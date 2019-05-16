@@ -1,0 +1,40 @@
+BUGStofix:
+program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
+
+TODO:
+armeijoitten valitseminen ja liikuttaminen
+reitinhaku armeijoitten liikkumiseen
+kameran liikuttelu hiirellä (toimii, mutta nyt pitää vielä lisätä rullazuumailun kohdistaminen kursorin luokse)
+
+purge fg soundeffects and replace them with something cc0-like, so that I can add them to git repo
+
+
+
+
+
+
+magnify filter pitää olla nearest neighbor, muuten näyttää kamalalta
+
+no niin en käytäkään noita fantasy generalin grafiikoita tai ääniä
+vaan nyt otetaan jotain vitun laillista open source kamaa
+
+maastotiilet
+https://cuddlyclover.itch.io/fantasy-hex-tiles
+tekijät CuddlyClover ja exoku
+tile width: 32
+tile height: 28 (height 48, stride 28)
+side length: 16
+y-offset: 2
+
+
+
+
+
+
+
+
+
+Hex edges: (amit)
+Iterate over all hexes H.
+For each hex, iterate over all 6 neighbors D.
+If D is on your game map, and H’s region and D’s region are different, draw the edge between H and D.

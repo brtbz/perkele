@@ -1,0 +1,8 @@
+delagardi
+/obj/*
+/.vscode/*
+/utils/*
+/data/sfx/*
+delagardi.ini
+perkele
+imgui.ini
