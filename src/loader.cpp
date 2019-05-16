@@ -65,7 +65,6 @@ GLuint NewProgram(GLuint vertex_shader, GLuint fragment_shader)
 
 GLuint LoadTexture(const char *file_path, int *w, int *h)
 {
-
 	GLuint new_texture;
 	GLint internal_format = GL_RGBA8; 
 	GLenum format = GL_RGBA; // this is supposed to be GL_BGRA in Windows version I guess(?)

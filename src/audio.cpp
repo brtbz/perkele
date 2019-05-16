@@ -125,11 +125,19 @@ void UnloadMusicAndSounds()
 {
 	if (audio_enabled)
 	{
+/*
+		cm_stop(music_src);
+		for (int i = 0; i < 37; i++)
+		{
+			cm_stop( sfx[i].src );
+		}
+
 		cm_destroy_source(music_src);
 		for (int i = 0; i < 37; i++)
 		{
 			cm_destroy_source( sfx[i].src );
 		}
+*/
 	}
 }
 
