@@ -53,8 +53,8 @@ void Camera::MoveToNewOrigo(vec2 new_origo)
 
 void InitNewCamera()
 {
-    vec2 mini = { 0.0f, 0.0f };
-    //vec2 maxi = { 1920.0f, 1080.0f};
-    vec2 maxi = viewport_size;
-    camera.SetCamera( mini, maxi );
+	vec2 mini = { 0.0f, 0.0f };
+	//vec2 maxi = { 1920.0f, 1080.0f};
+	vec2 maxi = viewport_size;
+	camera.SetCamera( mini, maxi );
 }

@@ -8,6 +8,6 @@ out vec4 color;
 
 void main()
 {
-    vec4 temp_color = texture(input_texture, frag_uv_coord);
-    color = vec4(0.9f, 0.8f, 0.7f, temp_color.r);
+	vec4 temp_color = texture(input_texture, frag_uv_coord);
+	color = vec4(0.9f, 0.8f, 0.7f, temp_color.r);
 }

@@ -267,65 +267,65 @@ void LoadHexMapStuff()
 	hex_map_texture = LoadTexture("data/gfx/terrain.png", &w, &h);
 	hex_map_highlight_texture = LoadTexture("data/gfx/fghex_highlight.png", NULL, NULL);
 
-    GLuint hex_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/hex-vert.glsl");
-    GLuint hex_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/hex-frag.glsl");
-    hex_sp = NewProgram(hex_vs, hex_fs);
+	GLuint hex_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/hex-vert.glsl");
+	GLuint hex_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/hex-frag.glsl");
+	hex_sp = NewProgram(hex_vs, hex_fs);
 
-    GLfloat vertex_data[] = {
-        // Positions   // texcoord
-         1.0f, -1.0f,  1.0f, 0.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f,  1.0f,  1.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,  
-    };
+	GLfloat vertex_data[] = {
+		// Positions   // texcoord
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,  
+	};
 
-    {
-        glGenVertexArrays(1, &hex_vao);
-        glBindVertexArray(hex_vao);
+	{
+		glGenVertexArrays(1, &hex_vao);
+		glBindVertexArray(hex_vao);
 
-        glGenBuffers(1, &hex_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, hex_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
+		glGenBuffers(1, &hex_vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, hex_vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
 
-        glEnableVertexAttribArray( glGetAttribLocation(hex_sp, "position") );
-        glVertexAttribPointer( glGetAttribLocation(hex_sp, "position") , 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)0 );
+		glEnableVertexAttribArray( glGetAttribLocation(hex_sp, "position") );
+		glVertexAttribPointer( glGetAttribLocation(hex_sp, "position") , 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)0 );
 
-        glEnableVertexAttribArray( glGetAttribLocation(hex_sp, "uv_coord") );
-        glVertexAttribPointer( glGetAttribLocation(hex_sp, "uv_coord") , 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat) ));
+		glEnableVertexAttribArray( glGetAttribLocation(hex_sp, "uv_coord") );
+		glVertexAttribPointer( glGetAttribLocation(hex_sp, "uv_coord") , 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat) ));
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        // siis sheideri tarvii heksan indeksin. mutta se tarvii myös terrain typenkin suoraan, se ei voi hakea terrain_typeä indeksin perusteella. 
-        // eli pitäisi tehdä joku terrain type array, jota täytellään sen mukaan mitä ja minkä verran tavaraa on tuossa indeksi-arrayssä(?)
-        // ja tunkea se johonkin bufferiin joka syötetään gl:lle
+		// siis sheideri tarvii heksan indeksin. mutta se tarvii myös terrain typenkin suoraan, se ei voi hakea terrain_typeä indeksin perusteella. 
+		// eli pitäisi tehdä joku terrain type array, jota täytellään sen mukaan mitä ja minkä verran tavaraa on tuossa indeksi-arrayssä(?)
+		// ja tunkea se johonkin bufferiin joka syötetään gl:lle
 
-        glGenBuffers(1, &hex_indices_buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, hex_indices_buffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(uint32_t) * map_size, NULL, GL_DYNAMIC_DRAW );
+		glGenBuffers(1, &hex_indices_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, hex_indices_buffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(uint32_t) * map_size, NULL, GL_DYNAMIC_DRAW );
 
-        glEnableVertexAttribArray( glGetAttribLocation( hex_sp, "hex_index" ) );
-        glVertexAttribIPointer( glGetAttribLocation( hex_sp, "hex_index" ), 1, GL_INT, 1*sizeof(GLint), (GLvoid*)0 );
-        glVertexAttribDivisor( glGetAttribLocation( hex_sp, "hex_index" ), 1 );
+		glEnableVertexAttribArray( glGetAttribLocation( hex_sp, "hex_index" ) );
+		glVertexAttribIPointer( glGetAttribLocation( hex_sp, "hex_index" ), 1, GL_INT, 1*sizeof(GLint), (GLvoid*)0 );
+		glVertexAttribDivisor( glGetAttribLocation( hex_sp, "hex_index" ), 1 );
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
 
-        glGenBuffers(1, &hex_terrain_types_buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, hex_terrain_types_buffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(uint32_t) * map_size, NULL, GL_DYNAMIC_DRAW );
+		glGenBuffers(1, &hex_terrain_types_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, hex_terrain_types_buffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(uint32_t) * map_size, NULL, GL_DYNAMIC_DRAW );
 
-        glEnableVertexAttribArray( glGetAttribLocation( hex_sp, "terrain_type" ) );
-        glVertexAttribIPointer( glGetAttribLocation( hex_sp, "terrain_type" ), 1, GL_INT, 1*sizeof(GLint), (GLvoid*)0 );
-        glVertexAttribDivisor( glGetAttribLocation( hex_sp, "terrain_type" ), 1 );
+		glEnableVertexAttribArray( glGetAttribLocation( hex_sp, "terrain_type" ) );
+		glVertexAttribIPointer( glGetAttribLocation( hex_sp, "terrain_type" ), 1, GL_INT, 1*sizeof(GLint), (GLvoid*)0 );
+		glVertexAttribDivisor( glGetAttribLocation( hex_sp, "terrain_type" ), 1 );
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        glBindVertexArray(0);
-    }
+		glBindVertexArray(0);
+	}
 }
 
 
@@ -494,21 +494,6 @@ int32_t GetRandomTerrain()
 }
 #endif
 
-/*
-// oho sehän on ihan vitun hidas
-bool NotDuplicateEdge(int32_t start, int32_t end, int32_t edge_count)
-{
-	for (int i = 0; i < edge_count; i++)
-	{
-		if (map_edges[i].start_node_index == start && map_edges[i].end_node_index == end || map_edges[i].end_node_index == start && map_edges[i].start_node_index == end)
-		{
-			return false;
-		}
-	}
-	return true;
-}
-*/
-
 void InitMapNodes()
 {
 	int32_t total_n_count = 0;
@@ -518,7 +503,6 @@ void InitMapNodes()
 		map_nodes[i].index = i;
 		map_nodes[i].x = i % map_width;
 		map_nodes[i].y = i / map_width;
-
 
 		map_nodes[i].n_north = -1;
 		map_nodes[i].n_northeast = -1;
@@ -534,6 +518,7 @@ void InitMapNodes()
 		map_nodes[i].edge_southwest = -1;
 		map_nodes[i].edge_northwest = -1;
 
+		// north
 		if (map_nodes[i].y < map_height - 1)
 		{
 			map_nodes[i].n_south = i + map_width;
@@ -622,64 +607,6 @@ void InitMapNodes()
 	int32_t edge_number = 0;
 	for (int i = 0; i < map_size; i++)
 	{
-#if 0
-		if (map_nodes[i].n_north != -1 )
-		{
-			if ( NotDuplicateEdge(i, map_nodes[i].n_north, edge_number))
-			{
-				map_edges[edge_number].start_node_index = i;
-				map_edges[edge_number].end_node_index = map_nodes[i].n_north;
-				edge_number++;
-			}
-		}
-		if (map_nodes[i].n_northeast != -1 )
-		{
-			if ( NotDuplicateEdge(i, map_nodes[i].n_northeast, edge_number))
-			{
-				map_edges[edge_number].start_node_index = i;
-				map_edges[edge_number].end_node_index = map_nodes[i].n_northeast;
-				edge_number++;
-			}
-		}
-		if (map_nodes[i].n_southeast != -1 )
-		{
-			if ( NotDuplicateEdge(i, map_nodes[i].n_southeast, edge_number))
-			{
-				map_edges[edge_number].start_node_index = i;
-				map_edges[edge_number].end_node_index = map_nodes[i].n_southeast;
-				edge_number++;				
-			}
-		}
-		if (map_nodes[i].n_south != -1 )
-		{
-			if ( NotDuplicateEdge(i, map_nodes[i].n_south, edge_number))
-			{
-				map_edges[edge_number].start_node_index = i;
-				map_edges[edge_number].end_node_index = map_nodes[i].n_south;
-				edge_number++;
-			}
-		}
-		if (map_nodes[i].n_southwest != -1 )
-		{
-			if ( NotDuplicateEdge(i, map_nodes[i].n_southwest, edge_number))
-			{
-				map_edges[edge_number].start_node_index = i;
-				map_edges[edge_number].end_node_index = map_nodes[i].n_southwest;
-				edge_number++;		
-			}
-		}
-		if (map_nodes[i].n_northwest != -1 )
-		{
-			if ( NotDuplicateEdge(i, map_nodes[i].n_northwest, edge_number))
-			{
-				map_edges[edge_number].start_node_index = i;
-				map_edges[edge_number].end_node_index = map_nodes[i].n_northwest;
-				edge_number++;				
-			}
-		}
-#endif
-
-#if 1
 		if (map_nodes[i].n_north != -1 )
 		{
 			map_edges[edge_number].start_node_index = i;
@@ -729,10 +656,8 @@ void InitMapNodes()
 			map_nodes[i].edge_northwest = edge_number;
 			edge_number++;
 		}
-#endif
 	}
 	printf("EDGE NUMBER IN THE END: %d\n", edge_number);
-
 }
 
 void InitHexMap()

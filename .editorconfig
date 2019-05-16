@@ -3,6 +3,6 @@
 root = true
 
 # 4 space indentation
-[*.{cpp,c,h,editorconfig}]
+[*.{cpp,c,h,glsl,editorconfig}]
 indent_style = tab
 indent_size = 4

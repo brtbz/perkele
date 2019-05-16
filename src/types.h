@@ -65,23 +65,11 @@ typedef struct DelagardiSettings
 	bool vsync;
 } DelagardiSettings;
 
-
-
-
 typedef struct Sfx
 {
-    int id;
-    cm_Source *src;
+	int id;
+	cm_Source *src;
 } Sfx;
-
-
-
-
-
-
-
-
-
 
 struct DumbDebugData
 {
@@ -90,9 +78,6 @@ struct DumbDebugData
 	int tile_row_min;
 	int tile_row_max;
 };
-
-
-
 
 
 typedef enum
@@ -293,7 +278,7 @@ typedef struct Army
 
 typedef struct MapNode
 {
-	int32_t index;
+	int32_t index; // this might be superfluous? it's the same as the index in map_nodes array. Think about it!
 	int16_t x;
 	int16_t y;
 
@@ -313,13 +298,11 @@ typedef struct MapNode
 	int32_t edge_south;
 	int32_t edge_southwest;
 	int32_t edge_northwest;
-	//int32_t edge_indices[6];
-	//int16_t edge_count;
 } MapNode;
 
 typedef struct MapEdge
 {
-	int32_t index;
+	int32_t index; // possibly superfluous as well
 	int32_t start_node_index;
 	int32_t end_node_index;
 	int16_t cost;

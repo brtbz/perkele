@@ -76,108 +76,108 @@ void Init()
 
 	gl_context = SDL_GL_CreateContext(window);
 
-    if(!gladLoadGL()) {
-        printf("GLAD GLOUDN*T GLOAD GL! Something went wrong!\n");
-        exit(-1);
-    }
+	if(!gladLoadGL()) {
+		printf("GLAD GLOUDN*T GLOAD GL! Something went wrong!\n");
+		exit(-1);
+	}
 
 	{
 		// Version info
-	    SDL_version compiled;
-	    SDL_version linked;
-	    SDL_VERSION(&compiled);
-	    SDL_GetVersion(&linked);
-	    printf("Compiled against SDL version %d.%d.%d\n", compiled.major, compiled.minor, compiled.patch);
-	    printf("Linking against SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);
-	    printf("OpenGL version: %s\n", glGetString(GL_VERSION));
-	    printf("GLSL version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-	    printf("Vendor: %s\n", glGetString(GL_VENDOR));
-	    printf("Renderer: %s\n", glGetString(GL_RENDERER));
+		SDL_version compiled;
+		SDL_version linked;
+		SDL_VERSION(&compiled);
+		SDL_GetVersion(&linked);
+		printf("Compiled against SDL version %d.%d.%d\n", compiled.major, compiled.minor, compiled.patch);
+		printf("Linking against SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);
+		printf("OpenGL version: %s\n", glGetString(GL_VERSION));
+		printf("GLSL version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		printf("Vendor: %s\n", glGetString(GL_VENDOR));
+		printf("Renderer: %s\n", glGetString(GL_RENDERER));
 	}
 
-    if (vsync_flag)
-    {
-    	//nop
-    }
-    else
-    {
-        int trySetSwapInterval = SDL_GL_SetSwapInterval(0);
-        if (trySetSwapInterval == -1) { printf("%s\n", SDL_GetError()); }
-        else { printf("Vsync disabled\n"); }
-    }
+	if (vsync_flag)
+	{
+		//nop
+	}
+	else
+	{
+		int trySetSwapInterval = SDL_GL_SetSwapInterval(0);
+		if (trySetSwapInterval == -1) { printf("%s\n", SDL_GetError()); }
+		else { printf("Vsync disabled\n"); }
+	}
 
 
 
-    // AUDIO
+	// AUDIO
 
-    SDL_AudioSpec fmt, got;
-    audio_mutex = SDL_CreateMutex();
+	SDL_AudioSpec fmt, got;
+	audio_mutex = SDL_CreateMutex();
 
-    /* Init SDL audio */
-    memset(&fmt, 0, sizeof(fmt));
-    fmt.freq      = 44100;
-    fmt.format    = AUDIO_S16;
-    fmt.channels  = 2;
-    fmt.samples   = 1024;
-    fmt.callback  = audio_callback;
+	/* Init SDL audio */
+	memset(&fmt, 0, sizeof(fmt));
+	fmt.freq      = 44100;
+	fmt.format    = AUDIO_S16;
+	fmt.channels  = 2;
+	fmt.samples   = 1024;
+	fmt.callback  = audio_callback;
 
-    audio_dev = SDL_OpenAudioDevice(NULL, 0, &fmt, &got, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
-    if (audio_dev == 0)
-    {
-        fprintf(stderr, "Error: failed to open audio device '%s'\n", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
+	audio_dev = SDL_OpenAudioDevice(NULL, 0, &fmt, &got, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
+	if (audio_dev == 0)
+	{
+		fprintf(stderr, "Error: failed to open audio device '%s'\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
 
-    /* Init library */
-    cm_init(got.freq);
-    cm_set_lock(lock_handler);
-    cm_set_master_gain(0.5);
+	/* Init library */
+	cm_init(got.freq);
+	cm_set_lock(lock_handler);
+	cm_set_master_gain(0.5);
 
-    /* Start audio */
-    SDL_PauseAudioDevice(audio_dev, 0);
-
-
-
-
+	/* Start audio */
+	SDL_PauseAudioDevice(audio_dev, 0);
 
 
 
 
 
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-
-    int size_pixels = 15;
-    float size_pixels_monofonto = 15.0f;
-    //io.Fonts->AddFontFromFileTTF("data/fonts/roboto-medium.ttf", size_pixels);
-    im_font_roboto = io.Fonts->AddFontFromFileTTF("data/fonts/roboto-medium.ttf", size_pixels);
-    im_font_monofonto = io.Fonts->AddFontFromFileTTF("data/fonts/monofonto.ttf", size_pixels_monofonto);
-    //io.Fonts->GetTexDataAsAlpha8();
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-    // Setup Platform/Renderer bindings
-    ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-
-    printf("Dear ImGui version: %s\n", IMGUI_VERSION);
-
-
-    srand((unsigned int)time(NULL));
 
 
 
-    InitFont();
-    InitHexMap();
-    InitArmyStuff();
 
-    InitNewCamera();
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+
+	int size_pixels = 15;
+	float size_pixels_monofonto = 15.0f;
+	//io.Fonts->AddFontFromFileTTF("data/fonts/roboto-medium.ttf", size_pixels);
+	im_font_roboto = io.Fonts->AddFontFromFileTTF("data/fonts/roboto-medium.ttf", size_pixels);
+	im_font_monofonto = io.Fonts->AddFontFromFileTTF("data/fonts/monofonto.ttf", size_pixels_monofonto);
+	//io.Fonts->GetTexDataAsAlpha8();
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
+
+	// Setup Platform/Renderer bindings
+	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+	ImGui_ImplOpenGL3_Init(glsl_version);
+
+	printf("Dear ImGui version: %s\n", IMGUI_VERSION);
+
+
+	srand((unsigned int)time(NULL));
+
+
+
+	InitFont();
+	InitHexMap();
+	InitArmyStuff();
+
+	InitNewCamera();
 
 }
 
@@ -188,9 +188,9 @@ void Shutdown()
 	ClearHexMapStuff();
 	TakeDownArmyStuff();
 
-    SDL_CloseAudioDevice(audio_dev);
+	SDL_CloseAudioDevice(audio_dev);
 
-    SDL_GL_DeleteContext(gl_context);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+	SDL_GL_DeleteContext(gl_context);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 }

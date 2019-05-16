@@ -44,18 +44,18 @@ void FreeUnitDataBuffer()
 
 void UpdateUnitDataBuffer()
 {
-    for (int i = 0; i < 183; i++)
-    {
-        ivec4 unit_datum = 
-        { 
-            test_armies[i].position_hex,
-            test_armies[i].type,
-            0,//test_divisions[i].unit_type,
-            0,//test_divisions[i].unit_size
-        };
+	for (int i = 0; i < 183; i++)
+	{
+		ivec4 unit_datum = 
+		{ 
+			test_armies[i].position_hex,
+			test_armies[i].type,
+			0,//test_divisions[i].unit_type,
+			0,//test_divisions[i].unit_size
+		};
 
-        unit_data[i] = unit_datum;
-    }
+		unit_data[i] = unit_datum;
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, unit_data_buffer);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, unit_data_count * sizeof(ivec4), (const GLvoid*)&(unit_data[0]) );
@@ -103,16 +103,16 @@ void LoadArmyGraphicStuff()
 
 
 
-    glGenBuffers(1, &unit_data_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, unit_data_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(int) * unit_limit, NULL, GL_DYNAMIC_DRAW);
+	glGenBuffers(1, &unit_data_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, unit_data_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(int) * unit_limit, NULL, GL_DYNAMIC_DRAW);
 
-    GLint unit_data_loc = glGetAttribLocation( army_sp, "unit_data" );
-    glEnableVertexAttribArray( unit_data_loc );
-    glVertexAttribIPointer( unit_data_loc, 4, GL_UNSIGNED_INT, 4*sizeof(GLuint), (GLvoid*)0 );
-    glVertexAttribDivisor( unit_data_loc, 1);
+	GLint unit_data_loc = glGetAttribLocation( army_sp, "unit_data" );
+	glEnableVertexAttribArray( unit_data_loc );
+	glVertexAttribIPointer( unit_data_loc, 4, GL_UNSIGNED_INT, 4*sizeof(GLuint), (GLvoid*)0 );
+	glVertexAttribDivisor( unit_data_loc, 1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
 

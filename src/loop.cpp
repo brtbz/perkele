@@ -2,15 +2,15 @@
 // Helper to display a little (?) mark which shows a tooltip when hovered.
 static void ShowHelpMarker(const char* desc)
 {
-    ImGui::TextDisabled("(?)");
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(desc);
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
-    }
+	ImGui::TextDisabled("(?)");
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
 }
 ///
 
@@ -135,7 +135,7 @@ void Step(double delta)
 		if (keyboard_state[SDL_SCANCODE_D] | keyboard_state[SDL_SCANCODE_RIGHT]) { camera_move_x = 1; }		
 	}
 
-    float zoom_level = (float)camera.Size().x / viewport_size.x;
+	float zoom_level = (float)camera.Size().x / viewport_size.x;
 
 	float camerah_x = camera.Min().x + (float)camera_move_x * (float)(delta) * 1000.0f * 1.0f * zoom_level;
 	float camerah_y = camera.Min().y + (float)camera_move_y * (float)(delta) * 1000.0f * 1.0f * zoom_level;
@@ -182,122 +182,122 @@ void Step(double delta)
 	static bool cycle_palette_phase = false;
 	static int current_palette_phase = 0;
 
-    static int text_string_count = 1;
-    static float text_string_loc_x = 200.0f;
-    static float text_string_loc_y = 124.0f;
+	static int text_string_count = 1;
+	static float text_string_loc_x = 200.0f;
+	static float text_string_loc_y = 124.0f;
 
-    static char str0[48] = "Victimae Paschali Laudes";
+	static char str0[48] = "Victimae Paschali Laudes";
 
-    static char loadmap_str[128] = "data/maps/terrain_perke_no.csv";
-
-
-
-    static int show_edge = 0;
-
-    // Start the Dear ImGui frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(window);
-    ImGui::NewFrame();
-
-    if (selected_army != NULL)
-    {
-    	ImGui::Begin("SELECTED UNIT");
-    	ImGui::Text("Unit Number: %d", selected_army->type);
-    	ImGui::InputInt("change", (int*)&(selected_army->type) );
-    	unit_data_buffer_needs_update = true;
-    	ImGui::End();
-    }
-
-    if (show_debug_ui)
-    {
-	    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	    if (show_demo_window) { ImGui::ShowDemoWindow(&show_demo_window); }
-
-	    // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	    {
-	        static float f = 0.0f;
-	        static int counter = 0;
-
-	        ImGui::Begin("delagardiebug");                          // Create a window called "Hello, world!" and append into it.
-
-	        ImGui::Checkbox("Demo", &show_demo_window);      // Edit bools storing our window open/close state
-	        ImGui::SameLine();
-	        ImGui::Checkbox("Settings###SETTINGS_CHECKBOX", &show_settings_window);
-	        ImGui::SameLine();
-	        ImGui::Checkbox("Memory", &show_memory_window);
-	        ImGui::SameLine();
-	        ImGui::Checkbox("8bit index palette pic", &draw_dqk);
-	        ImGui::Checkbox("Cycle palette phase", &cycle_palette_phase);
-	        ImGui::SliderInt("phase", &current_palette_phase, 0, 256);
-
-	        ImGui::Separator();
-
-	        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	        ImGui::Text("Time: %d", master_timer);
-	        ImGui::SliderFloat("master gain", &master_gain, 0.0f, 2.0f, "%.4f", 1.0f);
-	        ImGui::SliderFloat("music gain", &music_gain, 0.0f, 2.0f, "%.4f", 1.0f);
-
-	        if (ImGui::Button("CHAAARRGE!!!")) { PlaySfx(SFX_HERO_CHARGE); }
-	        ImGui::SameLine();
-	        if (ImGui::Button("bluhblahbloo!!!")) { PlaySfx(SFX_SPELLCASTER_A); }
-	        static int sfx_number = 0;
-	        ImGui::SliderInt("sfx", &sfx_number, 0, 36);
-	        ImGui::SameLine();
-	        ImGui::Text("%d ", sfx[sfx_number].id);
-	        ImGui::SameLine();
-	        if ( ImGui::Button("woah!") ) { cm_play(sfx[sfx_number].src); }
-
-	        ImGui::Separator();
-	        ImGui::InputText("text", str0, IM_ARRAYSIZE(str0));
-	        ImGui::SliderInt("text c", &text_string_count, 0, 24);
-	        ImGui::SliderFloat("text x", &text_string_loc_x, -500.0f, 2000.0f, "%.3f", 1.0f);
-	        ImGui::SliderFloat("text y", &text_string_loc_y, -200.0f, 1200.0f, "%.3f", 1.0f);
-	        ImGui::Separator();
-
-	        ImGui::Text("Camera %.2f %.2f %.2f %.2f", camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y);
-	        ImGui::Text("zoom_level: %.2f", zoom_level);
-
-		    ImGui::Text("tile column min: %d max: %d", dumb_dbg.tile_column_min, dumb_dbg.tile_column_max);
-		    ImGui::Text("tile row min: %d max: %d", dumb_dbg.tile_row_min, dumb_dbg.tile_row_max);
-		    ImGui::Text("hexes to draw count %d", hexes_to_draw_count);
-		    ImGui::Text("highlighted_hex: %d", highlighted_hex);
-		    ImGui::Text("MOUSE: X: %d, Y: %d MAP: X: %.2f Y: %.2f", mouse_pos_screen.x, mouse_pos_screen.y, mouse_pos_map.x, mouse_pos_map.y);
-		    ImGui::Text("HIGHLIGHT HEX: %d", highlighted_hex);
-		    ImGui::Text("MapNode: %d, Neighbors: N: %d NE: %d SE: %d S: %d SW: %d NW: %d", 
-		    	map_nodes[highlighted_hex].index,
-		    	map_nodes[highlighted_hex].n_north,
-		    	map_nodes[highlighted_hex].n_northeast,
-		    	map_nodes[highlighted_hex].n_southeast,
-		    	map_nodes[highlighted_hex].n_south,
-		    	map_nodes[highlighted_hex].n_southwest,
-		    	map_nodes[highlighted_hex].n_northwest
-		    	);
-		    ImGui::Text("Neighbor # %d", map_nodes[highlighted_hex].n_count);
+	static char loadmap_str[128] = "data/maps/terrain_perke_no.csv";
 
 
-		    ImGui::Separator();
-		    ImGui::Text("%s", dumb_debug_string);
-		    ImGui::Text("%s", dumb_debug_string2);
-		    ImGui::Text("kalle len: %f ville len: %f", debug_kalle_len, debug_ville_len);
+
+	static int show_edge = 0;
+
+	// Start the Dear ImGui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame(window);
+	ImGui::NewFrame();
+
+	if (selected_army != NULL)
+	{
+		ImGui::Begin("SELECTED UNIT");
+		ImGui::Text("Unit Number: %d", selected_army->type);
+		ImGui::InputInt("change", (int*)&(selected_army->type) );
+		unit_data_buffer_needs_update = true;
+		ImGui::End();
+	}
+
+	if (show_debug_ui)
+	{
+		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+		if (show_demo_window) { ImGui::ShowDemoWindow(&show_demo_window); }
+
+		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+		{
+			static float f = 0.0f;
+			static int counter = 0;
+
+			ImGui::Begin("delagardiebug");                          // Create a window called "Hello, world!" and append into it.
+
+			ImGui::Checkbox("Demo", &show_demo_window);      // Edit bools storing our window open/close state
+			ImGui::SameLine();
+			ImGui::Checkbox("Settings###SETTINGS_CHECKBOX", &show_settings_window);
+			ImGui::SameLine();
+			ImGui::Checkbox("Memory", &show_memory_window);
+			ImGui::SameLine();
+			ImGui::Checkbox("8bit index palette pic", &draw_dqk);
+			ImGui::Checkbox("Cycle palette phase", &cycle_palette_phase);
+			ImGui::SliderInt("phase", &current_palette_phase, 0, 256);
+
+			ImGui::Separator();
+
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::Text("Time: %d", master_timer);
+			ImGui::SliderFloat("master gain", &master_gain, 0.0f, 2.0f, "%.4f", 1.0f);
+			ImGui::SliderFloat("music gain", &music_gain, 0.0f, 2.0f, "%.4f", 1.0f);
+
+			if (ImGui::Button("CHAAARRGE!!!")) { PlaySfx(SFX_HERO_CHARGE); }
+			ImGui::SameLine();
+			if (ImGui::Button("bluhblahbloo!!!")) { PlaySfx(SFX_SPELLCASTER_A); }
+			static int sfx_number = 0;
+			ImGui::SliderInt("sfx", &sfx_number, 0, 36);
+			ImGui::SameLine();
+			ImGui::Text("%d ", sfx[sfx_number].id);
+			ImGui::SameLine();
+			if ( ImGui::Button("woah!") ) { cm_play(sfx[sfx_number].src); }
+
+			ImGui::Separator();
+			ImGui::InputText("text", str0, IM_ARRAYSIZE(str0));
+			ImGui::SliderInt("text c", &text_string_count, 0, 24);
+			ImGui::SliderFloat("text x", &text_string_loc_x, -500.0f, 2000.0f, "%.3f", 1.0f);
+			ImGui::SliderFloat("text y", &text_string_loc_y, -200.0f, 1200.0f, "%.3f", 1.0f);
+			ImGui::Separator();
+
+			ImGui::Text("Camera %.2f %.2f %.2f %.2f", camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y);
+			ImGui::Text("zoom_level: %.2f", zoom_level);
+
+			ImGui::Text("tile column min: %d max: %d", dumb_dbg.tile_column_min, dumb_dbg.tile_column_max);
+			ImGui::Text("tile row min: %d max: %d", dumb_dbg.tile_row_min, dumb_dbg.tile_row_max);
+			ImGui::Text("hexes to draw count %d", hexes_to_draw_count);
+			ImGui::Text("highlighted_hex: %d", highlighted_hex);
+			ImGui::Text("MOUSE: X: %d, Y: %d MAP: X: %.2f Y: %.2f", mouse_pos_screen.x, mouse_pos_screen.y, mouse_pos_map.x, mouse_pos_map.y);
+			ImGui::Text("HIGHLIGHT HEX: %d", highlighted_hex);
+			ImGui::Text("MapNode: %d, Neighbors: N: %d NE: %d SE: %d S: %d SW: %d NW: %d", 
+				map_nodes[highlighted_hex].index,
+				map_nodes[highlighted_hex].n_north,
+				map_nodes[highlighted_hex].n_northeast,
+				map_nodes[highlighted_hex].n_southeast,
+				map_nodes[highlighted_hex].n_south,
+				map_nodes[highlighted_hex].n_southwest,
+				map_nodes[highlighted_hex].n_northwest
+				);
+			ImGui::Text("Neighbor # %d", map_nodes[highlighted_hex].n_count);
 
 
-		    if (selected_army != NULL)
-		    {
-		    	ImGui::Text("Selected army: %d\n", (int)(selected_army->type));
-		    }
-		    ImGui::Separator();
+			ImGui::Separator();
+			ImGui::Text("%s", dumb_debug_string);
+			ImGui::Text("%s", dumb_debug_string2);
+			ImGui::Text("kalle len: %f ville len: %f", debug_kalle_len, debug_ville_len);
 
-		    ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
-		    ImGui::SameLine();
-		    if ( ImGui::Button("LOAD MAP") ) { int rc = LoadMapTerrainFromCSV(loadmap_str, map_size, map_data); }
 
-		    ImGui::Separator();
-		    ImGui::InputInt("edge", &show_edge, 1, 10);
-		    ImGui::SameLine();
-		    ImGui::Text("start %d end %d cost %d", map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].cost);
+			if (selected_army != NULL)
+			{
+				ImGui::Text("Selected army: %d\n", (int)(selected_army->type));
+			}
+			ImGui::Separator();
 
-	        ImGui::End();
-	    }
+			ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
+			ImGui::SameLine();
+			if ( ImGui::Button("LOAD MAP") ) { int rc = LoadMapTerrainFromCSV(loadmap_str, map_size, map_data); }
+
+			ImGui::Separator();
+			ImGui::InputInt("edge", &show_edge, 1, 10);
+			ImGui::SameLine();
+			ImGui::Text("start %d end %d cost %d", map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].cost);
+
+			ImGui::End();
+		}
 	}
 
 	if (show_main_menu)
@@ -366,8 +366,8 @@ void Step(double delta)
 		ImGui::End();
 	}
 
-    cm_set_master_gain((double)master_gain);
-    cm_set_gain(music_src, (double)music_gain);
+	cm_set_master_gain((double)master_gain);
+	cm_set_gain(music_src, (double)music_gain);
 
 	for (int i = 0; i < text_string_count; i++)
 	{
@@ -378,41 +378,41 @@ void Step(double delta)
 
 
 
-    glClearColor(223.0f/255.0f, 190.0f/255.0f, 138.0f/255.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(223.0f/255.0f, 190.0f/255.0f, 138.0f/255.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glDepthFunc(GL_LEQUAL);
-    glEnable(GL_DEPTH_TEST);
-    DrawHexes();
-    glDisable(GL_DEPTH_TEST);
-    DrawEdgeAsArrow( map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].direction * 60.0f );
+	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_DEPTH_TEST);
+	DrawHexes();
+	glDisable(GL_DEPTH_TEST);
+	DrawEdgeAsArrow( map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].direction * 60.0f );
 
-    glEnable(GL_DEPTH_TEST);
-    DrawArmies(unit_data_count);
-    glDisable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
+	DrawArmies(unit_data_count);
+	glDisable(GL_DEPTH_TEST);
 
-    
+	
 
-    DrawStrings();
+	DrawStrings();
 
-    if (draw_dqk)
-    {
-    	if (cycle_palette_phase)
-    	{
-    		current_palette_phase = (master_timer / 100 ) % 256;
-    	}
-    	DrawDQK(current_palette_phase, cycle_palette_phase);
-    }
+	if (draw_dqk)
+	{
+		if (cycle_palette_phase)
+		{
+			current_palette_phase = (master_timer / 100 ) % 256;
+		}
+		DrawDQK(current_palette_phase, cycle_palette_phase);
+	}
 
-    // Rendering
-    ImGui::Render();
-    //SDL_GL_MakeCurrent(window, gl_context); // ???
-    //glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+	// Rendering
+	ImGui::Render();
+	//SDL_GL_MakeCurrent(window, gl_context); // ???
+	//glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
 
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	SDL_GL_SwapWindow(window);
 }
 
