@@ -1,0 +1,8 @@
+# this is for github, hopefully it'll work
+# top-most EditorConfig file
+root = true
+
+# 4 space indentation
+[*.{cpp,c,h,editorconfig}]
+indent_style = tab
+indent_size = 4
