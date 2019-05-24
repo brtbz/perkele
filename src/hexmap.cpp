@@ -183,7 +183,7 @@ int GetMouseOveredHex(vec2 m)
 	kalle.y = (int)(m.y - kalle_offset) / (int)ystride;
 	kalle_hex = kalle.x + kalle.y * grid_width;
 
-	snprintf(dumb_debug_string, 256, "kalle.x %d .y %d ville.x %d . %d", kalle.x, kalle.y, ville.x, ville.y);
+	// snprintf(dumb_debug_string, 256, "kalle.x %d .y %d ville.x %d . %d", kalle.x, kalle.y, ville.x, ville.y);
 
 	if (kalle_hex == ville_hex)
 	{
@@ -215,6 +215,36 @@ int GetMouseOveredHex(vec2 m)
 		}
 	}
 	return hex_number;
+}
+
+ivec2 StaggeredToSlanted(ivec2 staggered_hex)
+{
+	ivec2 slanted_hex = { staggered_hex.x, staggered_hex.y - staggered_hex.x / 2 }; // ACHTUNG!!! might need something more (maybe floor()...)
+	return slanted_hex;
+}
+
+ivec2 SlantedToStaggered(ivec2 slanted_hex)
+{
+	ivec2 staggered_hex = { slanted_hex.x, slanted_hex.y + slanted_hex.x / 2 };
+	return staggered_hex;
+}
+
+int32_t CalculateHexDistance(ivec2 start_hex, ivec2 end_hex)
+{
+	ivec2 slanted_start_hex = StaggeredToSlanted(start_hex);
+	ivec2 slanted_end_hex = StaggeredToSlanted(end_hex);
+
+	int32_t dx = slanted_start_hex.x - slanted_end_hex.x;
+	int32_t dy = slanted_start_hex.y - slanted_end_hex.y;
+
+	if (dx < 0 && dy < 0 || dx > 0 && dy > 0)
+	{
+		return abs(dx) + abs(dy);
+	}
+	else
+	{
+		return abs(dx) > abs(dy) ? abs(dx) : abs(dy);
+	}
 }
 
 void LoadEdgeYeah()

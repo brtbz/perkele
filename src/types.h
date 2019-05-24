@@ -282,7 +282,7 @@ typedef struct MapNode
 	int16_t x;
 	int16_t y;
 
-//temp (or maybe not???)
+//temp (or maybe not???) // maybe could do somekind of hot/cold-split for this struct later on
 	int32_t n_north;
 	int32_t n_northeast;
 	int32_t n_southeast;
@@ -326,3 +326,22 @@ typedef struct PathStep
 	int32_t f_score;
 } PathStep;
 #endif
+
+typedef struct OpenSetLeaf
+{
+	int32_t parent = -2; // parent -1 is root
+	int32_t left_child = -2;
+	int32_t right_child = -2;
+	int32_t g_score = -2; // key value, sort by this
+	int32_t h_score = -2; // HexDistance(map_nodes[value], map_nodes[goal_node])
+	// int32_t f_score = g_score + h_score;
+	int32_t map_index = -2; // index to map_nodes array
+} OpenSetLeaf;
+
+typedef struct ClosedSetLeaf
+{
+	int32_t parent = -2;
+	int32_t left_child = -2;
+	int32_t right_child = -2;
+	int32_t map_index = -2;
+} ClosedSetLeaf;

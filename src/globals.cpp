@@ -108,11 +108,18 @@ GLuint edge_vbo;
 GLuint edge_vao;
 GLuint edge_texture;
 
+/*
 int32_t procession_of_edges[128];
 int32_t procession_of_nodes[128];
 PathStep path_map[128];
 int32_t size_of_procession_of_edges = -1;
-
+int32_t open_set[128];
+int32_t closed_set[128];
+int32_t open_set_size = 0;
+int32_t closed_set_size = 0;
+*/
+OpenSetLeaf open_set[16384];
+ClosedSetLeaf closed_set[16384];
 
 
 Camera camera;

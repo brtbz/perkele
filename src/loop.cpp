@@ -208,6 +208,22 @@ void Step(double delta)
 		ImGui::End();
 	}
 
+	static ivec2 hex_one;
+	static ivec2 hex_two;
+	static int32_t hex_distance_result = 0;
+	static int32_t some_temp_low_score = 0;
+	{
+		ImGui::Begin("Hex Distance");
+		ImGui::InputInt2("hex one", (int*)&hex_one);
+		ImGui::InputInt2("hex two", (int*)&hex_two);
+		//if (ImGui::Button("Calculate hex distance")) { hex_distance_result = CalculateHexDistance(hex_one, hex_two); }
+		//ImGui::Text("hex distance result: %d", hex_distance_result);
+		if ( ImGui::Button("Find Path") ) { some_temp_low_score = FindPath( hex_one.y * map_width + hex_one.x, hex_two.y * map_width + hex_two.x); }
+		ImGui::Text("Some temp low score %d", some_temp_low_score);
+		ImGui::End();
+
+	}
+
 	if (show_debug_ui)
 	{
 		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
@@ -260,9 +276,15 @@ void Step(double delta)
 			ImGui::Text("tile column min: %d max: %d", dumb_dbg.tile_column_min, dumb_dbg.tile_column_max);
 			ImGui::Text("tile row min: %d max: %d", dumb_dbg.tile_row_min, dumb_dbg.tile_row_max);
 			ImGui::Text("hexes to draw count %d", hexes_to_draw_count);
-			ImGui::Text("highlighted_hex: %d", highlighted_hex);
 			ImGui::Text("MOUSE: X: %d, Y: %d MAP: X: %.2f Y: %.2f", mouse_pos_screen.x, mouse_pos_screen.y, mouse_pos_map.x, mouse_pos_map.y);
-			ImGui::Text("HIGHLIGHT HEX: %d", highlighted_hex);
+			ivec2 staggered_hex = { map_nodes[highlighted_hex].x, map_nodes[highlighted_hex].y };
+			ivec2 slanted_hex = StaggeredToSlanted( staggered_hex );
+			ImGui::Text("HIGHLIGHT HEX: %d (Staggered: X%d Y%d Slanted: X%d Y%d)", 
+				highlighted_hex,
+				map_nodes[highlighted_hex].x,
+				map_nodes[highlighted_hex].y,
+				slanted_hex.x,
+				slanted_hex.y);
 			ImGui::Text("MapNode: %d, Neighbors: N: %d NE: %d SE: %d S: %d SW: %d NW: %d", 
 				map_nodes[highlighted_hex].index,
 				map_nodes[highlighted_hex].n_north,
