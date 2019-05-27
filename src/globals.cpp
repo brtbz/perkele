@@ -118,9 +118,17 @@ int32_t closed_set[128];
 int32_t open_set_size = 0;
 int32_t closed_set_size = 0;
 */
-OpenSetLeaf open_set[16384];
-ClosedSetLeaf closed_set[16384];
 
+#define OPEN_SET_MAX_SIZE 16384
+#define CLOSED_SET_MAX_SIZE OPEN_SET_MAX_SIZE
+OpenSetLeaf open_set[OPEN_SET_MAX_SIZE];
+int32_t open_set_write_head = 0;
+int32_t open_set_root_index = 0;
+int32_t open_set_count = 0;
+ClosedSetLeaf closed_set[CLOSED_SET_MAX_SIZE];
+int32_t closed_set_write_head = 0;
+int32_t closed_set_root_index = 0;
+int32_t closed_set_count = 0;
 
 Camera camera;
 

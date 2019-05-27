@@ -1,3 +1,5 @@
+// #define bool8 uint8_t
+
 typedef union vec2
 {
 	struct
@@ -326,22 +328,57 @@ typedef struct PathStep
 	int32_t f_score;
 } PathStep;
 #endif
+#if 0
+typedef struct LeafCore
+{
+	int16_t parent;
+	int16_t left_child;
+	int16_t right_child;
+	int16_t PADDING_PLEASE_IGNORE_SECRET_DATA_HERE;
+} LeafCore;
 
+typedef struct OpenSetPayload
+{
+	int32_t g_score;
+	int32_t f_score;
+	int32_t map_index;
+} OpenSetPayload;
+
+typedef struct OpenSetNode
+{
+	LeafCore core;
+	OpenSetPayload payload;
+} OpenSetNode;
+
+
+
+hmm...
+open_set_leaf_cores[16384] this also has the key
+open_set_payloads[16384]
+
+#endif
 typedef struct OpenSetLeaf
 {
 	int32_t parent = -2; // parent -1 is root
-	int32_t left_child = -2;
-	int32_t right_child = -2;
-	int32_t g_score = -2; // key value, sort by this
-	int32_t h_score = -2; // HexDistance(map_nodes[value], map_nodes[goal_node])
-	// int32_t f_score = g_score + h_score;
+	int32_t left_child = -2; // index in open_set data structure
+	int32_t right_child = -2; // index in open_set data structure
+	int32_t g_score = -2; // 
+	//int32_t h_score = -2; // HexDistance(map_nodes[map_index], map_nodes[goal_node])
+	int32_t f_score = -2; //g_score + h_score; // this is the key actually. does it matter that it's not saved, just a composite of g and h?
 	int32_t map_index = -2; // index to map_nodes array
 } OpenSetLeaf;
+// needs quick peek, removal and insertion
+// insertion moves write pointer forward
+// removal invalidates data, but doesn't move remaining data around
+// if root is removed, root pointer is shifted to old root's right child
+// root won't need removal if it has any remaining left children
 
 typedef struct ClosedSetLeaf
 {
 	int32_t parent = -2;
 	int32_t left_child = -2;
 	int32_t right_child = -2;
-	int32_t map_index = -2;
+	int32_t map_index = -2; // key
 } ClosedSetLeaf;
+// closed set needs quick peeks and quick insertions
+// no individual removals from closed set, just clean wipes
