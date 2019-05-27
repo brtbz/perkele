@@ -310,6 +310,8 @@ void ANALAIS(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
 
 int32_t FindPath(int32_t start, int32_t goal)
 {
+	uint64_t initiating_pathfinding = SDL_GetPerformanceCounter();
+
 	open_set_write_head = 0;
 	open_set_root_index = 0;
 	open_set_count = 0;
@@ -346,6 +348,13 @@ int32_t FindPath(int32_t start, int32_t goal)
 		printf("-----------LETS ANALAIS\n");
 		ANALAIS(map_index, accumulated_g_score, goal_hex);
 	}
+
+	uint64_t pathfinding_completed = SDL_GetPerformanceCounter();
+
+	double pathfinding_time = (double)(pathfinding_completed - initiating_pathfinding) / (double)perf_freq;
+	//printf("Path found in %.04g milliseconds.\n", pathfinding_time*1000.0);
+
+	snprintf(dumb_debug_string, 256, "Path found in %.04g milliseconds.\n", pathfinding_time*1000.0);
 
 	return temp_score;
 }
