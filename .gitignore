@@ -1,4 +1,3 @@
-delagardi
 /obj/*
 /.vscode/*
 /utils/*
@@ -6,3 +5,4 @@ delagardi
 delagardi.ini
 perkele
 imgui.ini
+perkele.s

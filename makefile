@@ -42,6 +42,8 @@ qwik : clean perkele
 
 all : clean glad imgui cmixer stb_vorbis libs perkele
 
+disa : clean disassembly
+
 perkele : $(MAIN_SRC_PATH) ; $(COMPILER_CPP) $(MAIN_SRC_PATH) $(GLAD_OBJ_PATH) $(IMGUI_OBJ_PATH) $(CMIXER_OBJ_PATH) $(STB_VORBIS_OBJ_PATH) $(LIBS_OBJ_PATH) $(CFLAGS_CPP) $(LFLAGS_CPP) -o $(BIN)
 
 glad : $(GLAD_SRC_PATH) ; $(COMPILER_C) -c $(GLAD_SRC_PATH) $(CFLAGS_C)
@@ -62,3 +64,5 @@ libs : $(LIBS_SRC_PATH) ; $(COMPILER_C) -c $(LIBS_SRC_PATH) $(CFLAGS_C)
 clean : 
 	mkdir -p obj
 	rm -f perkele
+
+disassembly : $(MAIN_SRC_PATH) ; $(COMPILER_CPP) -S $(CFLAGS_CPP) $(MAIN_SRC_PATH)
