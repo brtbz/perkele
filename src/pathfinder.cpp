@@ -8,7 +8,7 @@ bool ClosedSetIsEmpty()
 	return closed_set_count == 0 ? true : false;
 }
 
-int32_t AddOpenSetLeaf( int32_t f_score, int32_t g_score, int32_t map_index )
+int32_t AddOpenSetLeaf( int32_t f_score, int32_t g_score, int32_t map_index, int32_t came_along_edge )
 {
 	if ( open_set_write_head >= OPEN_SET_MAX_SIZE )
 	{
@@ -19,6 +19,7 @@ int32_t AddOpenSetLeaf( int32_t f_score, int32_t g_score, int32_t map_index )
 		open_set[ open_set_root_index ].f_score = f_score;
 		open_set[ open_set_root_index ].g_score = g_score;
 		open_set[ open_set_root_index ].map_index = map_index;
+		open_set[ open_set_root_index ].came_along_edge = came_along_edge;
 		open_set[ open_set_root_index ].parent = -1;
 		open_set[ open_set_root_index ].left_child = -1;
 		open_set[ open_set_root_index ].right_child = -1;
@@ -40,6 +41,7 @@ int32_t AddOpenSetLeaf( int32_t f_score, int32_t g_score, int32_t map_index )
 					open_set[ open_set_write_head ].f_score = f_score;
 					open_set[ open_set_write_head ].g_score = g_score;
 					open_set[ open_set_write_head ].map_index = map_index;
+					open_set[ open_set_write_head ].came_along_edge = came_along_edge;
 					open_set[ open_set_write_head ].parent = read_head;
 					open_set[ open_set_write_head ].left_child = -1;
 					open_set[ open_set_write_head ].right_child = -1;
@@ -61,6 +63,7 @@ int32_t AddOpenSetLeaf( int32_t f_score, int32_t g_score, int32_t map_index )
 					open_set[ open_set_write_head ].f_score = f_score;
 					open_set[ open_set_write_head ].g_score = g_score;
 					open_set[ open_set_write_head ].map_index = map_index;
+					open_set[ open_set_write_head ].came_along_edge = came_along_edge;
 					open_set[ open_set_write_head ].parent = read_head;
 					open_set[ open_set_write_head ].left_child = -1;
 					open_set[ open_set_write_head ].right_child = -1;
@@ -147,7 +150,7 @@ int32_t AddClosedSetLeaf(int32_t map_index)
 }
 
 // i want map_index, but these are sorted by f_score. okay?
-int32_t PullMapIndexWithLowestFScoreFromOpenSetAndDontForgetItsGScoreEither(int32_t *map_index, int32_t *g_score)
+int32_t PullMapIndexWithLowestFScoreFromOpenSet(int32_t *map_index, int32_t *g_score, int32_t *came_along_edge)
 {
 	if (OpenSetIsEmpty())
 	{
@@ -163,6 +166,7 @@ int32_t PullMapIndexWithLowestFScoreFromOpenSetAndDontForgetItsGScoreEither(int3
 		}
 		*map_index = open_set[read_head].map_index;
 		*g_score = open_set[read_head].g_score;
+		*came_along_edge = open_set[read_head].came_along_edge;
 
 		// rearrange
 
@@ -222,90 +226,54 @@ bool MapIndexIsInClosedSet(int32_t map_index)
 
 void ANALAIS(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
 {
-	//int32_t h_score;
-	//int32_t g_score;
-	//int32_t f_score;
-	int32_t neighbor;
-	if ( map_nodes[ map_index ].edge_north != -1 )
-	{
-		neighbor = map_edges[ map_nodes[map_index].edge_north ].end_node_index;
-		if (!MapIndexIsInClosedSet(neighbor))
-		{
-			ivec2 neighbor_hex = { map_nodes[neighbor].x, map_nodes[neighbor].y };
-			int32_t h_score = CalculateHexDistance(neighbor_hex, goal_hex);
-			int32_t g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge_north ].cost;
-			int32_t f_score = g_score + h_score;
-			printf("NEIGHBOR %d X%d Y%d H_SCORE: %d G_SCORE:%d F_SCORE:%d\n", neighbor, neighbor_hex.x, neighbor_hex.y, h_score, g_score, f_score);
-			AddOpenSetLeaf( f_score, g_score, neighbor );
-		}
-	}
+	int32_t h_score;
+	int32_t g_score;
+	int32_t f_score;
+	int32_t neighbour;
 
-	if ( map_nodes[ map_index ].edge_northeast != -1 )
+	for (int i = 0; i < 6; i++)
 	{
-		neighbor = map_edges[ map_nodes[map_index].edge_northeast ].end_node_index;
-		if (!MapIndexIsInClosedSet(neighbor))
+		if ( map_nodes[ map_index ].edge[i] != -1 )
 		{
-			ivec2 neighbor_hex = { map_nodes[neighbor].x, map_nodes[neighbor].y };
-			int32_t h_score = CalculateHexDistance(neighbor_hex, goal_hex);
-			int32_t g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge_northeast ].cost;
-			int32_t f_score = g_score + h_score;
-			AddOpenSetLeaf( f_score, g_score, neighbor );
-		}
-	}
-
-	if ( map_nodes[ map_index ].edge_southeast != -1 )
-	{
-		neighbor = map_edges[ map_nodes[map_index].edge_southeast ].end_node_index;
-		if (!MapIndexIsInClosedSet(neighbor))
-		{
-			ivec2 neighbor_hex = { map_nodes[neighbor].x, map_nodes[neighbor].y };
-			int32_t h_score = CalculateHexDistance(neighbor_hex, goal_hex);
-			int32_t g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge_southeast ].cost;
-			int32_t f_score = g_score + h_score;
-			AddOpenSetLeaf( f_score, g_score, neighbor );
-		}
-	}
-
-	if ( map_nodes[ map_index ].edge_south != -1 )
-	{
-		neighbor = map_edges[ map_nodes[map_index].edge_south ].end_node_index;
-		if (!MapIndexIsInClosedSet(neighbor))
-		{
-			ivec2 neighbor_hex = { map_nodes[neighbor].x, map_nodes[neighbor].y };
-			int32_t h_score = CalculateHexDistance(neighbor_hex, goal_hex);
-			int32_t g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge_south ].cost;
-			int32_t f_score = g_score + h_score;
-			AddOpenSetLeaf( f_score, g_score, neighbor );
-		}
-	}
-
-	if ( map_nodes[ map_index ].edge_southwest != -1 )
-	{
-		neighbor = map_edges[ map_nodes[map_index].edge_southwest ].end_node_index;
-		if (!MapIndexIsInClosedSet(neighbor))
-		{
-			ivec2 neighbor_hex = { map_nodes[neighbor].x, map_nodes[neighbor].y };
-			int32_t h_score = CalculateHexDistance(neighbor_hex, goal_hex);
-			int32_t g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge_southwest ].cost;
-			int32_t f_score = g_score + h_score;
-			AddOpenSetLeaf( f_score, g_score, neighbor );
-		}
-	}
-
-	if ( map_nodes[ map_index ].edge_northwest != -1 )
-	{
-		neighbor = map_edges[ map_nodes[map_index].edge_northwest ].end_node_index;
-		if (!MapIndexIsInClosedSet(neighbor))
-		{
-			ivec2 neighbor_hex = { map_nodes[neighbor].x, map_nodes[neighbor].y };
-			int32_t h_score = CalculateHexDistance(neighbor_hex, goal_hex);
-			int32_t g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge_northwest ].cost;
-			int32_t f_score = g_score + h_score;
-			AddOpenSetLeaf( f_score, g_score, neighbor );
+			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
+			if (!MapIndexIsInClosedSet(neighbour))
+			{
+				ivec2 neighbour_hex = { map_nodes[neighbour].x, map_nodes[neighbour].y };
+				h_score = CalculateHexDistance(neighbour_hex, goal_hex);
+				g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge[i] ].cost;
+				f_score = g_score + h_score;
+				AddOpenSetLeaf( f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );
+			}
 		}
 	}
 
 	AddClosedSetLeaf(map_index);
+}
+/*
+uint64_t starting1 = SDL_GetPerformanceCounter();
+uint64_t stopping1 = SDL_GetPerformanceCounter();
+double calculating1 = (double)(stopping1 - starting1) / (double)perf_freq;
+printf("This took %.04g\n", calculating1*1000.0);
+*/
+
+uint32_t ReconstructPath(int32_t start, int32_t goal)
+{
+	int path_size = 0;
+	int n = 0;
+
+
+	path_edges[n] = came_along_edges[goal];
+	int32_t prev_node = map_edges[ came_along_edges[goal] ].start_node_index;
+
+	while ( prev_node != start && path_size < 256 )
+	{
+		n++;
+		path_size++;
+		path_edges[n] = came_along_edges[prev_node];
+		prev_node = map_edges[ came_along_edges[prev_node] ].start_node_index;
+	}
+
+	return path_size;
 }
 
 int32_t FindPath(int32_t start, int32_t goal)
@@ -318,6 +286,7 @@ int32_t FindPath(int32_t start, int32_t goal)
 	closed_set_write_head = 0;
 	closed_set_root_index = 0;
 	closed_set_count = 0;
+	path_edges_size = 0;
 
 	ivec2 start_hex = { map_nodes[start].x, map_nodes[start].y };
 	ivec2 goal_hex = { map_nodes[goal].x, map_nodes[goal].y };
@@ -330,23 +299,37 @@ int32_t FindPath(int32_t start, int32_t goal)
 	int32_t temp_score = 1337;
 
 
-	AddOpenSetLeaf( f_score, g_score, start );
-
+	AddOpenSetLeaf( f_score, g_score, start, -1 );
+/*
+	double total_ANALAIS = 0.0;
+	uint64_t starting1;
+	uint64_t stopping1;
+	double calculating1;
+*/
 	while (!goal_found && !OpenSetIsEmpty())
 	{
 		int32_t map_index;
 		int32_t accumulated_g_score;
-		PullMapIndexWithLowestFScoreFromOpenSetAndDontForgetItsGScoreEither(&map_index, &accumulated_g_score);
+		int32_t came_along_edge;
+		PullMapIndexWithLowestFScoreFromOpenSet(&map_index, &accumulated_g_score, &came_along_edge);
 
-		ivec2 current_hex = { map_nodes[map_index].x, map_nodes[map_index].y };
-		h_score = CalculateHexDistance(current_hex, goal_hex);
-		if ( h_score == 0)
+		//ivec2 current_hex = { map_nodes[map_index].x, map_nodes[map_index].y };
+		//h_score = CalculateHexDistance(current_hex, goal_hex);
+		came_along_edges[map_index] = came_along_edge;
+		if ( map_index == goal )
 		{
 			goal_found = true;
+			path_edges_size = ReconstructPath(start, goal);
+			break;
 		}
 		temp_score = accumulated_g_score;
-		printf("-----------LETS ANALAIS\n");
+		//printf("-----------LETS ANALAIS\n");
+		//starting1 = SDL_GetPerformanceCounter();
 		ANALAIS(map_index, accumulated_g_score, goal_hex);
+		//stopping1 = SDL_GetPerformanceCounter();
+		//calculating1 = (double)(stopping1 - starting1) / (double)perf_freq;
+		//total_ANALAIS += calculating1;
+		//printf("ANALAIS took %.04g\n", calculating1*1000.0);
 	}
 
 	uint64_t pathfinding_completed = SDL_GetPerformanceCounter();
@@ -355,13 +338,7 @@ int32_t FindPath(int32_t start, int32_t goal)
 	//printf("Path found in %.04g milliseconds.\n", pathfinding_time*1000.0);
 
 	snprintf(dumb_debug_string, 256, "Path found in %.04g milliseconds.\n", pathfinding_time*1000.0);
+	//snprintf(dumb_debug_string2, 256, "Total ANALAIS %.04g milliseconds.\n", total_ANALAIS*1000.0);
 
 	return temp_score;
 }
-
-/*
-1. get from open_set entry with top priority (lowest f_score)
-2. analyze all its neighbour nodes (or edges) and if they are not found in closed set, then add them to open set
-3. add current node to closed set, and remove it from open set
-4. goto 1 if open set not empty
-*/

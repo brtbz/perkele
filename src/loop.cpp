@@ -159,6 +159,7 @@ void Step(double delta)
 		PlaySfx(SFX_UNIT_MOVE);
 		selected_army = NULL;
 		unit_data_buffer_needs_update = true;
+		path_edges_size = 0;
 	}
 	else if ( left_clicked && selected_army == NULL )
 	{
@@ -169,6 +170,14 @@ void Step(double delta)
 				selected_army = &test_armies[i];
 				PlaySfx(SFX_UI_CLICK_B);
 			}
+		}
+	}
+
+	if ( selected_army != NULL )
+	{
+		if ( selected_army->position_hex != highlighted_hex)
+		{
+			FindPath(selected_army->position_hex, highlighted_hex);
 		}
 	}
 
@@ -208,8 +217,8 @@ void Step(double delta)
 		ImGui::End();
 	}
 
-	static ivec2 hex_one;
-	static ivec2 hex_two;
+	static ivec2 hex_one = { 40, 35 };
+	static ivec2 hex_two = { 51, 23 };
 	static int32_t hex_distance_result = 0;
 	static int32_t some_temp_low_score = 0;
 	{
@@ -272,11 +281,12 @@ void Step(double delta)
 
 			ImGui::Text("Camera %.2f %.2f %.2f %.2f", camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y);
 			ImGui::Text("zoom_level: %.2f", zoom_level);
-
+/*
 			ImGui::Text("tile column min: %d max: %d", dumb_dbg.tile_column_min, dumb_dbg.tile_column_max);
 			ImGui::Text("tile row min: %d max: %d", dumb_dbg.tile_row_min, dumb_dbg.tile_row_max);
 			ImGui::Text("hexes to draw count %d", hexes_to_draw_count);
 			ImGui::Text("MOUSE: X: %d, Y: %d MAP: X: %.2f Y: %.2f", mouse_pos_screen.x, mouse_pos_screen.y, mouse_pos_map.x, mouse_pos_map.y);
+*/
 			ivec2 staggered_hex = { map_nodes[highlighted_hex].x, map_nodes[highlighted_hex].y };
 			ivec2 slanted_hex = StaggeredToSlanted( staggered_hex );
 			ImGui::Text("HIGHLIGHT HEX: %d (Staggered: X%d Y%d Slanted: X%d Y%d)", 
@@ -285,17 +295,18 @@ void Step(double delta)
 				map_nodes[highlighted_hex].y,
 				slanted_hex.x,
 				slanted_hex.y);
+/*
 			ImGui::Text("MapNode: %d, Neighbors: N: %d NE: %d SE: %d S: %d SW: %d NW: %d", 
 				map_nodes[highlighted_hex].index,
-				map_nodes[highlighted_hex].n_north,
-				map_nodes[highlighted_hex].n_northeast,
-				map_nodes[highlighted_hex].n_southeast,
-				map_nodes[highlighted_hex].n_south,
-				map_nodes[highlighted_hex].n_southwest,
-				map_nodes[highlighted_hex].n_northwest
+				map_node_neighbours[highlighted_hex].n_north,
+				map_node_neighbours[highlighted_hex].n_northeast,
+				map_node_neighbours[highlighted_hex].n_southeast,
+				map_node_neighbours[highlighted_hex].n_south,
+				map_node_neighbours[highlighted_hex].n_southwest,
+				map_node_neighbours[highlighted_hex].n_northwest
 				);
-			ImGui::Text("Neighbor # %d", map_nodes[highlighted_hex].n_count);
-
+			ImGui::Text("Neighbor # %d", map_node_neighbours[highlighted_hex].n_count);
+*/
 
 			ImGui::Separator();
 			ImGui::Text("%s", dumb_debug_string);
@@ -410,7 +421,13 @@ void Step(double delta)
 	glEnable(GL_DEPTH_TEST);
 	DrawHexes();
 	glDisable(GL_DEPTH_TEST);
-	DrawEdgeAsArrow( map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].direction * 60.0f );
+	//DrawEdgeAsArrow( map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].direction * 60.0f );
+
+
+	for (int i = 0; i <= path_edges_size; i++)
+	{
+		DrawEdgeAsArrow( map_edges[ path_edges[i] ].start_node_index, map_edges[ path_edges[i] ].end_node_index, map_edges[ path_edges[i] ].direction * 60.0f );
+	}
 
 	glEnable(GL_DEPTH_TEST);
 	DrawArmies(unit_data_count);

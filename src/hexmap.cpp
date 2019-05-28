@@ -528,35 +528,41 @@ void InitMapNodes()
 {
 	int32_t total_n_count = 0;
 	map_nodes = (MapNode*)malloc(map_size * sizeof(MapNode));
+	map_node_neighbours = (MapNodeNeighbours*)malloc(map_size * sizeof(MapNodeNeighbours));
+	came_along_edges = (int32_t*)malloc(map_size * sizeof(int32_t));
+
+	for (int i = 0; i < map_size; i++)
+	{
+		came_along_edges[i] = -1;
+	}
+
 	for (int i = 0; i < map_size; i++)
 	{
 		map_nodes[i].index = i;
 		map_nodes[i].x = i % map_width;
 		map_nodes[i].y = i / map_width;
 
-		map_nodes[i].n_north = -1;
-		map_nodes[i].n_northeast = -1;
-		map_nodes[i].n_southeast = -1;
-		map_nodes[i].n_south = -1;
-		map_nodes[i].n_southwest = -1;
-		map_nodes[i].n_northwest = -1;
+		map_node_neighbours[i].n_north = -1;
+		map_node_neighbours[i].n_northeast = -1;
+		map_node_neighbours[i].n_southeast = -1;
+		map_node_neighbours[i].n_south = -1;
+		map_node_neighbours[i].n_southwest = -1;
+		map_node_neighbours[i].n_northwest = -1;
 
-		map_nodes[i].edge_north = -1;
-		map_nodes[i].edge_northeast = -1;
-		map_nodes[i].edge_southeast = -1;
-		map_nodes[i].edge_south = -1;
-		map_nodes[i].edge_southwest = -1;
-		map_nodes[i].edge_northwest = -1;
+		for (int j = 0; j < 6; j++)
+		{
+			map_nodes[i].edge[j] = -1;
+		}
 
 		// north
 		if (map_nodes[i].y < map_height - 1)
 		{
-			map_nodes[i].n_south = i + map_width;
+			map_node_neighbours[i].n_south = i + map_width;
 		}
 
 		if (map_nodes[i].y > 0)
 		{
-			map_nodes[i].n_north = i - map_width;
+			map_node_neighbours[i].n_north = i - map_width;
 		}
 
 		// northwest
@@ -564,11 +570,11 @@ void InitMapNodes()
 		{
 			if (i % 2 == 1)
 			{
-				map_nodes[i].n_northwest = i - 1;
+				map_node_neighbours[i].n_northwest = i - 1;
 			}
 			else if ( i % 2 == 0 && map_nodes[i].y > 0)
 			{
-				map_nodes[i].n_northwest = i - 1 - map_width;
+				map_node_neighbours[i].n_northwest = i - 1 - map_width;
 			}
 		}
 
@@ -577,11 +583,11 @@ void InitMapNodes()
 		{
 			if ( i % 2 == 0 )
 			{
-				map_nodes[i].n_southwest = i - 1;
+				map_node_neighbours[i].n_southwest = i - 1;
 			}
 			else if ( i % 2 == 1 && map_nodes[i].y < map_height - 1 )
 			{
-				map_nodes[i].n_southwest = i - 1 + map_width;
+				map_node_neighbours[i].n_southwest = i - 1 + map_width;
 			}
 		}
 
@@ -590,11 +596,11 @@ void InitMapNodes()
 		{
 			if ( i % 2 == 1)
 			{
-				map_nodes[i].n_northeast = i + 1;
+				map_node_neighbours[i].n_northeast = i + 1;
 			}
 			else if ( i % 2 == 0 && map_nodes[i].y > 0)
 			{
-				map_nodes[i].n_northeast = i + 1 - map_width;
+				map_node_neighbours[i].n_northeast = i + 1 - map_width;
 			}
 		}
 
@@ -603,22 +609,22 @@ void InitMapNodes()
 		{
 			if (i % 2 == 0)
 			{
-				map_nodes[i].n_southeast = i + 1;
+				map_node_neighbours[i].n_southeast = i + 1;
 			}
 			else if ( i % 2 == 1 && map_nodes[i].y < map_height - 1)
 			{
-				map_nodes[i].n_southeast = i + 1 + map_width;
+				map_node_neighbours[i].n_southeast = i + 1 + map_width;
 			}
 		}
 
 		int32_t n_count = 0;
-		if ( map_nodes[i].n_north != -1 ) { n_count++; }
-		if ( map_nodes[i].n_northeast != -1 ) { n_count++; }
-		if ( map_nodes[i].n_southeast != -1 ) { n_count++; }
-		if ( map_nodes[i].n_south != -1 ) { n_count++; }
-		if ( map_nodes[i].n_southwest != -1 ) { n_count++; }
-		if ( map_nodes[i].n_northwest != -1 ) { n_count++; }
-		map_nodes[i].n_count = n_count;
+		if ( map_node_neighbours[i].n_north != -1 ) { n_count++; }
+		if ( map_node_neighbours[i].n_northeast != -1 ) { n_count++; }
+		if ( map_node_neighbours[i].n_southeast != -1 ) { n_count++; }
+		if ( map_node_neighbours[i].n_south != -1 ) { n_count++; }
+		if ( map_node_neighbours[i].n_southwest != -1 ) { n_count++; }
+		if ( map_node_neighbours[i].n_northwest != -1 ) { n_count++; }
+		map_node_neighbours[i].n_count = n_count;
 
 		total_n_count += n_count;
 	}
@@ -637,57 +643,85 @@ void InitMapNodes()
 	int32_t edge_number = 0;
 	for (int i = 0; i < map_size; i++)
 	{
-		if (map_nodes[i].n_north != -1 )
+		if (map_node_neighbours[i].n_north != -1 )
 		{
 			map_edges[edge_number].start_node_index = i;
-			map_edges[edge_number].end_node_index = map_nodes[i].n_north;
+			map_edges[edge_number].end_node_index = map_node_neighbours[i].n_north;
 			map_edges[edge_number].direction = 0;
-			map_nodes[i].edge_north = edge_number;
+			map_nodes[i].edge[0] = edge_number;
 			edge_number++;
 		}
 
-		if (map_nodes[i].n_northeast != -1 )
+		if (map_node_neighbours[i].n_northeast != -1 )
 		{
 			map_edges[edge_number].start_node_index = i;
-			map_edges[edge_number].end_node_index = map_nodes[i].n_northeast;
+			map_edges[edge_number].end_node_index = map_node_neighbours[i].n_northeast;
 			map_edges[edge_number].direction = 1;
-			map_nodes[i].edge_northeast = edge_number;
+			map_nodes[i].edge[1] = edge_number;
 			edge_number++;
 		}
-		if (map_nodes[i].n_southeast != -1 )
+		if (map_node_neighbours[i].n_southeast != -1 )
 		{
 			map_edges[edge_number].start_node_index = i;
-			map_edges[edge_number].end_node_index = map_nodes[i].n_southeast;
+			map_edges[edge_number].end_node_index = map_node_neighbours[i].n_southeast;
 			map_edges[edge_number].direction = 2;
-			map_nodes[i].edge_southeast = edge_number;
+			map_nodes[i].edge[2] = edge_number;
 			edge_number++;
 		}
-		if (map_nodes[i].n_south != -1 )
+		if (map_node_neighbours[i].n_south != -1 )
 		{
 			map_edges[edge_number].start_node_index = i;
-			map_edges[edge_number].end_node_index = map_nodes[i].n_south;
+			map_edges[edge_number].end_node_index = map_node_neighbours[i].n_south;
 			map_edges[edge_number].direction = 3;
-			map_nodes[i].edge_south = edge_number;
+			map_nodes[i].edge[3] = edge_number;
 			edge_number++;
 		}
-		if (map_nodes[i].n_southwest != -1 )
+		if (map_node_neighbours[i].n_southwest != -1 )
 		{
 			map_edges[edge_number].start_node_index = i;
-			map_edges[edge_number].end_node_index = map_nodes[i].n_southwest;
+			map_edges[edge_number].end_node_index = map_node_neighbours[i].n_southwest;
 			map_edges[edge_number].direction = 4;
-			map_nodes[i].edge_southwest = edge_number;
+			map_nodes[i].edge[4] = edge_number;
 			edge_number++;
 		}
-		if (map_nodes[i].n_northwest != -1 )
+		if (map_node_neighbours[i].n_northwest != -1 )
 		{
 			map_edges[edge_number].start_node_index = i;
-			map_edges[edge_number].end_node_index = map_nodes[i].n_northwest;
+			map_edges[edge_number].end_node_index = map_node_neighbours[i].n_northwest;
 			map_edges[edge_number].direction = 5;
-			map_nodes[i].edge_northwest = edge_number;
+			map_nodes[i].edge[5] = edge_number;
 			edge_number++;
 		}
 	}
 	printf("EDGE NUMBER IN THE END: %d\n", edge_number);
+	total_edge_count = edge_number;
+}
+
+void UpdateEdgeTravelCosts()
+{
+	for (int i = 0; i < total_edge_count; i++)
+	{
+		if ( map_data[ map_edges[i].end_node_index ] == 5) // mountain
+		{
+			map_edges[i].cost = 4;
+		}
+		else if ( map_data[ map_edges[i].end_node_index ] == 1) // light wood
+		{
+			map_edges[i].cost = 2;
+		}
+		else if ( map_data[ map_edges[i].end_node_index ] == 2) // haevy wood
+		{
+			map_edges[i].cost = 2;
+		}
+		else if ( map_data[ map_edges[i].end_node_index ] == 3) // hills
+		{
+			map_edges[i].cost = 3;
+		}
+		else if ( map_data[ map_edges[i].end_node_index ] == 4) // wooded hills
+		{
+			map_edges[i].cost = 3;
+		}
+	}
 }
 
 void InitHexMap()
@@ -721,6 +755,7 @@ void InitHexMap()
 	UpdateHexMapBuffers();
 
 	InitMapNodes();
+	UpdateEdgeTravelCosts();
 }
 
 void ClearHexMapStuff()

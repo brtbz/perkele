@@ -123,6 +123,17 @@ void LoadArmyGraphicStuff()
 	glBindVertexArray(0);
 }
 
+void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
+{
+	test_armies[174].position_hex = 30 * 128 + 55;
+	test_armies[176].position_hex = 4148;
+	test_armies[177].position_hex = 3763;
+
+	vec2 temp_vec2 = { 860.0f, 650.0f };
+	camera.IncreaseSizeBy(0.42f);
+	camera.MoveToNewMin(temp_vec2);
+}
+
 void InitArmyStuff()
 {
 	LoadArmyGraphicStuff();

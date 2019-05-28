@@ -176,9 +176,9 @@ void Init()
 	InitFont();
 	InitHexMap();
 	InitArmyStuff();
-
 	InitNewCamera();
 
+	ArrangePiecesAroundOnTheBoardJohnImOnlyTesting();
 }
 
 void Shutdown()

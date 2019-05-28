@@ -284,7 +284,11 @@ typedef struct MapNode
 	int16_t x;
 	int16_t y;
 
-//temp (or maybe not???) // maybe could do somekind of hot/cold-split for this struct later on
+	int32_t edge[6]; // 0 north, 1 northeast, 2 southeast, 3 south, 4 southwest, 5 northwest
+} MapNode;
+
+typedef struct MapNodeNeighbours
+{
 	int32_t n_north;
 	int32_t n_northeast;
 	int32_t n_southeast;
@@ -292,15 +296,7 @@ typedef struct MapNode
 	int32_t n_southwest;
 	int32_t n_northwest;
 	int32_t n_count;
-
-// edges
-	int32_t edge_north;
-	int32_t edge_northeast;
-	int32_t edge_southeast;
-	int32_t edge_south;
-	int32_t edge_southwest;
-	int32_t edge_northwest;
-} MapNode;
+} MapNodeNeighbours;
 
 typedef struct MapEdge
 {
@@ -311,52 +307,6 @@ typedef struct MapEdge
 	int16_t direction; // 0 = north, 1 = northeast, 2 = southeast, 3 = south, 4 = southwest, 5 = northwest
 } MapEdge;
 
-#if 0
-typedef struct PathStep
-{
-	int32_t this_node;
-	int32_t came_from_node;
-	int32_t g_score;
-	int32_t f_score;
-} PathStep;
-#else
-typedef struct PathStep
-{
-	int32_t start_node;
-	int32_t edge;
-	int32_t g_score;
-	int32_t f_score;
-} PathStep;
-#endif
-#if 0
-typedef struct LeafCore
-{
-	int16_t parent;
-	int16_t left_child;
-	int16_t right_child;
-	int16_t PADDING_PLEASE_IGNORE_SECRET_DATA_HERE;
-} LeafCore;
-
-typedef struct OpenSetPayload
-{
-	int32_t g_score;
-	int32_t f_score;
-	int32_t map_index;
-} OpenSetPayload;
-
-typedef struct OpenSetNode
-{
-	LeafCore core;
-	OpenSetPayload payload;
-} OpenSetNode;
-
-
-
-hmm...
-open_set_leaf_cores[16384] this also has the key
-open_set_payloads[16384]
-
-#endif
 typedef struct OpenSetLeaf
 {
 	int32_t parent = -2; // parent -1 is root
@@ -364,8 +314,9 @@ typedef struct OpenSetLeaf
 	int32_t right_child = -2; // index in open_set data structure
 	int32_t g_score = -2; // 
 	//int32_t h_score = -2; // HexDistance(map_nodes[map_index], map_nodes[goal_node])
-	int32_t f_score = -2; //g_score + h_score; // this is the key actually. does it matter that it's not saved, just a composite of g and h?
+	int32_t f_score = -2; //g_score + h_score; // this is the key actually.
 	int32_t map_index = -2; // index to map_nodes array
+	int32_t came_along_edge = -2;
 } OpenSetLeaf;
 // needs quick peek, removal and insertion
 // insertion moves write pointer forward

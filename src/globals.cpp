@@ -101,23 +101,16 @@ uint32_t *hexes_to_draw_terrain_types = NULL;
 uint32_t hexes_to_draw_max = map_size;
 
 MapNode *map_nodes;
+MapNodeNeighbours *map_node_neighbours;
 MapEdge *map_edges;
+uint32_t total_edge_count = 0;
 
 GLuint edge_sp;
 GLuint edge_vbo;
 GLuint edge_vao;
 GLuint edge_texture;
 
-/*
-int32_t procession_of_edges[128];
-int32_t procession_of_nodes[128];
-PathStep path_map[128];
-int32_t size_of_procession_of_edges = -1;
-int32_t open_set[128];
-int32_t closed_set[128];
-int32_t open_set_size = 0;
-int32_t closed_set_size = 0;
-*/
+
 
 #define OPEN_SET_MAX_SIZE 16384
 #define CLOSED_SET_MAX_SIZE OPEN_SET_MAX_SIZE
@@ -129,6 +122,10 @@ ClosedSetLeaf closed_set[CLOSED_SET_MAX_SIZE];
 int32_t closed_set_write_head = 0;
 int32_t closed_set_root_index = 0;
 int32_t closed_set_count = 0;
+int32_t *came_along_edges; // this a big ARRAY! array index is same as map index, value is edge's index
+int32_t path_edges[256];
+uint32_t path_edges_size = 0;
+
 
 Camera camera;
 
