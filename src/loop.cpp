@@ -211,8 +211,8 @@ void Step(double delta)
 	if (selected_army != NULL)
 	{
 		ImGui::Begin("SELECTED UNIT");
-		ImGui::Text("Unit Number: %d", selected_army->type);
-		ImGui::InputInt("change", (int*)&(selected_army->type) );
+		ImGui::Text("Base sprite: %d", selected_army->base_sprite);
+		ImGui::InputInt("change", (int*)&(selected_army->base_sprite) );
 		unit_data_buffer_needs_update = true;
 		ImGui::End();
 	}
@@ -316,7 +316,7 @@ void Step(double delta)
 
 			if (selected_army != NULL)
 			{
-				ImGui::Text("Selected army: %d\n", (int)(selected_army->type));
+				ImGui::Text("Selected army: %d\n", (int)(selected_army->base_sprite));
 			}
 			ImGui::Separator();
 

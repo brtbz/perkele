@@ -49,7 +49,7 @@ void UpdateUnitDataBuffer()
 		ivec4 unit_datum = 
 		{ 
 			test_armies[i].position_hex,
-			test_armies[i].type,
+			test_armies[i].base_sprite,
 			0,//test_divisions[i].unit_type,
 			0,//test_divisions[i].unit_size
 		};
@@ -128,6 +128,7 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	test_armies[174].position_hex = 30 * 128 + 55;
 	test_armies[176].position_hex = 4148;
 	test_armies[177].position_hex = 3763;
+	test_armies[177].base_sprite = GOBLIN_BATHROBE_RED;
 
 	vec2 temp_vec2 = { 860.0f, 650.0f };
 	camera.IncreaseSizeBy(0.42f);
@@ -140,7 +141,7 @@ void InitArmyStuff()
 	InitUnitDataBuffer();
 	for (int i = 0; i < 183; i++)
 	{
-		test_armies[i].type = (ArmyType)(i % 183);
+		test_armies[i].base_sprite = (ArmyBaseSprite)(i % 183);
 		test_armies[i].position_hex = i;
 		test_armies[i].movement_points_max = 20;
 		test_armies[i].movement_points_current = 20;
