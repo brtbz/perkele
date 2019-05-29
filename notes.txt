@@ -1,46 +1,48 @@
 BUGStofix:
+imgui can behave weirdly in windowed mode. there's some additional yoffset for mouse input or something.
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
 
 TODO: (in rough order of importance)
 pathfinding needs some debugging visualizations, like for all the nodes that were in the open set
-adjustable weights for pathfinder heuristic. convert to floats also.
 impassable nodes for the path graph
-
+stop recalculating path every frame
 reitinhaku armeijoitten liikkumiseen
-kameran liikuttelu hiirellä (toimii, mutta nyt pitää vielä lisätä rullazuumailun kohdistaminen kursorin luokse)
-
-purge fg soundeffects and replace them with something cc0-like, so that I can add them to git repo
+zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
+zoom-level constraints for the camera
+panning constraints for the camera (camera origo must stay within the map)
+edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
 pack path arrows into single draw call
+build files for windows (VC++2015 /w build.bat)
 
 
 
+credits section:
+
+terrain graphics: CuddlyClover (modified by exoku) (unclear license, but seems to be something free)
+unit graphics: dungeon crawl stone soup project utumno (cc0)
+
+sound effects by: artisticdude at opengameart.org (cc0)
+music: hey! by kim lightyear (cc-by 3.0)
+
+various stb-libraries by sean barrett
+dear imgui by omar cornut
+cmixer by rxi
+ini.h by mattias gustavsson
+sdl2 by slouken, icculus and others
+glad by who?
 
 
 
-
-
-
-Other notes:
+Other notes
+-----------
 magnify filter pitää olla nearest neighbor, muuten näyttää kamalalta
 
-no niin en käytäkään noita fantasy generalin grafiikoita tai ääniä
-vaan nyt otetaan jotain vitun laillista open source kamaa
-
-maastotiilet
+terrain tiles:
 https://cuddlyclover.itch.io/fantasy-hex-tiles
-tekijät CuddlyClover ja exoku
 tile width: 32
 tile height: 28 (height 48, stride 28)
 side length: 16
 y-offset: 2
-
-
-
-
-
-
-
-
 
 Hex edges: (amit)
 Iterate over all hexes H.

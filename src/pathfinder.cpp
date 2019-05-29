@@ -285,6 +285,11 @@ uint32_t ReconstructPath(int32_t start, int32_t goal)
 
 int32_t FindPath(int32_t start, int32_t goal)
 {
+	if (goal < 0)
+	{
+		return -1;
+	}
+
 	uint64_t initiating_pathfinding = SDL_GetPerformanceCounter();
 
 	open_set_write_head = 0;

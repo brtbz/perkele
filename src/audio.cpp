@@ -30,10 +30,10 @@ static void lock_handler(cm_Event *e)
 #define SFX_UNIT_ATTACK_A 23
 #define SFX_UNIT_ATTACK_B 24
 
-#define SFX_UNIT_MOVE 104
+#define SFX_UNIT_MOVE 0
 #define SFX_UI_CLICK_B 103
 
-#define SFX_UI_CLICK_A 101
+#define SFX_UI_CLICK_A 1
 
 void PlaySfx(int id)
 {
@@ -52,65 +52,7 @@ void PlaySfx(int id)
 int LoadMusicAndSounds()
 {
 	// TODO: check if the sound effects are loaded too
-/*
-	// SOUDNS
-	const int sfx_ids[37] = {
-		100, 101, 102, 103, 104,
-		 10,  12,  13,  16,  17,
-		  1, 200, 201, 202, 203,
-		204,  22,  23,  24,  26,
-		 27,  28,  29,   2,  31,
-		 32,  35,   3,  41,  47,
-		 48,  49,   4,   6,   7,
-		  8,   9,
-	};
 
-	const char *sfx_src_filenames[37] = {
-		"data/sfx/100.wav",
-		"data/sfx/101.wav",
-		"data/sfx/102.wav",
-		"data/sfx/103.wav",
-		"data/sfx/104.wav",
-		"data/sfx/10.wav",
-		"data/sfx/12.wav",
-		"data/sfx/13.wav",
-		"data/sfx/16.wav",
-		"data/sfx/17.wav",
-		"data/sfx/1.wav",
-		"data/sfx/200.wav",
-		"data/sfx/201.wav",
-		"data/sfx/202.wav",
-		"data/sfx/203.wav",
-		"data/sfx/204.wav",
-		"data/sfx/22.wav",
-		"data/sfx/23.wav",
-		"data/sfx/24.wav",
-		"data/sfx/26.wav",
-		"data/sfx/27.wav",
-		"data/sfx/28.wav",
-		"data/sfx/29.wav",
-		"data/sfx/2.wav",
-		"data/sfx/31.wav",
-		"data/sfx/32.wav",
-		"data/sfx/35.wav",
-		"data/sfx/3.wav",
-		"data/sfx/41.wav",
-		"data/sfx/47.wav",
-		"data/sfx/48.wav",
-		"data/sfx/49.wav",
-		"data/sfx/4.wav",
-		"data/sfx/6.wav",
-		"data/sfx/7.wav",
-		"data/sfx/8.wav",
-		"data/sfx/9.wav",
-	};
-
-	for (int i = 0; i < 37; i++)
-	{
-		sfx[i].id = sfx_ids[i];
-		sfx[i].src = cm_new_source_from_file(sfx_src_filenames[i]);
-	}
-*/
 	sfx[0].id = 0;
 	sfx[0].src = cm_new_source_from_file("data/sfx/swing.ogg");
 

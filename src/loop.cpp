@@ -153,10 +153,10 @@ void Step(double delta)
 		UpdateUnitDataBuffer();
 	}
 
-	if ( left_clicked && selected_army != NULL )
+	if ( left_clicked && selected_army != NULL && highlighted_hex > 0)
 	{
 		selected_army->position_hex = highlighted_hex;
-		PlaySfx(0);
+		PlaySfx(SFX_UNIT_MOVE);
 		selected_army = NULL;
 		unit_data_buffer_needs_update = true;
 		path_edges_size = 0;
@@ -168,7 +168,7 @@ void Step(double delta)
 			if ( test_armies[i].position_hex == highlighted_hex )
 			{
 				selected_army = &test_armies[i];
-				PlaySfx(1);
+				PlaySfx(SFX_UI_CLICK_A);
 			}
 		}
 	}
@@ -191,7 +191,7 @@ void Step(double delta)
 	static bool cycle_palette_phase = false;
 	static int current_palette_phase = 0;
 
-	static int text_string_count = 1;
+	static int text_string_count = 0;
 	static float text_string_loc_x = 200.0f;
 	static float text_string_loc_y = 124.0f;
 
@@ -253,15 +253,16 @@ void Step(double delta)
 			ImGui::Checkbox("Settings###SETTINGS_CHECKBOX", &show_settings_window);
 			ImGui::SameLine();
 			ImGui::Checkbox("Memory", &show_memory_window);
-			ImGui::SameLine();
+#if 0
+			ImGui::SameLine();			
 			ImGui::Checkbox("8bit index palette pic", &draw_dqk);
 			ImGui::Checkbox("Cycle palette phase", &cycle_palette_phase);
 			ImGui::SliderInt("phase", &current_palette_phase, 0, 256);
-
+#endif
 			ImGui::Separator();
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::Text("Time: %d", master_timer);
+			// ImGui::Text("Time: %d", master_timer);
 			ImGui::SliderFloat("master gain", &master_gain, 0.0f, 2.0f, "%.4f", 1.0f);
 			ImGui::SliderFloat("music gain", &music_gain, 0.0f, 2.0f, "%.4f", 1.0f);
 
@@ -272,11 +273,13 @@ void Step(double delta)
 			ImGui::SameLine();
 			if ( ImGui::Button("woah!") ) { cm_play(sfx[sfx_number].src); }
 
+#if 0
 			ImGui::Separator();
 			ImGui::InputText("text", str0, IM_ARRAYSIZE(str0));
 			ImGui::SliderInt("text c", &text_string_count, 0, 24);
 			ImGui::SliderFloat("text x", &text_string_loc_x, -500.0f, 2000.0f, "%.3f", 1.0f);
 			ImGui::SliderFloat("text y", &text_string_loc_y, -200.0f, 1200.0f, "%.3f", 1.0f);
+#endif
 			ImGui::Separator();
 
 			ImGui::Text("Camera %.2f %.2f %.2f %.2f", camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y);
@@ -311,24 +314,20 @@ void Step(double delta)
 			ImGui::Separator();
 			ImGui::Text("%s", dumb_debug_string);
 			ImGui::Text("%s", dumb_debug_string2);
-			ImGui::Text("kalle len: %f ville len: %f", debug_kalle_len, debug_ville_len);
+			//ImGui::Text("kalle len: %f ville len: %f", debug_kalle_len, debug_ville_len);
 
-
-			if (selected_army != NULL)
-			{
-				ImGui::Text("Selected army: %d\n", (int)(selected_army->base_sprite));
-			}
 			ImGui::Separator();
 
 			ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
 			ImGui::SameLine();
 			if ( ImGui::Button("LOAD MAP") ) { int rc = LoadMapTerrainFromCSV(loadmap_str, map_size, map_data); }
 
+#if 0
 			ImGui::Separator();
 			ImGui::InputInt("edge", &show_edge, 1, 10);
 			ImGui::SameLine();
 			ImGui::Text("start %d end %d cost %d", map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].cost);
-
+#endif
 			ImGui::End();
 		}
 	}
