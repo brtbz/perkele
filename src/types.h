@@ -133,7 +133,7 @@ typedef struct OpenSetLeaf
 	int32_t right_child = -2; // index in open_set data structure
 	int32_t g_score = -2; // 
 	//int32_t h_score = -2; // HexDistance(map_nodes[map_index], map_nodes[goal_node])
-	int32_t f_score = -2; //g_score + h_score; // this is the key actually.
+	float f_score = -2.0f; //g_score + h_score; // this is the key actually.
 	int32_t map_index = -2; // index to map_nodes array
 	int32_t came_along_edge = -2;
 } OpenSetLeaf;

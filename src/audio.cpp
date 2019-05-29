@@ -39,7 +39,7 @@ void PlaySfx(int id)
 {
 	if (audio_enabled)
 	{
-		for (int i = 0; i < 37; i++)
+		for (int i = 0; i < 2; i++)
 		{
 			if (sfx[i].id == id)
 			{
@@ -52,7 +52,7 @@ void PlaySfx(int id)
 int LoadMusicAndSounds()
 {
 	// TODO: check if the sound effects are loaded too
-
+/*
 	// SOUDNS
 	const int sfx_ids[37] = {
 		100, 101, 102, 103, 104,
@@ -110,6 +110,12 @@ int LoadMusicAndSounds()
 		sfx[i].id = sfx_ids[i];
 		sfx[i].src = cm_new_source_from_file(sfx_src_filenames[i]);
 	}
+*/
+	sfx[0].id = 0;
+	sfx[0].src = cm_new_source_from_file("data/sfx/swing.ogg");
+
+	sfx[1].id = 1;
+	sfx[1].src = cm_new_source_from_file("data/sfx/metal-small1.ogg");
 
 	music_src = cm_new_source_from_file("data/music/hey.ogg");
 	// music_src = cm_new_source_from_file("data/music/junkala_title.wav");

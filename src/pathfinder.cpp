@@ -8,7 +8,7 @@ bool ClosedSetIsEmpty()
 	return closed_set_count == 0 ? true : false;
 }
 
-int32_t AddOpenSetLeaf( int32_t f_score, int32_t g_score, int32_t map_index, int32_t came_along_edge )
+int32_t AddOpenSetLeaf( float f_score, int32_t g_score, int32_t map_index, int32_t came_along_edge )
 {
 	if ( open_set_write_head >= OPEN_SET_MAX_SIZE )
 	{
@@ -228,7 +228,7 @@ void ANALAIS(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
 {
 	int32_t h_score;
 	int32_t g_score;
-	int32_t f_score;
+	float f_score;
 	int32_t neighbour;
 
 	for (int i = 0; i < 6; i++)
@@ -241,7 +241,14 @@ void ANALAIS(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
 				ivec2 neighbour_hex = { map_nodes[neighbour].x, map_nodes[neighbour].y };
 				h_score = CalculateHexDistance(neighbour_hex, goal_hex);
 				g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge[i] ].cost;
-				f_score = g_score + h_score;
+				if (neighbour_hex.x == goal_hex.x && neighbour_hex.y == goal_hex.y )
+				{
+					f_score = 0.0f;
+				}
+				else
+				{
+					f_score = pathfind_weight_g * (float)g_score + pathfind_weight_h * (float)h_score;
+				}
 				AddOpenSetLeaf( f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );
 			}
 		}

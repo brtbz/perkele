@@ -156,7 +156,7 @@ void Step(double delta)
 	if ( left_clicked && selected_army != NULL )
 	{
 		selected_army->position_hex = highlighted_hex;
-		PlaySfx(SFX_UNIT_MOVE);
+		PlaySfx(0);
 		selected_army = NULL;
 		unit_data_buffer_needs_update = true;
 		path_edges_size = 0;
@@ -168,7 +168,7 @@ void Step(double delta)
 			if ( test_armies[i].position_hex == highlighted_hex )
 			{
 				selected_army = &test_armies[i];
-				PlaySfx(SFX_UI_CLICK_B);
+				PlaySfx(1);
 			}
 		}
 	}
@@ -229,6 +229,9 @@ void Step(double delta)
 		//ImGui::Text("hex distance result: %d", hex_distance_result);
 		if ( ImGui::Button("Find Path") ) { some_temp_low_score = FindPath( hex_one.y * map_width + hex_one.x, hex_two.y * map_width + hex_two.x); }
 		ImGui::Text("Some temp low score %d", some_temp_low_score);
+		ImGui::InputFloat("H weight", &pathfind_weight_h); ImGui::SameLine();
+		ShowHelpMarker("Heuristic weight for pathfind algorithm.");
+
 		ImGui::End();
 
 	}
@@ -262,11 +265,8 @@ void Step(double delta)
 			ImGui::SliderFloat("master gain", &master_gain, 0.0f, 2.0f, "%.4f", 1.0f);
 			ImGui::SliderFloat("music gain", &music_gain, 0.0f, 2.0f, "%.4f", 1.0f);
 
-			if (ImGui::Button("CHAAARRGE!!!")) { PlaySfx(SFX_HERO_CHARGE); }
-			ImGui::SameLine();
-			if (ImGui::Button("bluhblahbloo!!!")) { PlaySfx(SFX_SPELLCASTER_A); }
 			static int sfx_number = 0;
-			ImGui::SliderInt("sfx", &sfx_number, 0, 36);
+			ImGui::SliderInt("sfx", &sfx_number, 0, 1);
 			ImGui::SameLine();
 			ImGui::Text("%d ", sfx[sfx_number].id);
 			ImGui::SameLine();

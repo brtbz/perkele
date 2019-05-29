@@ -125,7 +125,8 @@ int32_t closed_set_count = 0;
 int32_t *came_along_edges; // this a big ARRAY! array index is same as map index, value is edge's index
 int32_t path_edges[256];
 uint32_t path_edges_size = 0;
-
+float pathfind_weight_h = 1.5f;
+float pathfind_weight_g = 1.0f;
 
 Camera camera;
 
