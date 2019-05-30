@@ -218,15 +218,15 @@ void LoadInitialData()
 		audio_enabled = true;
 	}
 
+#if 0
 	{
 		int w, h;
 		delagardie_texture = LoadTexture("data/gfx/delagardie.jpg", &w, &h);
 	}
 	{
-		//dqk = LoadIndexedBMP("data/gfx/dqk02b.bmp");
 		dqk = LoadIndexedBMP("data/gfx/heretic01.bmp");
 	}
-
+#endif
 
 
 #if 1

@@ -1,4 +1,4 @@
-// TODO add wrappers so that only audio.cpp directly accesses cmixer. Although probably useless if I stay on unity build.
+// TODO add wrappers so that only audio.cpp directly accesses cmixer.
 
 static void audio_callback(void *udata, Uint8 *stream, int size)
 {
@@ -18,21 +18,7 @@ static void lock_handler(cm_Event *e)
 	}
 }
 
-#define SFX_SPELLCASTER_A 200
-#define SFX_SPELLCASTER_B 201
-#define SFX_SPELLCASTER_C 202
-#define SFX_SPELLCASTER_D 203
-#define SFX_SPELLCASTER_E 204
-
-#define SFX_HERO_CHARGE 48
-#define SFX_HERO_DEATH 49
-
-#define SFX_UNIT_ATTACK_A 23
-#define SFX_UNIT_ATTACK_B 24
-
 #define SFX_UNIT_MOVE 0
-#define SFX_UI_CLICK_B 103
-
 #define SFX_UI_CLICK_A 1
 
 void PlaySfx(int id)
@@ -60,7 +46,6 @@ int LoadMusicAndSounds()
 	sfx[1].src = cm_new_source_from_file("data/sfx/metal-small1.ogg");
 
 	music_src = cm_new_source_from_file("data/music/hey.ogg");
-	// music_src = cm_new_source_from_file("data/music/junkala_title.wav");
 	if (!music_src) {
 		fprintf(stderr, "Error: failed to create source '%s'\n", cm_get_error());
 		return 0;

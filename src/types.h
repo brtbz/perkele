@@ -1,5 +1,3 @@
-// #define bool8 uint8_t
-
 typedef union vec2
 {
 	struct
@@ -97,16 +95,23 @@ typedef struct Army
 	int16_t movement_points_current;
 } Army;
 
+typedef enum 
+{
+	PASSABLE = 1,
+	IMPASSABLE = 2,
+} TerrainWalkability;
+
 typedef struct MapNode
 {
 	int32_t index; // this might be superfluous? it's the same as the index in map_nodes array. Think about it!
 	int16_t x;
 	int16_t y;
+	TerrainWalkability terrain;
 
 	int32_t edge[6]; // 0 north, 1 northeast, 2 southeast, 3 south, 4 southwest, 5 northwest
 } MapNode;
 
-typedef struct MapNodeNeighbours
+typedef struct MapNodeNeighbours // these are only used for determining edges at the moment I think
 {
 	int32_t n_north;
 	int32_t n_northeast;
@@ -124,6 +129,7 @@ typedef struct MapEdge
 	int32_t end_node_index;
 	int16_t cost;
 	int16_t direction; // 0 = north, 1 = northeast, 2 = southeast, 3 = south, 4 = southwest, 5 = northwest
+	// TerrainWalkability terrain;
 } MapEdge;
 
 typedef struct OpenSetLeaf

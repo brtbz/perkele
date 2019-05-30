@@ -224,7 +224,7 @@ bool MapIndexIsInClosedSet(int32_t map_index)
 	return false;
 }
 
-void ANALAIS(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
+void AnalyzeMapNode(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
 {
 	int32_t h_score;
 	int32_t g_score;
@@ -238,18 +238,25 @@ void ANALAIS(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
 			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
 			if (!MapIndexIsInClosedSet(neighbour))
 			{
-				ivec2 neighbour_hex = { map_nodes[neighbour].x, map_nodes[neighbour].y };
-				h_score = CalculateHexDistance(neighbour_hex, goal_hex);
-				g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge[i] ].cost;
-				if (neighbour_hex.x == goal_hex.x && neighbour_hex.y == goal_hex.y )
+				if ( map_nodes[neighbour].terrain == IMPASSABLE )
 				{
-					f_score = 0.0f;
+					AddClosedSetLeaf(neighbour);
 				}
 				else
 				{
-					f_score = pathfind_weight_g * (float)g_score + pathfind_weight_h * (float)h_score;
+					ivec2 neighbour_hex = { map_nodes[neighbour].x, map_nodes[neighbour].y };
+					h_score = CalculateHexDistance(neighbour_hex, goal_hex);
+					g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge[i] ].cost;
+					if (neighbour_hex.x == goal_hex.x && neighbour_hex.y == goal_hex.y )
+					{
+						f_score = 0.0f;
+					}
+					else
+					{
+						f_score = pathfind_weight_g * (float)g_score + pathfind_weight_h * (float)h_score;
+					}
+					AddOpenSetLeaf( f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );	
 				}
-				AddOpenSetLeaf( f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );
 			}
 		}
 	}
@@ -289,6 +296,10 @@ int32_t FindPath(int32_t start, int32_t goal)
 	{
 		return -1;
 	}
+	if ( map_nodes[goal].terrain == IMPASSABLE )
+	{
+		return -2;
+	}
 
 	uint64_t initiating_pathfinding = SDL_GetPerformanceCounter();
 
@@ -310,14 +321,8 @@ int32_t FindPath(int32_t start, int32_t goal)
 	bool goal_found = false;
 	int32_t temp_score = 1337;
 
-
 	AddOpenSetLeaf( f_score, g_score, start, -1 );
-/*
-	double total_ANALAIS = 0.0;
-	uint64_t starting1;
-	uint64_t stopping1;
-	double calculating1;
-*/
+
 	while (!goal_found && !OpenSetIsEmpty())
 	{
 		int32_t map_index;
@@ -332,25 +337,17 @@ int32_t FindPath(int32_t start, int32_t goal)
 		{
 			goal_found = true;
 			path_edges_size = ReconstructPath(start, goal);
+			temp_score = accumulated_g_score;
 			break;
 		}
-		temp_score = accumulated_g_score;
-		//printf("-----------LETS ANALAIS\n");
-		//starting1 = SDL_GetPerformanceCounter();
-		ANALAIS(map_index, accumulated_g_score, goal_hex);
-		//stopping1 = SDL_GetPerformanceCounter();
-		//calculating1 = (double)(stopping1 - starting1) / (double)perf_freq;
-		//total_ANALAIS += calculating1;
-		//printf("ANALAIS took %.04g\n", calculating1*1000.0);
+		AnalyzeMapNode(map_index, accumulated_g_score, goal_hex);
 	}
 
 	uint64_t pathfinding_completed = SDL_GetPerformanceCounter();
 
 	double pathfinding_time = (double)(pathfinding_completed - initiating_pathfinding) / (double)perf_freq;
-	//printf("Path found in %.04g milliseconds.\n", pathfinding_time*1000.0);
 
 	snprintf(dumb_debug_string, 256, "Path found in %.04g milliseconds.\n", pathfinding_time*1000.0);
-	//snprintf(dumb_debug_string2, 256, "Total ANALAIS %.04g milliseconds.\n", total_ANALAIS*1000.0);
 
 	return temp_score;
 }

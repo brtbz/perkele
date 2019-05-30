@@ -541,6 +541,11 @@ void InitMapNodes()
 		map_nodes[i].index = i;
 		map_nodes[i].x = i % map_width;
 		map_nodes[i].y = i / map_width;
+		map_nodes[i].terrain = PASSABLE;
+		if (map_data[i] == 5 || map_data[i] == 6)
+		{
+			map_nodes[i].terrain = IMPASSABLE;
+		}
 
 		map_node_neighbours[i].n_north = -1;
 		map_node_neighbours[i].n_northeast = -1;
@@ -701,6 +706,16 @@ void UpdateEdgeTravelCosts()
 {
 	for (int i = 0; i < total_edge_count; i++)
 	{
+#if 0
+		if (map_nodes[ map_edges[i].end_node_index ].terrain == IMPASSABLE )
+		{
+			map_edges[i].terrain = IMPASSABLE;
+		}
+		else if (map_nodes[ map_edges[i].end_node_index ].terrain == PASSABLE )
+		{
+			map_edges[i].terrain = PASSABLE;
+		}
+#endif
 		if ( map_data[ map_edges[i].end_node_index ] == 5) // mountain
 		{
 			map_edges[i].cost = 4;
