@@ -93,6 +93,10 @@ typedef struct Army
 	ArmyBaseSprite base_sprite;
 	int16_t movement_points_max;
 	int16_t movement_points_current;
+	int16_t hits_max;
+	int16_t hits_current;
+	int16_t strength;
+	char name[32];
 } Army;
 
 typedef enum 

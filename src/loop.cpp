@@ -211,9 +211,15 @@ void Step(double delta)
 	if (selected_army != NULL)
 	{
 		ImGui::Begin("SELECTED UNIT");
+		ImGui::Text("%s", selected_army->name);
+		ImGui::Text("Strength: %d", selected_army->strength);
+		ImGui::Text("Moves: %d / %d", selected_army->movement_points_current, selected_army->movement_points_max);
+		ImGui::Text("Hits:  %d / %d", selected_army->hits_current, selected_army->hits_max);
+		ImGui::Separator();
 		ImGui::Text("Base sprite: %d", selected_army->base_sprite);
 		ImGui::InputInt("change", (int*)&(selected_army->base_sprite) );
 		unit_data_buffer_needs_update = true;
+
 		ImGui::End();
 	}
 

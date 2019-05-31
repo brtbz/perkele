@@ -116,11 +116,37 @@ void LoadArmyGraphicStuff()
 
 
 
-
-
-
-
 	glBindVertexArray(0);
+}
+
+void RandomName(Army *a)
+{
+	const char* names[] = 
+	{
+		"Make", "Pera", "Maukka", "Ilya",
+		"Konsta", "Arska", "Sepi", "Jaakko",
+		"Igor", "Ivan", "John", "Spike",
+		"Hans", "Oleg", "Sven", "Michael",
+
+		"Aarno", "Sergei", "Marco", "Jakke",
+		"Kristian", "Jonne", "Sulevi", "Brad",
+		"Flash", "Razor", "Jeff", "Vlad",
+		"Kirill", "Raivo", "Kaspar", "Robert",
+
+		"Frank", "Luca", "Jyri", "Eki",
+		"Pekkis", "Leksa", "Aake", "Rami",
+		"Teme", "Enrique", "Dieter", "Vallu",
+		"Tyrone", "Turo", "Aki", "Calle",
+
+		"Jugi", "Masa", "Ola", "Juhis",
+		"Teukka", "Pate", "Tumppi", "Sami",
+		"Iiro", "Fredi", "Vova", "Darijus",
+		"Herkus", "Jurgis", "Pilypas", "Tomas"
+	};
+
+	int random_name = rand() % 64;
+	strncpy(a->name, names[random_name], 31);
+	a->name[31] = '\0';
 }
 
 void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
@@ -143,8 +169,12 @@ void InitArmyStuff()
 	{
 		test_armies[i].base_sprite = (ArmyBaseSprite)(i % 183);
 		test_armies[i].position_hex = i;
-		test_armies[i].movement_points_max = 20;
-		test_armies[i].movement_points_current = 20;
+		test_armies[i].movement_points_max = 12;
+		test_armies[i].movement_points_current = 12;
+		test_armies[i].hits_max = 10;
+		test_armies[i].hits_current = 10;
+		test_armies[i].strength = 12;
+		RandomName(&test_armies[i]);
 	}
 }
 
