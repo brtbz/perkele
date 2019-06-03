@@ -630,6 +630,7 @@ void InitMapNodes()
 		map_nodes[i].index = i;
 		map_nodes[i].x = i % map_width;
 		map_nodes[i].y = i / map_width;
+		map_nodes[i].occupier = -1;
 		map_nodes[i].terrain = PASSABLE;
 		if (map_data[i] == 5 || map_data[i] == 6)
 		{

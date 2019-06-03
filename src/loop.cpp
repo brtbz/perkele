@@ -155,11 +155,13 @@ void Step(double delta)
 
 	if ( left_clicked && selected_army != NULL && highlighted_hex > 0)
 	{
-		selected_army->position_hex = highlighted_hex;
+		//selected_army->position_hex = highlighted_hex;
+		MoveArmyToNewHex( selected_army->index, highlighted_hex );
 		PlaySfx(SFX_UNIT_MOVE);
 		selected_army = NULL;
 		unit_data_buffer_needs_update = true;
 		path_edges_size = 0;
+		draw_path = false;
 	}
 	else if ( left_clicked && selected_army == NULL )
 	{

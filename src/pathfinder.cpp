@@ -341,7 +341,7 @@ void AnalyzeMapNode(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_h
 			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
 			if (!MapIndexIsInClosedSet(neighbour) && !MapIndexIsInOpenSetMapIndices(neighbour))
 			{
-				if ( map_nodes[neighbour].terrain == IMPASSABLE )
+				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 )
 				{
 					AddClosedSetLeaf(neighbour);
 				}
@@ -403,6 +403,10 @@ int32_t FindPath(int32_t start, int32_t goal)
 	if ( map_nodes[goal].terrain == IMPASSABLE )
 	{
 		return -2;
+	}
+	if ( map_nodes[goal].occupier != -1 )
+	{
+		return -3;
 	}
 
 	uint64_t initiating_pathfinding = SDL_GetPerformanceCounter();

@@ -149,11 +149,21 @@ void RandomName(Army *a)
 	a->name[31] = '\0';
 }
 
+void MoveArmyToNewHex(int32_t army, int32_t hex)
+{
+	map_nodes[ test_armies[army].position_hex ].occupier = -1;
+	test_armies[army].position_hex = hex;
+	map_nodes[ test_armies[army].position_hex ].occupier = army;
+}
+
 void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 {
-	test_armies[174].position_hex = 30 * 128 + 55;
-	test_armies[176].position_hex = 4148;
-	test_armies[177].position_hex = 3763;
+	//test_armies[174].position_hex = 30 * 128 + 55;
+	//test_armies[176].position_hex = 4148;
+	//test_armies[177].position_hex = 3763;
+	MoveArmyToNewHex(177, 3763);
+	MoveArmyToNewHex(176, 4148);
+	MoveArmyToNewHex(174, 30 * 128 + 55);
 	test_armies[177].base_sprite = GOBLIN_BATHROBE_RED;
 
 	vec2 temp_vec2 = { 860.0f, 650.0f };
@@ -167,6 +177,7 @@ void InitArmyStuff()
 	InitUnitDataBuffer();
 	for (int i = 0; i < 183; i++)
 	{
+		test_armies[i].index = i;
 		test_armies[i].base_sprite = (ArmyBaseSprite)(i % 183);
 		test_armies[i].position_hex = i;
 		test_armies[i].movement_points_max = 12;

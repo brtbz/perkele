@@ -89,6 +89,7 @@ typedef enum
 
 typedef struct Army
 {
+	int32_t index;
 	int32_t position_hex;
 	ArmyBaseSprite base_sprite;
 	int16_t movement_points_max;
@@ -111,6 +112,7 @@ typedef struct MapNode
 	int16_t x;
 	int16_t y;
 	TerrainWalkability terrain;
+	int32_t occupier;
 
 	int32_t edge[6]; // 0 north, 1 northeast, 2 southeast, 3 south, 4 southwest, 5 northwest
 } MapNode;
