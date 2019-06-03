@@ -123,10 +123,18 @@ int32_t closed_set_write_head = 0;
 int32_t closed_set_root_index = 0;
 int32_t closed_set_count = 0;
 int32_t *came_along_edges; // this a big ARRAY! array index is same as map index, value is edge's index
-int32_t path_edges[256];
+int32_t path_edges[512];
 uint32_t path_edges_size = 0;
 float pathfind_weight_h = 1.5f;
 float pathfind_weight_g = 1.0f;
+bool draw_path = false;
+ivec2 current_path = { 0, 0 };
+uint32_t nodes_that_were_in_open_set_debug[OPEN_SET_MAX_SIZE];
+int32_t number_of_nodes_that_were_in_open_set_debug;
+GLuint hex_debug_overlay_sp;
+GLuint hex_debug_overlay_vao;
+GLuint hex_debug_overlay_vbo;
+GLuint hex_indices_debug_overlay_buffer;
 
 Camera camera;
 

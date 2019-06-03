@@ -10,6 +10,9 @@ bool ClosedSetIsEmpty()
 
 int32_t AddOpenSetLeaf( float f_score, int32_t g_score, int32_t map_index, int32_t came_along_edge )
 {
+	nodes_that_were_in_open_set_debug[number_of_nodes_that_were_in_open_set_debug] = (uint32_t)map_index;
+	number_of_nodes_that_were_in_open_set_debug++;
+
 	if ( open_set_write_head >= OPEN_SET_MAX_SIZE )
 	{
 		return -1;
@@ -279,7 +282,7 @@ uint32_t ReconstructPath(int32_t start, int32_t goal)
 	path_edges[n] = came_along_edges[goal];
 	int32_t prev_node = map_edges[ came_along_edges[goal] ].start_node_index;
 
-	while ( prev_node != start && path_size < 256 )
+	while ( prev_node != start && path_size < 512 )
 	{
 		n++;
 		path_size++;
@@ -302,6 +305,8 @@ int32_t FindPath(int32_t start, int32_t goal)
 	}
 
 	uint64_t initiating_pathfinding = SDL_GetPerformanceCounter();
+
+	number_of_nodes_that_were_in_open_set_debug = 0;
 
 	open_set_write_head = 0;
 	open_set_root_index = 0;

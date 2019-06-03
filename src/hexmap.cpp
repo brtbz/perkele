@@ -41,6 +41,39 @@ void DrawHexes()
 	glBindVertexArray(0);
 }
 
+void DrawHexDebugOverlay()
+{
+	glBindVertexArray(hex_debug_overlay_vao);
+	glUseProgram(hex_debug_overlay_sp);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, hex_map_texture);
+
+	GLint uloc_input_texture = glGetUniformLocation( hex_debug_overlay_sp, "input_texture" );
+	glUniform1i( uloc_input_texture, 0 );
+
+	GLint uloc_sprite_sheet_size = glGetUniformLocation( hex_debug_overlay_sp, "sprite_sheet_size" );
+	glUniform2f(uloc_sprite_sheet_size, 256.0f, 576.0f );
+
+	GLint uloc_screen_size = glGetUniformLocation( hex_debug_overlay_sp, "screen_size" );
+	glUniform2f( uloc_screen_size, viewport_size.x, viewport_size.y );
+
+	GLint uloc_camera = glGetUniformLocation( hex_debug_overlay_sp, "camera" );
+	glUniform4f( uloc_camera, camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y);
+
+	GLint uloc_map_grid_size = glGetUniformLocation( hex_debug_overlay_sp, "map_grid_size" );
+	glUniform2i( uloc_map_grid_size, map_width, map_height );
+
+	GLint uloc_time = glGetUniformLocation( hex_debug_overlay_sp, "time");
+	glUniform1i(uloc_time, master_timer);
+
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, number_of_nodes_that_were_in_open_set_debug );
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
+	glBindVertexArray(0);
+
+}
+
 void DrawEdgeAsArrow(int start_node_idx, int end_node_idx, float angle)
 {
 	glBindVertexArray(edge_vao);
@@ -88,6 +121,13 @@ void UpdateHexMapBuffers()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	//glBindVertexArray(0);
+}
+
+void UpdateHexMapBuffersForDebugOverlay()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, hex_indices_debug_overlay_buffer);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, number_of_nodes_that_were_in_open_set_debug * sizeof(int32_t), (const GLvoid*)&nodes_that_were_in_open_set_debug[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void HexesWithinCameraBounds()
@@ -286,6 +326,55 @@ void LoadEdgeYeah()
 		glBindVertexArray(0);
 
 		// pitää joku edge-bufferi tehdä kanssa niinkuin noitten heksojenkin kanssa (TODO)
+	}
+}
+
+void LoadHexMapDebugOverlayStuff()
+{
+	// texture is the same as regular hex map
+
+	GLuint hex_debug_overlay_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/hex-overlay-debug-vert.glsl");
+	GLuint hex_debug_overlay_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/hex-overlay-debug-frag.glsl");
+	hex_debug_overlay_sp = NewProgram(hex_debug_overlay_vs, hex_debug_overlay_fs);
+
+	GLfloat vertex_data[] = {
+		// Positions   // texcoord
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,  
+	};
+
+	{
+		glGenVertexArrays(1, &hex_debug_overlay_vao);
+		glBindVertexArray(hex_debug_overlay_vao);
+
+		glGenBuffers(1, &hex_debug_overlay_vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, hex_debug_overlay_vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray( glGetAttribLocation(hex_debug_overlay_sp, "position") );
+		glVertexAttribPointer( glGetAttribLocation(hex_debug_overlay_sp, "position") , 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)0 );
+
+		glEnableVertexAttribArray( glGetAttribLocation(hex_debug_overlay_sp, "uv_coord") );
+		glVertexAttribPointer( glGetAttribLocation(hex_debug_overlay_sp, "uv_coord") , 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat) ));
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glGenBuffers(1, &hex_indices_debug_overlay_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, hex_indices_debug_overlay_buffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(uint32_t) * map_size, NULL, GL_DYNAMIC_DRAW );
+
+		glEnableVertexAttribArray( glGetAttribLocation( hex_debug_overlay_sp, "hex_index" ) );
+		glVertexAttribIPointer( glGetAttribLocation( hex_debug_overlay_sp, "hex_index" ), 1, GL_INT, 1*sizeof(GLint), (GLvoid*)0 );
+		glVertexAttribDivisor( glGetAttribLocation( hex_debug_overlay_sp, "hex_index" ), 1 );
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glBindVertexArray(0);
 	}
 }
 
@@ -764,6 +853,7 @@ void InitHexMap()
 	hexes_to_draw_indices = (uint32_t*)malloc(map_size * sizeof(uint32_t));
 	hexes_to_draw_terrain_types = (uint32_t*)malloc(map_size * sizeof(uint32_t));
 	LoadHexMapStuff();
+	LoadHexMapDebugOverlayStuff();
 
 	LoadEdgeYeah();
 

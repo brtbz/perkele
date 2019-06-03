@@ -1,12 +1,11 @@
 BUGStofix:
 imgui can behave weirdly in windowed mode. there's some additional yoffset for mouse input or something.
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
+pathfinder seems to add same nodes to open set over and over again
 pathfinder should be perfect but slow, when heuristic weight is 0, but that's not the case (it's just slow). anyways it's good enough for now.
 
 TODO: (in rough order of importance)
-pathfinding needs some debugging visualizations, like for all the nodes that were in the open set
 way to show all the hexes that are reachable with currently available movement points
-stop recalculating path every frame
 reitinhaku armeijoitten liikkumiseen
 zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
 zoom-level constraints for the camera
@@ -15,6 +14,7 @@ edges can have several different travel costs (normal, flying, sailing, voice, w
 pack path arrows into single draw call
 build files for windows (VC++2015 /w build.bat)
 fog or war
+loader for shader code should handle wrong filenames better (now it seems to just segfault)
 
 
 

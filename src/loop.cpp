@@ -177,7 +177,19 @@ void Step(double delta)
 	{
 		if ( selected_army->position_hex != highlighted_hex)
 		{
-			FindPath(selected_army->position_hex, highlighted_hex);
+			if ( current_path.x != selected_army->position_hex || current_path.y != highlighted_hex )
+			{
+				if ( FindPath(selected_army->position_hex, highlighted_hex) < 0 )
+				{
+					draw_path = false;
+				}
+				else
+				{
+					draw_path = true;
+				}
+				current_path.x = selected_army->position_hex;
+				current_path.y = highlighted_hex;
+			}
 		}
 	}
 
@@ -324,6 +336,9 @@ void Step(double delta)
 
 			ImGui::Separator();
 
+			ImGui::Text("open set: %d", number_of_nodes_that_were_in_open_set_debug);
+			ImGui::Separator();
+
 			ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
 			ImGui::SameLine();
 			if ( ImGui::Button("LOAD MAP") ) { int rc = LoadMapTerrainFromCSV(loadmap_str, map_size, map_data); }
@@ -428,10 +443,14 @@ void Step(double delta)
 	glDisable(GL_DEPTH_TEST);
 	//DrawEdgeAsArrow( map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].direction * 60.0f );
 
-
-	for (int i = 0; i <= path_edges_size; i++)
+	if (draw_path)
 	{
-		DrawEdgeAsArrow( map_edges[ path_edges[i] ].start_node_index, map_edges[ path_edges[i] ].end_node_index, map_edges[ path_edges[i] ].direction * 60.0f );
+		for (int i = 0; i <= path_edges_size; i++)
+		{
+			DrawEdgeAsArrow( map_edges[ path_edges[i] ].start_node_index, map_edges[ path_edges[i] ].end_node_index, map_edges[ path_edges[i] ].direction * 60.0f );
+		}
+		UpdateHexMapBuffersForDebugOverlay();
+		DrawHexDebugOverlay();	
 	}
 
 	glEnable(GL_DEPTH_TEST);
