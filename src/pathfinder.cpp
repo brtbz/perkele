@@ -8,6 +8,77 @@ bool ClosedSetIsEmpty()
 	return closed_set_count == 0 ? true : false;
 }
 
+bool OpenSetMapIndicesIsEmpty()
+{
+	return open_set_map_indices_count == 0 ? true : false;
+}
+
+int32_t AddOpenSetMapIndicesLeaf(int32_t map_index)
+{
+	if ( open_set_map_indices_write_head >= OPEN_SET_MAX_SIZE )
+	{
+		return -1;
+	}
+	if ( OpenSetMapIndicesIsEmpty() )
+	{
+		open_set_map_indices[ open_set_map_indices_root_index ].map_index = map_index;
+		open_set_map_indices[ open_set_map_indices_root_index ].parent = -1;
+		open_set_map_indices[ open_set_map_indices_root_index ].left_child = -1;
+		open_set_map_indices[ open_set_map_indices_root_index ].right_child = -1;
+
+		open_set_map_indices_write_head++;
+		open_set_map_indices_count++;
+	}
+	else
+	{
+		bool place_for_new_node_found = false;
+		int32_t read_head = open_set_map_indices_root_index;
+
+		while (!place_for_new_node_found)
+		{
+			if ( map_index > open_set_map_indices[read_head].map_index )
+			{
+				if ( open_set_map_indices[read_head].right_child == -1 )
+				{
+					open_set_map_indices[ open_set_map_indices_write_head ].map_index = map_index;
+					open_set_map_indices[ open_set_map_indices_write_head ].parent = read_head;
+					open_set_map_indices[ open_set_map_indices_write_head ].left_child = -1;
+					open_set_map_indices[ open_set_map_indices_write_head ].right_child = -1;
+					open_set_map_indices[ read_head ].right_child = open_set_map_indices_write_head;
+
+					open_set_map_indices_write_head++;
+					open_set_map_indices_count++;
+					place_for_new_node_found = true;
+				}
+				else
+				{
+					read_head = open_set_map_indices[ read_head ].right_child;
+				}
+			}
+			else // new key equal or less
+			{
+				if ( open_set_map_indices[read_head].left_child == -1 )
+				{
+					open_set_map_indices[ open_set_map_indices_write_head ].map_index = map_index;
+					open_set_map_indices[ open_set_map_indices_write_head ].parent = read_head;
+					open_set_map_indices[ open_set_map_indices_write_head ].left_child = -1;
+					open_set_map_indices[ open_set_map_indices_write_head ].right_child = -1;
+					open_set_map_indices[ read_head ].left_child = open_set_map_indices_write_head;
+
+					open_set_map_indices_write_head++;
+					open_set_map_indices_count++;
+					place_for_new_node_found = true;
+				}
+				else
+				{
+					read_head = open_set_map_indices[ read_head ].left_child;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
 int32_t AddOpenSetLeaf( float f_score, int32_t g_score, int32_t map_index, int32_t came_along_edge )
 {
 	nodes_that_were_in_open_set_debug[number_of_nodes_that_were_in_open_set_debug] = (uint32_t)map_index;
@@ -94,10 +165,10 @@ int32_t AddClosedSetLeaf(int32_t map_index)
 	}
 	if ( ClosedSetIsEmpty() )
 	{
-		closed_set[ open_set_root_index ].map_index = map_index;
-		closed_set[ open_set_root_index ].parent = -1;
-		closed_set[ open_set_root_index ].left_child = -1;
-		closed_set[ open_set_root_index ].right_child = -1;
+		closed_set[ closed_set_root_index ].map_index = map_index;
+		closed_set[ closed_set_root_index ].parent = -1;
+		closed_set[ closed_set_root_index ].left_child = -1;
+		closed_set[ closed_set_root_index ].right_child = -1;
 
 		closed_set_write_head++;
 		closed_set_count++;
@@ -227,6 +298,35 @@ bool MapIndexIsInClosedSet(int32_t map_index)
 	return false;
 }
 
+bool MapIndexIsInOpenSetMapIndices(int32_t map_index)
+{
+	if (OpenSetMapIndicesIsEmpty())
+	{
+		return false;
+	}
+	else
+	{
+		int32_t read_head = open_set_map_indices_root_index;
+		bool keep_looking = true;
+		while (keep_looking)
+		{
+			if ( open_set_map_indices[read_head].map_index == map_index )
+			{
+				return true;
+			}
+			if ( map_index < open_set_map_indices[read_head].map_index )
+			{
+				open_set_map_indices[read_head].left_child != -1 ? read_head = open_set_map_indices[read_head].left_child : keep_looking = false;
+			}
+			else // if ( map_index > closed_set[read_head].map_index )
+			{
+				open_set_map_indices[read_head].right_child != -1 ? read_head = open_set_map_indices[read_head].right_child : keep_looking = false;
+			}
+		}
+	}
+	return false;
+}
+
 void AnalyzeMapNode(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
 {
 	int32_t h_score;
@@ -239,7 +339,7 @@ void AnalyzeMapNode(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_h
 		if ( map_nodes[ map_index ].edge[i] != -1 )
 		{
 			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
-			if (!MapIndexIsInClosedSet(neighbour))
+			if (!MapIndexIsInClosedSet(neighbour) && !MapIndexIsInOpenSetMapIndices(neighbour))
 			{
 				if ( map_nodes[neighbour].terrain == IMPASSABLE )
 				{
@@ -258,7 +358,8 @@ void AnalyzeMapNode(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_h
 					{
 						f_score = pathfind_weight_g * (float)g_score + pathfind_weight_h * (float)h_score;
 					}
-					AddOpenSetLeaf( f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );	
+					AddOpenSetLeaf( f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );
+					AddOpenSetMapIndicesLeaf(neighbour);
 				}
 			}
 		}
@@ -308,6 +409,10 @@ int32_t FindPath(int32_t start, int32_t goal)
 
 	number_of_nodes_that_were_in_open_set_debug = 0;
 
+	open_set_map_indices_count = 0;
+	open_set_map_indices_write_head = 0;
+	open_set_map_indices_root_index = 0;
+
 	open_set_write_head = 0;
 	open_set_root_index = 0;
 	open_set_count = 0;
@@ -321,12 +426,13 @@ int32_t FindPath(int32_t start, int32_t goal)
 
 	int32_t h_score = CalculateHexDistance(start_hex, goal_hex);
 	int32_t g_score = 0;
-	int32_t f_score = g_score + h_score;
+	float f_score = (float)g_score + pathfind_weight_h * (float) h_score;
 
 	bool goal_found = false;
 	int32_t temp_score = 1337;
 
 	AddOpenSetLeaf( f_score, g_score, start, -1 );
+	AddOpenSetMapIndicesLeaf(start);
 
 	while (!goal_found && !OpenSetIsEmpty())
 	{

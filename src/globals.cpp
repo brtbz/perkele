@@ -118,6 +118,13 @@ OpenSetLeaf open_set[OPEN_SET_MAX_SIZE];
 int32_t open_set_write_head = 0;
 int32_t open_set_root_index = 0;
 int32_t open_set_count = 0;
+
+// key is map_index, quick insert, quick peek, quick removal (maybe not removal)
+ClosedSetLeaf open_set_map_indices[OPEN_SET_MAX_SIZE]; // Need to rename ClosedSetLeaf as it got this new job
+int32_t open_set_map_indices_write_head = 0;
+int32_t open_set_map_indices_root_index = 0;
+int32_t open_set_map_indices_count = 0;
+
 ClosedSetLeaf closed_set[CLOSED_SET_MAX_SIZE];
 int32_t closed_set_write_head = 0;
 int32_t closed_set_root_index = 0;
@@ -135,6 +142,7 @@ GLuint hex_debug_overlay_sp;
 GLuint hex_debug_overlay_vao;
 GLuint hex_debug_overlay_vbo;
 GLuint hex_indices_debug_overlay_buffer;
+bool draw_hex_debug_overlay = true;
 
 Camera camera;
 

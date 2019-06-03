@@ -335,8 +335,10 @@ void Step(double delta)
 			//ImGui::Text("kalle len: %f ville len: %f", debug_kalle_len, debug_ville_len);
 
 			ImGui::Separator();
-
+			ImGui::Checkbox("Pathfind debug overlay", &draw_hex_debug_overlay);
 			ImGui::Text("open set: %d", number_of_nodes_that_were_in_open_set_debug);
+			ImGui::Text("open_set_count: %d", open_set_count);
+			ImGui::Text("closed_set_count: %d", closed_set_count);
 			ImGui::Separator();
 
 			ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
@@ -449,8 +451,12 @@ void Step(double delta)
 		{
 			DrawEdgeAsArrow( map_edges[ path_edges[i] ].start_node_index, map_edges[ path_edges[i] ].end_node_index, map_edges[ path_edges[i] ].direction * 60.0f );
 		}
-		UpdateHexMapBuffersForDebugOverlay();
-		DrawHexDebugOverlay();	
+		if (draw_hex_debug_overlay)
+		{
+			UpdateHexMapBuffersForDebugOverlay();
+			DrawHexDebugOverlay();		
+		}
+		
 	}
 
 	glEnable(GL_DEPTH_TEST);

@@ -1,12 +1,9 @@
 BUGStofix:
 imgui can behave weirdly in windowed mode. there's some additional yoffset for mouse input or something.
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
-pathfinder seems to add same nodes to open set over and over again
-pathfinder should be perfect but slow, when heuristic weight is 0, but that's not the case (it's just slow). anyways it's good enough for now.
 
 TODO: (in rough order of importance)
 way to show all the hexes that are reachable with currently available movement points
-reitinhaku armeijoitten liikkumiseen
 zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
 zoom-level constraints for the camera
 panning constraints for the camera (camera origo must stay within the map)
