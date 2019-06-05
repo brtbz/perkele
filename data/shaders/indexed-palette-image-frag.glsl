@@ -15,7 +15,7 @@ void main()
 	uint phase = 0u;
 	if (phase_shift)
 	{
-		phase = (time/50u) % 256u;
+		//phase = (time/500u) % 256u;
 	}
 	uvec4 temp_color = texture(input_texture, frag_uv_coord);
 

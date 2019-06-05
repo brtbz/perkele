@@ -14,16 +14,16 @@ static void ShowHelpMarker(const char* desc)
 }
 ///
 
-void DrawDQK(int palette_phase, bool phase_shift)
+void DrawIPI(int palette_phase, bool phase_shift, float zoom_level)
 {
 	glBindVertexArray(ipi_vao);
 	glUseProgram(ipi_sp);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, dqk.texture);
+	glBindTexture(GL_TEXTURE_2D, ipi.texture);
 	//glBindTexture(GL_TEXTURE_2D, delagardie_texture);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, dqk.palette_texture);
+	glBindTexture(GL_TEXTURE_2D, ipi.palette_texture);
 
 	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, &(dqk.palette[0]) );
 	//glTexSubImage2D(GL_TEXTURE_2D, 0, palette_phase, 0, 256 - palette_phase, 1, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, &(dqk.palette[0]) );
@@ -37,6 +37,9 @@ void DrawDQK(int palette_phase, bool phase_shift)
 
 	GLint time_loc = glGetUniformLocation( ipi_sp, "time");
 	glUniform1ui( time_loc, master_timer);
+
+	GLint zoom_loc = glGetUniformLocation( ipi_sp, "zoom_level");
+	glUniform1f(zoom_loc, zoom_level);
 
 	GLint phase_shift_loc = glGetUniformLocation( ipi_sp, "phase_shift");
 	glUniform1i( phase_shift_loc, phase_shift );
@@ -67,8 +70,6 @@ void Step(double delta)
 	SDL_Event evt;
 	const Uint8* keyboard_state = SDL_GetKeyboardState(NULL);;
 
-	SDL_GetMouseState( &(mouse_pos_screen.x), &(mouse_pos_screen.y) );
-
 	while (SDL_PollEvent(&evt) != 0)
 	{
 		ImGui_ImplSDL2_ProcessEvent(&evt);
@@ -98,7 +99,6 @@ void Step(double delta)
 		{
 			if (evt.type == SDL_MOUSEWHEEL)
 			{
-				//ivec2 temphehe = { (int)mouse_pos_map.x, (int)mouse_pos_map.y };
 				camera.IncreaseSizeBy( 1.0f + evt.wheel.y * -0.2f, mouse_pos_map );
 				zoom_adjusted = true;		
 			}
@@ -120,7 +120,7 @@ void Step(double delta)
 
 	}
 
-	
+	SDL_GetMouseState( &(mouse_pos_screen.x), &(mouse_pos_screen.y) );
 
 	if (mouse_first_move_done)
 	{
@@ -204,8 +204,8 @@ void Step(double delta)
 	static float master_gain = 1.0f;
 
 	static bool show_demo_window = false;
-	static bool draw_dqk = false;
-	static bool cycle_palette_phase = false;
+	static bool draw_ipi = true;
+	static bool cycle_palette_phase = true;
 	static int current_palette_phase = 0;
 
 	static int text_string_count = 0;
@@ -446,6 +446,15 @@ void Step(double delta)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	if (draw_ipi)
+	{
+		if (cycle_palette_phase)
+		{
+			current_palette_phase = (master_timer / 100 ) % 256;
+		}
+		DrawIPI(current_palette_phase, cycle_palette_phase, zoom_level);
+	}
+
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_DEPTH_TEST);
 	DrawHexes();
@@ -474,14 +483,7 @@ void Step(double delta)
 
 	DrawStrings();
 
-	if (draw_dqk)
-	{
-		if (cycle_palette_phase)
-		{
-			current_palette_phase = (master_timer / 100 ) % 256;
-		}
-		DrawDQK(current_palette_phase, cycle_palette_phase);
-	}
+
 
 	// Rendering
 	ImGui::Render();

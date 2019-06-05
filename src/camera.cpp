@@ -56,9 +56,9 @@ void Camera::SetNewSize(vec2 new_size)
 
 void Camera::ConstrainSize()
 {
-	float max_size_x = viewport_size.x * 4.0f;
+	float max_size_x = viewport_size.x * 3.9f;
 	float min_size_x = viewport_size.x * 0.1f;
-	float max_size_y = viewport_size.y * 4.0f;
+	float max_size_y = viewport_size.y * 3.9f;
 	float min_size_y = viewport_size.y * 0.1f;
 	size.x = ClampToF( min_size_x, max_size_x, size.x );
 	size.y = ClampToF( min_size_y, max_size_y, size.y );

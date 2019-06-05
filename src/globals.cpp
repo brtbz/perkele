@@ -156,7 +156,7 @@ vec2 mouse_pos_map;
 
 bool mouse_first_move_done = false;
 
-IndexedPaletteImage dqk;
+IndexedPaletteImage ipi;
 GLuint ipi_sp;
 GLuint ipi_vbo;
 GLuint ipi_vao;

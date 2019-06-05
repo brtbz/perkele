@@ -840,7 +840,7 @@ void InitHexMap()
 		map_data[i] = GetRandomTerrain();
 	}
 
-	int load_result = LoadMapTerrainFromCSV("data/maps/terrain_perke_no.csv", map_size, map_data);
+	int load_result = LoadMapTerrainFromCSV("data/maps/terrain_perke.csv", map_size, map_data);
 	if (load_result == 0)
 	{
 		printf("level load success!!!\n");

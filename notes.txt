@@ -5,6 +5,8 @@ FIXED TEMPORARILY program seems to freeze if sound effect is playing, while tryi
 TODO: (in rough order of importance)
 pathfinder can't handle islands yet
 way to show all the hexes that are reachable with currently available movement points
+armies should be able to attack each other
+dynamic cursor (separate attack and movement symbols)
 zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
 edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
 pack path arrows into single draw call
@@ -41,6 +43,7 @@ zone of controls?
 camera could use a rewrite
 
 magnify filter pitää olla nearest neighbor, muuten näyttää kamalalta
+xeen's palette is quite pretty actually, could use that more if I bother with the graphics (background bmp has the palette atm)
 
 terrain tiles:
 https://cuddlyclover.itch.io/fantasy-hex-tiles

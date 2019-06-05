@@ -218,16 +218,10 @@ void LoadInitialData()
 		audio_enabled = true;
 	}
 
-#if 0
 	{
-		int w, h;
-		delagardie_texture = LoadTexture("data/gfx/delagardie.jpg", &w, &h);
+		// dqk = LoadIndexedBMP("data/gfx/darknight_by_dogchicken.bmp");
+		ipi = LoadIndexedBMP("data/gfx/peace_by_ironthunder_and_sourav_dhar_ccby30_bigger.bmp");
 	}
-	{
-		dqk = LoadIndexedBMP("data/gfx/heretic01.bmp");
-	}
-#endif
-
 
 #if 1
 	{
