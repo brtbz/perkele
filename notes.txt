@@ -3,10 +3,9 @@ imgui can behave weirdly in windowed mode. there's some additional yoffset for m
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
 
 TODO: (in rough order of importance)
+pathfinder can't handle islands yet
 way to show all the hexes that are reachable with currently available movement points
 zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
-zoom-level constraints for the camera
-panning constraints for the camera (camera origo must stay within the map)
 edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
 pack path arrows into single draw call
 build files for windows (VC++2015 /w build.bat)
@@ -39,8 +38,7 @@ armies block each other
 enemies block movement, friends can pass each other, but not stop at same hex
 one unit per hex
 zone of controls?
-
-
+camera could use a rewrite
 
 magnify filter pitää olla nearest neighbor, muuten näyttää kamalalta
 

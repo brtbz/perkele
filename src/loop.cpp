@@ -67,6 +67,8 @@ void Step(double delta)
 	SDL_Event evt;
 	const Uint8* keyboard_state = SDL_GetKeyboardState(NULL);;
 
+	SDL_GetMouseState( &(mouse_pos_screen.x), &(mouse_pos_screen.y) );
+
 	while (SDL_PollEvent(&evt) != 0)
 	{
 		ImGui_ImplSDL2_ProcessEvent(&evt);
@@ -96,8 +98,9 @@ void Step(double delta)
 		{
 			if (evt.type == SDL_MOUSEWHEEL)
 			{
-				camera.IncreaseSizeBy( 1.0f + evt.wheel.y * -0.2f );
-				zoom_adjusted = true;				
+				//ivec2 temphehe = { (int)mouse_pos_map.x, (int)mouse_pos_map.y };
+				camera.IncreaseSizeBy( 1.0f + evt.wheel.y * -0.2f, mouse_pos_map );
+				zoom_adjusted = true;		
 			}
 			else if ( evt.type == SDL_MOUSEBUTTONDOWN )
 			{
@@ -117,7 +120,7 @@ void Step(double delta)
 
 	}
 
-	SDL_GetMouseState( &(mouse_pos_screen.x), &(mouse_pos_screen.y) );
+	
 
 	if (mouse_first_move_done)
 	{
@@ -247,7 +250,7 @@ void Step(double delta)
 		ImGui::InputInt2("hex two", (int*)&hex_two);
 		//if (ImGui::Button("Calculate hex distance")) { hex_distance_result = CalculateHexDistance(hex_one, hex_two); }
 		//ImGui::Text("hex distance result: %d", hex_distance_result);
-		if ( ImGui::Button("Find Path") ) { some_temp_low_score = FindPath( hex_one.y * map_width + hex_one.x, hex_two.y * map_width + hex_two.x); }
+		if ( ImGui::Button("Find Path") ) { some_temp_low_score = FindPath( hex_one.y * map_width + hex_one.x, hex_two.y * map_width + hex_two.x); draw_path = true; }
 		ImGui::Text("Some temp low score %d", some_temp_low_score);
 		ImGui::InputFloat("H weight", &pathfind_weight_h); ImGui::SameLine();
 		ShowHelpMarker("Heuristic weight for pathfind algorithm.");
@@ -302,8 +305,10 @@ void Step(double delta)
 #endif
 			ImGui::Separator();
 
-			ImGui::Text("Camera %.2f %.2f %.2f %.2f", camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y);
+			// ImGui::Text("Camera %.2f %.2f %.2f %.2f", camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y);
 			ImGui::Text("zoom_level: %.2f", zoom_level);
+			ImGui::Text("CameraSize %.2f %.2f", camera.Size().x, camera.Size().y);
+			ImGui::Text("CameraOrigo %.2f %.2f", camera.Origo().x, camera.Origo().y);
 /*
 			ImGui::Text("tile column min: %d max: %d", dumb_dbg.tile_column_min, dumb_dbg.tile_column_max);
 			ImGui::Text("tile row min: %d max: %d", dumb_dbg.tile_row_min, dumb_dbg.tile_row_max);
@@ -338,7 +343,7 @@ void Step(double delta)
 
 			ImGui::Separator();
 			ImGui::Checkbox("Pathfind debug overlay", &draw_hex_debug_overlay);
-			ImGui::Text("open set: %d", number_of_nodes_that_were_in_open_set_debug);
+			ImGui::Text("total in open set: %d", number_of_nodes_that_were_in_open_set_debug);
 			ImGui::Text("open_set_count: %d", open_set_count);
 			ImGui::Text("closed_set_count: %d", closed_set_count);
 			ImGui::Separator();

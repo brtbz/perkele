@@ -445,8 +445,6 @@ int32_t FindPath(int32_t start, int32_t goal)
 		int32_t came_along_edge;
 		PullMapIndexWithLowestFScoreFromOpenSet(&map_index, &accumulated_g_score, &came_along_edge);
 
-		//ivec2 current_hex = { map_nodes[map_index].x, map_nodes[map_index].y };
-		//h_score = CalculateHexDistance(current_hex, goal_hex);
 		came_along_edges[map_index] = came_along_edge;
 		if ( map_index == goal )
 		{
@@ -459,9 +457,7 @@ int32_t FindPath(int32_t start, int32_t goal)
 	}
 
 	uint64_t pathfinding_completed = SDL_GetPerformanceCounter();
-
 	double pathfinding_time = (double)(pathfinding_completed - initiating_pathfinding) / (double)perf_freq;
-
 	snprintf(dumb_debug_string, 256, "Path found in %.04g milliseconds.\n", pathfinding_time*1000.0);
 
 	return temp_score;

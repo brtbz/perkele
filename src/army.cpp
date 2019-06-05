@@ -166,8 +166,9 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	MoveArmyToNewHex(174, 30 * 128 + 55);
 	test_armies[177].base_sprite = GOBLIN_BATHROBE_RED;
 
+	vec2 temp_hehe = {-1.0f, -1.0f};
 	vec2 temp_vec2 = { 860.0f, 650.0f };
-	camera.IncreaseSizeBy(0.42f);
+	camera.IncreaseSizeBy(0.42f, temp_hehe);
 	camera.MoveToNewMin(temp_vec2);
 }
 
