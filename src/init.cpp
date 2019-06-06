@@ -47,6 +47,9 @@ void CustomSDLCursors()
 	SDL_Surface *walk_bmp = SDL_LoadBMP("data/gfx/cursorwalk.bmp");
 	cursor_walk_bmp = SDL_CreateColorCursor(walk_bmp, 16, 16);
 
+	SDL_Surface *arrow_bmp = SDL_LoadBMP("data/gfx/cursorarrow.bmp");
+	cursor_arrow_bmp = SDL_CreateColorCursor(arrow_bmp, 1, 0);
+
 }
 
 void Init()
