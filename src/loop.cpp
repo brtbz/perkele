@@ -66,6 +66,7 @@ void Step(double delta)
 
 	int ui_hovered = 0;
 	if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) { ui_hovered = 1; }
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
 	SDL_Event evt;
 	const Uint8* keyboard_state = SDL_GetKeyboardState(NULL);;
@@ -148,6 +149,14 @@ void Step(double delta)
 	mouse_pos_map.x = ( (float)mouse_pos_screen.x * zoom_level + camera.Min().x );
 	mouse_pos_map.y = ( (float)mouse_pos_screen.y * zoom_level + camera.Min().y );
 	highlighted_hex = GetMouseOveredHex(mouse_pos_map);
+
+	if (ui_hovered) { io.ConfigFlags ^= ImGuiConfigFlags_NoMouseCursorChange; }
+	else
+	{
+		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+		if (map_nodes[highlighted_hex].occupier != -1) { SDL_SetCursor(cursor_swords); }
+		else { SDL_SetCursor(cursor_arrow);	}
+	}
 
 	HexesWithinCameraBounds();
 

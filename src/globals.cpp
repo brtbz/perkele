@@ -26,6 +26,10 @@ SDL_Window *window;
 const char* glsl_version = "#version 330";
 vec2 viewport_size = {640.0f, 480.0f};
 
+SDL_Cursor *cursor_arrow;
+SDL_Cursor *cursor_swords;
+SDL_Cursor *cursor_swords_bmp;
+
 
 
 // AUDIO
@@ -33,11 +37,6 @@ SDL_mutex* audio_mutex;
 cm_Source *music_src;
 SDL_AudioDeviceID audio_dev;
 Sfx sfx[37] = {};
-
-
-
-
-GLuint delagardie_texture;
 
 
 

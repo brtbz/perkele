@@ -36,6 +36,7 @@ glad by who?
 Other notes
 -----------
 
+Colorful hardware mouse cursors seem to be doable with SDL, yay
 armies block each other
 enemies block movement, friends can pass each other, but not stop at same hex
 one unit per hex
