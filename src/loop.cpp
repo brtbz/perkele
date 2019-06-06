@@ -154,7 +154,8 @@ void Step(double delta)
 	else
 	{
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
-		if (map_nodes[highlighted_hex].occupier != -1) { SDL_SetCursor(cursor_swords); }
+		if (map_nodes[highlighted_hex].occupier != -1) { SDL_SetCursor(cursor_swords_bmp); }
+		else if ( selected_army != NULL ) { SDL_SetCursor(cursor_walk_bmp); }
 		else { SDL_SetCursor(cursor_arrow);	}
 	}
 

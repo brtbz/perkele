@@ -41,8 +41,12 @@ void CustomSDLCursors()
 	cursor_arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 	cursor_swords = SDL_CreateCursor( &swords_cursor_data[0], &swords_cursor_mask[0], 32, 32, 14, 14 );
 
-	//SDL_Surface *swords_bmp = SDL_LoadBMP("data/gfx/swordsc.bmp");
-	//cursor_swords_bmp = SDL_CreateColorCursor(swords_bmp, 14, 14);
+	SDL_Surface *swords_bmp = SDL_LoadBMP("data/gfx/cursorsword.bmp");
+	cursor_swords_bmp = SDL_CreateColorCursor(swords_bmp, 22, 22);
+
+	SDL_Surface *walk_bmp = SDL_LoadBMP("data/gfx/cursorwalk.bmp");
+	cursor_walk_bmp = SDL_CreateColorCursor(walk_bmp, 16, 16);
+
 }
 
 void Init()

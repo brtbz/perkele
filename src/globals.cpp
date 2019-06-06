@@ -29,6 +29,7 @@ vec2 viewport_size = {640.0f, 480.0f};
 SDL_Cursor *cursor_arrow;
 SDL_Cursor *cursor_swords;
 SDL_Cursor *cursor_swords_bmp;
+SDL_Cursor *cursor_walk_bmp;
 
 
 
