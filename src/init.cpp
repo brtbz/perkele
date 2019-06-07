@@ -225,13 +225,6 @@ void Init()
 
 	InitFont();
 	InitHexMap();
-
-	uint64_t starting1 = SDL_GetPerformanceCounter();
-	FloodFillIslandIds();
-	uint64_t stopping1 = SDL_GetPerformanceCounter();
-	double calculating1 = (double)(stopping1 - starting1) / (double)perf_freq;
-	printf("Flood filling island id's took %.04g ms.\n", calculating1*1000.0);
-	
 	InitArmyStuff();
 	InitNewCamera();
 

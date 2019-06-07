@@ -5,13 +5,11 @@ FIXED TEMPORARILY program seems to freeze if sound effect is playing, while tryi
 TODO: (in rough order of importance)
 way to show all the hexes that are reachable with currently available movement points
 armies should be able to attack each other
-dynamic cursor (separate attack and movement symbols)
 zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
 edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
 pack path arrows into single draw call
 build files for windows (VC++2015 /w build.bat)
 fog or war
-flood filling island id's takes quite a bit time at startup (185ms). it re-uses pathfinder functions atm. maybe it could get its own?
 loader for shader code should handle wrong filenames better (now it seems to just segfault)
 
 
@@ -37,13 +35,15 @@ Other notes
 -----------
 
 Colorful hardware mouse cursors seem to be doable with SDL, yay
+
 armies block each other
 enemies block movement, friends can pass each other, but not stop at same hex
 one unit per hex
+one move, one attack per turn. either one can be first. can't postpone second action, it must be taken immediately after.
+
 zone of controls?
 camera could use a rewrite
 
-magnify filter pitää olla nearest neighbor, muuten näyttää kamalalta
 xeen's palette is quite pretty actually, could use that more if I bother with the graphics (background bmp has the palette atm)
 
 terrain tiles:

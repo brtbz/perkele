@@ -829,6 +829,32 @@ void UpdateEdgeTravelCosts()
 	}
 }
 
+bool FloodFill(int32_t map_index, int32_t island_id)
+{
+	if ( map_nodes[map_index].terrain == IMPASSABLE ) { return false; }
+	else if ( map_nodes[map_index].pathfind_island_id != -1 ) { return false; }
+	else { map_nodes[map_index].pathfind_island_id = island_id;	}
+
+	for (int i = 0; i < 6; i++)
+	{
+		if (map_nodes[map_index].edge[i] != -1)
+		{
+			FloodFill( map_edges[ map_nodes[map_index].edge[i] ].end_node_index, island_id );
+		}
+	}
+	return true;
+}
+
+void FloodFillIslandIds()
+{
+	int32_t island_id = 1;
+
+	for (int i = 0; i < map_size; i++)
+	{
+		if (FloodFill(i, island_id)) { island_id++; }
+	}
+}
+
 void InitHexMap()
 {
 	rng_z = rand();
@@ -862,6 +888,7 @@ void InitHexMap()
 
 	InitMapNodes();
 	UpdateEdgeTravelCosts();
+	FloodFillIslandIds();
 }
 
 void ClearHexMapStuff()
