@@ -93,7 +93,7 @@ GLuint hex_terrain_types_buffer;
 uint32_t map_width = 128;
 uint32_t map_height = map_width;
 uint32_t map_size = map_width * map_height;
-uint32_t *map_data;
+uint32_t *map_data; // this is used to tell OpenGL which kind of hex to draw (Other stuff is in MapNode)
 int32_t highlighted_hex = -2112;
 
 uint32_t hexes_to_draw_count = 0;

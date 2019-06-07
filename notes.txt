@@ -3,7 +3,6 @@ imgui can behave weirdly in windowed mode. there's some additional yoffset for m
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
 
 TODO: (in rough order of importance)
-pathfinder can't handle islands yet
 way to show all the hexes that are reachable with currently available movement points
 armies should be able to attack each other
 dynamic cursor (separate attack and movement symbols)
@@ -12,6 +11,7 @@ edges can have several different travel costs (normal, flying, sailing, voice, w
 pack path arrows into single draw call
 build files for windows (VC++2015 /w build.bat)
 fog or war
+flood filling island id's takes quite a bit time at startup (185ms). it re-uses pathfinder functions atm. maybe it could get its own?
 loader for shader code should handle wrong filenames better (now it seems to just segfault)
 
 

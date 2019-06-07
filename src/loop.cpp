@@ -21,13 +21,8 @@ void DrawIPI(int palette_phase, bool phase_shift, float zoom_level)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, ipi.texture);
-	//glBindTexture(GL_TEXTURE_2D, delagardie_texture);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, ipi.palette_texture);
-
-	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, &(dqk.palette[0]) );
-	//glTexSubImage2D(GL_TEXTURE_2D, 0, palette_phase, 0, 256 - palette_phase, 1, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, &(dqk.palette[0]) );
-	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, palette_phase, 1, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, &(dqk.palette[1024 - palette_phase * 4]) );
 
 	GLint input_texture_loc = glGetUniformLocation( ipi_sp, "input_texture");
 	glUniform1i( input_texture_loc, 0);
@@ -154,9 +149,10 @@ void Step(double delta)
 	else
 	{
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
-		if (map_nodes[highlighted_hex].occupier != -1) { SDL_SetCursor(cursor_swords_bmp); }
-		else if ( selected_army != NULL ) { SDL_SetCursor(cursor_walk_bmp); }
-		else { SDL_SetCursor(cursor_arrow_bmp);	}
+		SDL_SetCursor(cursor_arrow_bmp);
+		// if (map_nodes[highlighted_hex].occupier != -1) { SDL_SetCursor(cursor_swords_bmp); }
+		// else if ( selected_army != NULL ) { SDL_SetCursor(cursor_walk_bmp); }
+		// else { SDL_SetCursor(cursor_arrow_bmp);	}
 	}
 
 	HexesWithinCameraBounds();
@@ -333,6 +329,7 @@ void Step(double delta)
 				map_nodes[highlighted_hex].y,
 				slanted_hex.x,
 				slanted_hex.y);
+			ImGui::Text("island_id: %d", map_nodes[highlighted_hex].pathfind_island_id);
 /*
 			ImGui::Text("MapNode: %d, Neighbors: N: %d NE: %d SE: %d S: %d SW: %d NW: %d", 
 				map_nodes[highlighted_hex].index,

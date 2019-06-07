@@ -113,6 +113,7 @@ typedef struct MapNode
 	int16_t y;
 	TerrainWalkability terrain;
 	int32_t occupier;
+	int32_t pathfind_island_id;
 
 	int32_t edge[6]; // 0 north, 1 northeast, 2 southeast, 3 south, 4 southwest, 5 northwest
 } MapNode;
