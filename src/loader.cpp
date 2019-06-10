@@ -219,12 +219,8 @@ void LoadInitialData()
 	}
 
 	{
-		// dqk = LoadIndexedBMP("data/gfx/darknight_by_dogchicken.bmp");
 		ipi = LoadIndexedBMP("data/gfx/peace_by_ironthunder_and_sourav_dhar_ccby30_bigger.bmp");
-	}
 
-#if 1
-	{
 		GLuint ipi_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/indexed-palette-image-vert.glsl");
 		GLuint ipi_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/indexed-palette-image-frag.glsl");
 		ipi_sp = NewProgram(ipi_vs, ipi_fs);
@@ -257,6 +253,4 @@ void LoadInitialData()
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
-#endif
-
 }

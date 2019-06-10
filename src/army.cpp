@@ -9,8 +9,6 @@ void DrawArmies(int32_t count)
 	glUniform1i( input_texture_loc, 0 );
 
 	GLint sprite_sheet_size_loc = glGetUniformLocation( army_sp, "sprite_sheet_size" );
-	//glUniform2f( sprite_sheet_size_loc, 124.0f, 51.0f );
-	//glUniform2f( sprite_sheet_size_loc, 1024.0f, 1024.0f );
 	glUniform2f( sprite_sheet_size_loc, 2048.0f, 1536.0f );
 
 	GLint screen_size_loc = glGetUniformLocation( army_sp, "screen_size" );
@@ -158,9 +156,6 @@ void MoveArmyToNewHex(int32_t army, int32_t hex)
 
 void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 {
-	//test_armies[174].position_hex = 30 * 128 + 55;
-	//test_armies[176].position_hex = 4148;
-	//test_armies[177].position_hex = 3763;
 	MoveArmyToNewHex(177, 3763);
 	MoveArmyToNewHex(176, 4148);
 	MoveArmyToNewHex(174, 30 * 128 + 55);
@@ -181,8 +176,8 @@ void InitArmyStuff()
 		test_armies[i].index = i;
 		test_armies[i].base_sprite = (ArmyBaseSprite)(i % 183);
 		test_armies[i].position_hex = i;
-		test_armies[i].movement_points_max = 12;
-		test_armies[i].movement_points_current = 12;
+		test_armies[i].movement_points_max = 5;
+		test_armies[i].movement_points_current = 5;
 		test_armies[i].hits_max = 10;
 		test_armies[i].hits_current = 10;
 		test_armies[i].strength = 12;

@@ -9,31 +9,23 @@ void DrawHexes()
 	glUniform1i( uloc_input_texture, 0 );
 
 	GLint uloc_sprite_sheet_size = glGetUniformLocation( hex_sp, "sprite_sheet_size" );
-	//glUniform2f(uloc_sprite_sheet_size, (float)sprite->ss.w, (float)sprite->ss.h );
-	//glUniform2f(uloc_sprite_sheet_size, 192.0f, 212.0f );
-	//glUniform2f(uloc_sprite_sheet_size, 1024.0f, 1024.0f );
 	glUniform2f(uloc_sprite_sheet_size, 256.0f, 576.0f );
 
 	GLint uloc_screen_size = glGetUniformLocation( hex_sp, "screen_size" );
-	//glUniform2f( uloc_screen_size, (float)logical_screen_size.x, (float)logical_screen_size.y );
 	glUniform2f( uloc_screen_size, viewport_size.x, viewport_size.y );
 
 	GLint uloc_camera = glGetUniformLocation( hex_sp, "camera" );
 	glUniform4f( uloc_camera, camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y);
-	//glUniform4f( uloc_camera, 0.0f, 0.0f, 1920.0f, 1080.0f);
 
 	GLint uloc_highlighted = glGetUniformLocation( hex_sp, "highlighted_hex" );
 	glUniform1i( uloc_highlighted, highlighted_hex );
-	//glUniform1i( uloc_highlighted, 0 );
 
 	GLint uloc_map_grid_size = glGetUniformLocation( hex_sp, "map_grid_size" );
-	//glUniform2i( uloc_map_grid_size, map_grid_size.x, map_grid_size.y );
 	glUniform2i( uloc_map_grid_size, map_width, map_height );
 
 	GLint uloc_time = glGetUniformLocation( hex_sp, "time");
 	glUniform1i(uloc_time, master_timer);
 
-	//glDrawArraysInstanced(GL_TRIANGLES, 0, 6, tiles_to_draw.count );
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, hexes_to_draw_count );
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -131,7 +123,6 @@ void UpdateHexMapBuffersForDebugOverlay()
 
 void HexesWithinCameraBounds()
 {
-
 	ivec2 view_top_left = { (int)camera.Min().x, (int)camera.Min().y };
 	ivec2 view_bottom_right = { (int)camera.Max().x, (int)camera.Max().y };
 
@@ -143,7 +134,7 @@ void HexesWithinCameraBounds()
 	int tile_columns_in_view;
 	int tile_rows_in_view;
 
-	int tile_width = 24; // stride 45(?), width 62
+	int tile_width = 24; // stride 24(?), width 32
 	int tile_height = 28; 
 
 	tile_column_min = ( view_top_left.x - 20 ) / tile_width;
@@ -256,6 +247,15 @@ int GetMouseOveredHex(vec2 m)
 	return hex_number;
 }
 
+/*
+Hex grid coordinate systems:
+STAGGERED: 
+	x-axis is towards right, but staggered, y is down. 
+	This is the default system for perkele
+SLANTED: 
+	x-axis is towards right and down, y is down, angle between them is about 60 degrees. 
+	This is used for calculating distance. (Hex version of Manhattan distance(?))
+*/
 ivec2 StaggeredToSlanted(ivec2 staggered_hex)
 {
 	ivec2 slanted_hex = { staggered_hex.x, staggered_hex.y - staggered_hex.x / 2 }; // ACHTUNG!!! might need something more (maybe floor()...)
@@ -330,7 +330,7 @@ void LoadEdgeYeah()
 
 void LoadHexMapDebugOverlayStuff()
 {
-	// texture is the same as regular hex map
+	// uses the same texture as the regular hex map
 
 	GLuint hex_debug_overlay_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/hex-overlay-debug-vert.glsl");
 	GLuint hex_debug_overlay_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/hex-overlay-debug-frag.glsl");
@@ -380,10 +380,7 @@ void LoadHexMapDebugOverlayStuff()
 void LoadHexMapStuff()
 {
 	int w, h;
-	//hex_map_texture = LoadTexture("data/gfx/fg_hexes.png", &w, &h);
-	//hex_map_texture = LoadTexture("data/gfx/fg_hexes_atlas.png", &w, &h);
 	hex_map_texture = LoadTexture("data/gfx/terrain.png", &w, &h);
-	hex_map_highlight_texture = LoadTexture("data/gfx/fghex_highlight.png", NULL, NULL);
 
 	GLuint hex_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/hex-vert.glsl");
 	GLuint hex_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/hex-frag.glsl");

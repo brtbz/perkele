@@ -186,6 +186,12 @@ void Step(double delta)
 
 	if ( selected_army != NULL )
 	{
+		if ( selected_army->position_hex == highlighted_hex)
+		{
+			FindReachableNodes(selected_army->position_hex, selected_army->movement_points_current);
+			draw_path = true;
+		}
+#if 0		
 		if ( selected_army->position_hex != highlighted_hex)
 		{
 			if ( current_path.x != selected_army->position_hex || current_path.y != highlighted_hex )
@@ -202,6 +208,7 @@ void Step(double delta)
 				current_path.y = highlighted_hex;
 			}
 		}
+#endif
 	}
 
 

@@ -77,9 +77,6 @@ vec2 Camera::ConstrainPositionOrigo()
 	float max_origo_x = map_width * tile_stride_x;
 	float max_origo_y = 20.0f + map_height * tile_stride_y;
 
-	// origo.x < 0.0f ? desired_origo.x = 0.0f : desired_origo.x = origo.x;
-	// origo.y < 0.0f ? desired_origo.y = 0.0f : desired_origo.y = origo.y;
-
 	desired_origo.x = ClampToF( min_origo_x, max_origo_x, origo.x );
 	desired_origo.y = ClampToF( min_origo_y, max_origo_y, origo.y );
 
@@ -118,7 +115,6 @@ void Camera::MoveToNewOrigo(vec2 new_origo)
 void InitNewCamera()
 {
 	vec2 mini = { 0.0f, 0.0f };
-	//vec2 maxi = { 1920.0f, 1080.0f};
 	vec2 maxi = viewport_size;
 	camera.SetCamera( mini, maxi );
 }

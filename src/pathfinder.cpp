@@ -366,12 +366,93 @@ void AnalyzeMapNode(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_h
 	}
 	AddClosedSetLeaf(map_index);
 }
+
+void AnalyzeMapNodeForReachableNodes(int32_t map_index, int32_t accumulated_g_score, int available_movement_points)
+{
+	int32_t g_score;
+	int32_t neighbour;
+
+	for (int i = 0; i < 6; i++)
+	{
+		if ( map_nodes[ map_index ].edge[i] != -1 )
+		{
+			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
+			if (!MapIndexIsInClosedSet(neighbour) && !MapIndexIsInOpenSetMapIndices(neighbour))
+			{
+				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 )
+				{
+					AddClosedSetLeaf(neighbour);
+				}
+				else
+				{
+					g_score = accumulated_g_score + map_edges[ map_nodes[map_index].edge[i] ].cost;
+
+					if (g_score > available_movement_points)
+					{
+						AddClosedSetLeaf(neighbour);
+					}
+					else
+					{
+						float f_score = (float)g_score;
+						AddOpenSetLeaf( f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );
+						AddOpenSetMapIndicesLeaf(neighbour);
+					}
+				}
+			}
+		}
+	}
+	AddClosedSetLeaf(map_index);
+}
 /*
 uint64_t starting1 = SDL_GetPerformanceCounter();
 uint64_t stopping1 = SDL_GetPerformanceCounter();
 double calculating1 = (double)(stopping1 - starting1) / (double)perf_freq;
 printf("This took %.04g\n", calculating1*1000.0);
 */
+
+// way to show all the hexes that are reachable with currently available movement points
+// 1. start from start node
+// 2. add nodes to open set and analyze
+// 3. if accumulated_g_score is higher than available movement points, throw node in closed set
+// 4. continue until open set
+// 5. return value all the nodes that were in open set (this could be array of int32_t and its size)
+// 6.
+
+int32_t FindReachableNodes(int32_t start, int available_movement_points)
+{
+	int32_t reachable_nodes_count = 0;
+
+	number_of_nodes_that_were_in_open_set_debug = 0;
+	open_set_map_indices_count = 0;
+	open_set_map_indices_write_head = 0;
+	open_set_map_indices_root_index = 0;
+	open_set_write_head = 0;
+	open_set_root_index = 0;
+	open_set_count = 0;
+	closed_set_write_head = 0;
+	closed_set_root_index = 0;
+	closed_set_count = 0;
+	path_edges_size = 0;
+
+	int32_t g_score = 0;
+	float f_score = 0.0f;
+
+	AddOpenSetLeaf( f_score, g_score, start, -1 );
+	AddOpenSetMapIndicesLeaf(start);
+
+	while (!OpenSetIsEmpty())
+	{
+		int32_t map_index;
+		int32_t accumulated_g_score;
+		int32_t came_along_edge;
+
+		PullMapIndexWithLowestFScoreFromOpenSet(&map_index, &accumulated_g_score, &came_along_edge);
+		came_along_edges[map_index] = came_along_edge;
+		AnalyzeMapNodeForReachableNodes(map_index, accumulated_g_score, available_movement_points);
+	}
+
+	return reachable_nodes_count;
+}
 
 uint32_t ReconstructPath(int32_t start, int32_t goal)
 {
