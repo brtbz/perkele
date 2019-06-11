@@ -286,6 +286,18 @@ int32_t CalculateHexDistance(ivec2 start_hex, ivec2 end_hex)
 	}
 }
 
+bool HexesAreNeighbours(int32_t hex_a, int32_t hex_b)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		if ( map_edges[ map_nodes[hex_a].edge[i] ].end_node_index == hex_b )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void LoadEdgeYeah()
 {
 	int w, h;

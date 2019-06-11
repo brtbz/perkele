@@ -99,7 +99,7 @@ vec2 Camera::ConstrainThisOrigo(vec2 origo_seeking_approval)
 	desired_origo.x = ClampToF( min_origo_x, max_origo_x, origo_seeking_approval.x );
 	desired_origo.y = ClampToF( min_origo_y, max_origo_y, origo_seeking_approval.y );
 
-	return desired_origo;	
+	return desired_origo;
 }
 
 void Camera::MoveToNewOrigo(vec2 new_origo)

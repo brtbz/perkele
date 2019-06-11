@@ -147,11 +147,60 @@ void RandomName(Army *a)
 	a->name[31] = '\0';
 }
 
+void Kill(Army *a)
+{
+
+}
+
+void Attack(Army *attacker, Army *defender)
+{
+	float attacker_strength = (float)attacker->strength;
+	float defender_strength = (float)defender->strength;
+
+	float attacker_bonus = 0.0f;
+	float defender_bonus = 0.2f;
+
+	attacker_strength += attacker_bonus;
+	defender_strength += defender_bonus;
+
+	int attacker_roll = MWC % 20;
+	int defender_roll = MWC % 20;
+
+	attacker_strength += attacker_roll;
+	defender_strength += defender_roll;
+
+	if (attacker_strength > defender_strength)
+	{
+		// attacker wins!
+		defender->hits_current -= 2;
+	}
+	else
+	{
+		// defender wins!
+		attacker->hits_current -= 1;
+	}
+
+	if (attacker->hits_current <= 0)
+	{
+		Kill(attacker);
+	}
+	if (defender->hits_current <= 0)
+	{
+		Kill(defender);
+	}
+	// tänhän pitää olla sitten monimutkasempi että kumpikin voi ottaa vähän osumaa ja niin pois päin hehe plöörggh
+}
+
 void MoveArmyToNewHex(int32_t army, int32_t hex)
 {
 	map_nodes[ test_armies[army].position_hex ].occupier = -1;
 	test_armies[army].position_hex = hex;
 	map_nodes[ test_armies[army].position_hex ].occupier = army;
+}
+
+bool HexIsFree(int32_t hex)
+{
+	return map_nodes[ hex ].occupier == -1 ? true : false;
 }
 
 void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()

@@ -85,7 +85,7 @@ GLuint hex_sp;
 GLuint hex_vbo;
 GLuint hex_vao;
 GLuint hex_map_texture;
-GLuint hex_map_highlight_texture;
+//GLuint hex_map_highlight_texture;
 GLuint hex_indices_buffer;
 GLuint hex_terrain_types_buffer;
 

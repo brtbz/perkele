@@ -162,15 +162,27 @@ void Step(double delta)
 		UpdateUnitDataBuffer();
 	}
 
-	if ( left_clicked && selected_army != NULL && highlighted_hex > 0)
+	if ( left_clicked && selected_army != NULL )
 	{
-		//selected_army->position_hex = highlighted_hex;
-		MoveArmyToNewHex( selected_army->index, highlighted_hex );
-		PlaySfx(SFX_UNIT_MOVE);
-		selected_army = NULL;
-		unit_data_buffer_needs_update = true;
-		path_edges_size = 0;
-		draw_path = false;
+		if (HexIsFree(highlighted_hex))
+		{
+			//selected_army->position_hex = highlighted_hex;
+			MoveArmyToNewHex( selected_army->index, highlighted_hex );
+			PlaySfx(SFX_UNIT_MOVE);
+			selected_army = NULL;
+			unit_data_buffer_needs_update = true;
+			path_edges_size = 0;
+			draw_path = false;
+		}
+		else
+		{
+			Attack( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
+			PlaySfx(SFX_UNIT_MOVE);
+			selected_army = NULL;
+			unit_data_buffer_needs_update = true;
+			path_edges_size = 0;
+			draw_path = false;
+		}
 	}
 	else if ( left_clicked && selected_army == NULL )
 	{
@@ -211,6 +223,16 @@ void Step(double delta)
 #endif
 	}
 
+	if (selected_army != NULL)
+	{
+		if ( HexesAreNeighbours( selected_army->position_hex, highlighted_hex) )
+		{
+			if ( !HexIsFree(highlighted_hex) )
+			{
+				SDL_SetCursor(cursor_swords_bmp);
+			}
+		}
+	}
 
 
 	static float music_gain = 0.05f;
