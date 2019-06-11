@@ -174,10 +174,10 @@ void Step(double delta)
 			path_edges_size = 0;
 			draw_path = false;
 		}
-		else
+		else if ( HexesAreNeighbours( selected_army->position_hex, highlighted_hex) )
 		{
 			Attack( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
-			PlaySfx(SFX_UNIT_MOVE);
+			PlaySfx(SFX_GOBLIN_ROAR);
 			selected_army = NULL;
 			unit_data_buffer_needs_update = true;
 			path_edges_size = 0;

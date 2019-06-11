@@ -20,12 +20,13 @@ static void lock_handler(cm_Event *e)
 
 #define SFX_UNIT_MOVE 0
 #define SFX_UI_CLICK_A 1
+#define SFX_GOBLIN_ROAR 2
 
 void PlaySfx(int id)
 {
 	if (audio_enabled)
 	{
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			if (sfx[i].id == id)
 			{
@@ -44,6 +45,9 @@ int LoadMusicAndSounds()
 
 	sfx[1].id = 1;
 	sfx[1].src = cm_new_source_from_file("data/sfx/metal-small1.ogg");
+
+	sfx[2].id = 2;
+	sfx[2].src = cm_new_source_from_file("data/sfx/mnstr1.ogg");
 
 	music_src = cm_new_source_from_file("data/music/hey.ogg");
 	if (!music_src) {
