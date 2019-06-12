@@ -75,6 +75,9 @@ int unit_data_count = 183;
 ivec4* unit_data;
 bool unit_data_buffer_needs_update = true;
 
+GLuint moving_army_sp;
+GLuint moving_army_vbo;
+GLuint moving_army_vao;
 
 Army test_armies[183];
 
@@ -85,7 +88,6 @@ GLuint hex_sp;
 GLuint hex_vbo;
 GLuint hex_vao;
 GLuint hex_map_texture;
-//GLuint hex_map_highlight_texture;
 GLuint hex_indices_buffer;
 GLuint hex_terrain_types_buffer;
 

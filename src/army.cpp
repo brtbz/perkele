@@ -30,6 +30,11 @@ void DrawArmies(int32_t count)
 	glBindVertexArray(0);
 }
 
+void DrawMovingArmy(int32_t a)
+{
+
+}
+
 void InitUnitDataBuffer()
 {
 	unit_data = (ivec4*)malloc( unit_limit * sizeof(ivec4) );
@@ -65,8 +70,8 @@ void UpdateUnitDataBuffer()
 
 void LoadArmyGraphicStuff()
 {
+	// BASIC SHADER
 	int w, h;
-	//army_texture = LoadTexture("data/gfx/fg_units_atlas.png", &w, &h);
 	army_texture = LoadTexture("data/gfx/DungeonCrawl_ProjectUtumnoTileset.png", &w, &h);
 	GLuint army_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/army-vert.glsl");
 	GLuint army_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/army-frag.glsl");
@@ -112,8 +117,30 @@ void LoadArmyGraphicStuff()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	glBindVertexArray(0);
 
 
+	// SHADER FOR ANIMATING MOVEMENT
+	GLuint moving_army_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/moving-army-vert.glsl");
+	GLuint moving_army_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/moving-army-frag.glsl");
+	moving_army_sp = NewProgram(moving_army_vs, moving_army_fs);
+
+	glGenVertexArrays(1, &moving_army_vao);
+	glBindVertexArray(moving_army_vao);
+
+	glGenBuffers(1, &moving_army_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, moving_army_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), &vertex_data[0], GL_STATIC_DRAW);
+
+	position_loc = glGetAttribLocation(moving_army_sp, "position");
+	glEnableVertexAttribArray(position_loc);
+	glVertexAttribPointer( position_loc, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)0 );
+
+	uv_coord_loc = glGetAttribLocation(moving_army_sp, "uv_coord");
+	glEnableVertexAttribArray( uv_coord_loc );
+	glVertexAttribPointer( uv_coord_loc, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)(2*sizeof(GLfloat)));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
 
@@ -188,7 +215,6 @@ void Attack(Army *attacker, Army *defender)
 	{
 		Kill(defender);
 	}
-	// tänhän pitää olla sitten monimutkasempi että kumpikin voi ottaa vähän osumaa ja niin pois päin hehe plöörggh
 }
 
 void MoveArmyToNewHex(int32_t army, int32_t hex)
@@ -196,6 +222,14 @@ void MoveArmyToNewHex(int32_t army, int32_t hex)
 	map_nodes[ test_armies[army].position_hex ].occupier = -1;
 	test_armies[army].position_hex = hex;
 	map_nodes[ test_armies[army].position_hex ].occupier = army;
+}
+
+void ArmyMover(int32_t army, int32_t *path, int32_t path_size, uint32_t allowed_time)
+{
+	// I guess most of the movement code is handled here in c++. 
+	// glsl is just told: now draw unit between these two hexes with transition being x percent complete
+	// only one unit moves at a time, so I guess there's no point in adding that 'between hexes' capability to the normal unit drawing code
+	// when unit starts to move, stop drawing it in normal way, and resume normal operations once it stops.
 }
 
 bool HexIsFree(int32_t hex)

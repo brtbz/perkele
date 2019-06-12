@@ -1,5 +1,5 @@
 BUGStofix:
-imgui can behave weirdly in windowed mode. there's some additional yoffset for mouse input or something.
+imgui can behave weirdly in windowed mode. there's some additional yoffset for mouse input or something. (this is likely about xfce's window manager and SDL2 and some old versions of the two)
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
 
 TODO: (in rough order of importance)
