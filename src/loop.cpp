@@ -200,7 +200,7 @@ void Step(double delta)
 	{
 		if ( selected_army->position_hex == highlighted_hex)
 		{
-			FindReachableNodes(selected_army->position_hex, selected_army->movement_points_current);
+			FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement_points_current);
 			draw_path = true;
 		}
 #if 0		
@@ -285,9 +285,9 @@ void Step(double delta)
 		ImGui::InputInt2("hex two", (int*)&hex_two);
 		//if (ImGui::Button("Calculate hex distance")) { hex_distance_result = CalculateHexDistance(hex_one, hex_two); }
 		//ImGui::Text("hex distance result: %d", hex_distance_result);
-		if ( ImGui::Button("Find Path") ) { some_temp_low_score = FindPath( hex_one.y * map_width + hex_one.x, hex_two.y * map_width + hex_two.x); draw_path = true; }
+		if ( ImGui::Button("Find Path") ) { some_temp_low_score = FindPath( pathfinder, hex_one.y * map_width + hex_one.x, hex_two.y * map_width + hex_two.x); draw_path = true; }
 		ImGui::Text("Some temp low score %d", some_temp_low_score);
-		ImGui::InputFloat("H weight", &pathfind_weight_h); ImGui::SameLine();
+		// ImGui::InputFloat("H weight", &(pathfinder->pathfind_weight_h) ); ImGui::SameLine();
 		ShowHelpMarker("Heuristic weight for pathfind algorithm.");
 
 		ImGui::End();
@@ -379,9 +379,9 @@ void Step(double delta)
 
 			ImGui::Separator();
 			ImGui::Checkbox("Pathfind debug overlay", &draw_hex_debug_overlay);
-			ImGui::Text("total in open set: %d", number_of_nodes_that_were_in_open_set_debug);
-			ImGui::Text("open_set_count: %d", open_set_count);
-			ImGui::Text("closed_set_count: %d", closed_set_count);
+			ImGui::Text("total in open set: %d", pathfinder->number_of_nodes_that_were_in_open_set_debug);
+			ImGui::Text("open_set_count: %d", pathfinder->open_set_count);
+			ImGui::Text("closed_set_count: %d", pathfinder->closed_set_count);
 			ImGui::Separator();
 
 			ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
@@ -438,7 +438,7 @@ void Step(double delta)
 		ImGui::PopFont();
 
 		ImGui::InputInt("lines", &inspector_line_count, 4, 16);
-		ImGui::InputInt("osote", (int*)((uint64_t)&mm_ptr), 16, 256);
+		ImGui::InputInt("mem.addr", (int*)((uint64_t)&mm_ptr), 16, 256);
 		ImGui::SameLine(); ShowHelpMarker("Small adjusts to move pointer around,\nbigger adjusts to crash the program.");
 
 		ImGui::End();
@@ -505,8 +505,11 @@ void Step(double delta)
 		}
 		if (draw_hex_debug_overlay)
 		{
-			UpdateHexMapBuffersForDebugOverlay();
-			DrawHexDebugOverlay();		
+			vec3 overlay_color = { 1.0f, 0.5f, 1.0f };
+			//UpdateHexMapBuffersForDebugOverlay();
+
+			UpdateHexMapBuffersForReachableNodesOverlay();
+			DrawHexDebugOverlay(overlay_color);
 		}
 		
 	}

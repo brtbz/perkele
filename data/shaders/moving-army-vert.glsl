@@ -7,7 +7,7 @@ out vec2 unit_base_uv;
 
 uniform int start_hex; // location; start hex index and end hex index; start and end are supposed to be neighbours
 uniform int end_hex;
-uniform float transition; // percent of transition complete between start and end hex;
+uniform float transition; // percent of transition complete between start and end hex; 0.0f ... 1.0f
 uniform int base_sprite;
 
 uniform vec2 sprite_sheet_size;
@@ -23,21 +23,28 @@ void main()
 {
 	ivec2 map_size = map_grid_size;
 
-	int hex_index = start_hex;  // unit_data.x;
+	int hex_index_start = start_hex;  // unit_data.x;
+	int hex_index_end = end_hex;
 	int unit_base = base_sprite; // unit_data.y;
-	//int unit_type = unit_data.z;
-	//int unit_size = unit_data.w;
 
 	vec2 view_size = vec2( camera.z - camera.x, camera.w - camera.y );
 
 	float common_y_offset = 12.0f;
 	float odd_row_offset = 0.0f;
-	float odd_column_offset = 0.0f;
-	//if ( ( hex_index / map_size.x) % 2 == 1 ) { odd_row_offset = 27.0f; }
-	if ( hex_index % 2 == 1 ) { odd_column_offset = 14.0f; }
+	float odd_column_offset_start = 0.0f;
+	float odd_column_offset_end = 0.0f;
 
-	float target_x = ( hex_index % map_size.x ) * 24.0f + odd_row_offset - camera.x;
-	float target_y = ( hex_index / map_size.x ) * 28.0f + odd_column_offset + common_y_offset - camera.y;
+	if ( hex_index_start % 2 == 1 ) { odd_column_offset_start = 14.0f; }
+	if ( hex_index_end % 2 == 1 ) { odd_column_offset_end = 14.0f; }
+
+	float target_x_start = ( hex_index_start % map_size.x ) * 24.0f + odd_row_offset - camera.x;
+	float target_y_start = ( hex_index_start / map_size.x ) * 28.0f + odd_column_offset_start + common_y_offset - camera.y;
+
+	float target_x_end = ( hex_index_end % map_size.x ) * 24.0f + odd_row_offset - camera.x;
+	float target_y_end = ( hex_index_end / map_size.x ) * 28.0f + odd_column_offset_end + common_y_offset - camera.y;
+
+	float target_x = target_x_start + transition * ( target_x_end - target_x_start );
+	float target_y = target_y_start + transition * ( target_y_end - target_y_start );
 
 	float target_margin = 4.0f;
 	float target_y_offset = 0.0f;
@@ -71,8 +78,10 @@ void main()
 	pos.x = pos.x + 2.0f * ( target_position.x / view_size.x );
 	pos.y = pos.y - 2.0f * ( target_position.y / view_size.y );
 
-	float z = 0.99f - float(hex_index / map_grid_size.x) / float(map_grid_size.y);
-	if ( hex_index % 2 == 0 ) { z += 0.0000001f; }
+	// using only hex_index_start here and not some average of hex_index_start and hex_index_end
+	// let's see what happens
+	float z = 0.99f - float(hex_index_start / map_grid_size.x) / float(map_grid_size.y);
+	if ( hex_index_start % 2 == 0 ) { z += 0.0000001f; }
 
 	gl_Position = vec4(pos, z, 1.0f);
 
@@ -81,7 +90,6 @@ void main()
 
 
 	// UV COORDS
-
 	unit_base_uv.x = (
 		uv_coord.x / (sprite_sheet_size.x / sprite_rectangle_base.z) ) +
 		( sprite_rectangle_base.x / sprite_sheet_size.x );

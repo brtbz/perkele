@@ -1,77 +1,77 @@
-bool OpenSetIsEmpty()
+bool OpenSetIsEmpty(Pathfinder *pf)
 {
-	return open_set_count == 0 ? true : false;
+	return pf->open_set_count == 0 ? true : false;
 }
 
-bool ClosedSetIsEmpty()
+bool ClosedSetIsEmpty(Pathfinder *pf)
 {
-	return closed_set_count == 0 ? true : false;
+	return pf->closed_set_count == 0 ? true : false;
 }
 
-bool OpenSetMapIndicesIsEmpty()
+bool OpenSetMapIndicesIsEmpty(Pathfinder *pf)
 {
-	return open_set_map_indices_count == 0 ? true : false;
+	return pf->open_set_map_indices_count == 0 ? true : false;
 }
 
-int32_t AddOpenSetMapIndicesLeaf(int32_t map_index)
+int32_t AddOpenSetMapIndicesLeaf(Pathfinder *pf, int32_t map_index)
 {
-	if ( open_set_map_indices_write_head >= OPEN_SET_MAX_SIZE )
+	if ( pf->open_set_map_indices_write_head >= OPEN_SET_MAX_SIZE )
 	{
 		return -1;
 	}
-	if ( OpenSetMapIndicesIsEmpty() )
+	if ( OpenSetMapIndicesIsEmpty(pf) )
 	{
-		open_set_map_indices[ open_set_map_indices_root_index ].map_index = map_index;
-		open_set_map_indices[ open_set_map_indices_root_index ].parent = -1;
-		open_set_map_indices[ open_set_map_indices_root_index ].left_child = -1;
-		open_set_map_indices[ open_set_map_indices_root_index ].right_child = -1;
+		pf->open_set_map_indices[ pf->open_set_map_indices_root_index ].map_index = map_index;
+		pf->open_set_map_indices[ pf->open_set_map_indices_root_index ].parent = -1;
+		pf->open_set_map_indices[ pf->open_set_map_indices_root_index ].left_child = -1;
+		pf->open_set_map_indices[ pf->open_set_map_indices_root_index ].right_child = -1;
 
-		open_set_map_indices_write_head++;
-		open_set_map_indices_count++;
+		pf->open_set_map_indices_write_head++;
+		pf->open_set_map_indices_count++;
 	}
 	else
 	{
 		bool place_for_new_node_found = false;
-		int32_t read_head = open_set_map_indices_root_index;
+		int32_t read_head = pf->open_set_map_indices_root_index;
 
 		while (!place_for_new_node_found)
 		{
-			if ( map_index > open_set_map_indices[read_head].map_index )
+			if ( map_index > pf->open_set_map_indices[read_head].map_index )
 			{
-				if ( open_set_map_indices[read_head].right_child == -1 )
+				if ( pf->open_set_map_indices[read_head].right_child == -1 )
 				{
-					open_set_map_indices[ open_set_map_indices_write_head ].map_index = map_index;
-					open_set_map_indices[ open_set_map_indices_write_head ].parent = read_head;
-					open_set_map_indices[ open_set_map_indices_write_head ].left_child = -1;
-					open_set_map_indices[ open_set_map_indices_write_head ].right_child = -1;
-					open_set_map_indices[ read_head ].right_child = open_set_map_indices_write_head;
+					pf->open_set_map_indices[ pf->open_set_map_indices_write_head ].map_index = map_index;
+					pf->open_set_map_indices[ pf->open_set_map_indices_write_head ].parent = read_head;
+					pf->open_set_map_indices[ pf->open_set_map_indices_write_head ].left_child = -1;
+					pf->open_set_map_indices[ pf->open_set_map_indices_write_head ].right_child = -1;
+					pf->open_set_map_indices[ read_head ].right_child = pf->open_set_map_indices_write_head;
 
-					open_set_map_indices_write_head++;
-					open_set_map_indices_count++;
+					pf->open_set_map_indices_write_head++;
+					pf->open_set_map_indices_count++;
 					place_for_new_node_found = true;
 				}
 				else
 				{
-					read_head = open_set_map_indices[ read_head ].right_child;
+					read_head = pf->open_set_map_indices[ read_head ].right_child;
 				}
 			}
 			else // new key equal or less
 			{
-				if ( open_set_map_indices[read_head].left_child == -1 )
+				if ( pf->open_set_map_indices[read_head].left_child == -1 )
 				{
-					open_set_map_indices[ open_set_map_indices_write_head ].map_index = map_index;
-					open_set_map_indices[ open_set_map_indices_write_head ].parent = read_head;
-					open_set_map_indices[ open_set_map_indices_write_head ].left_child = -1;
-					open_set_map_indices[ open_set_map_indices_write_head ].right_child = -1;
-					open_set_map_indices[ read_head ].left_child = open_set_map_indices_write_head;
+					pf->open_set_map_indices[ pf->open_set_map_indices_write_head ].map_index = map_index;
+					pf->open_set_map_indices[ pf->open_set_map_indices_write_head ].parent = read_head;
+					pf->open_set_map_indices[ pf->open_set_map_indices_write_head ].left_child = -1;
+					pf->open_set_map_indices[ pf->open_set_map_indices_write_head ].right_child = -1;
+					pf->open_set_map_indices[ read_head ].left_child = pf->open_set_map_indices_write_head;
 
-					open_set_map_indices_write_head++;
-					open_set_map_indices_count++;
+					pf->open_set_map_indices_write_head++;
+					pf->open_set_map_indices_count++;
 					place_for_new_node_found = true;
 				}
 				else
 				{
-					read_head = open_set_map_indices[ read_head ].left_child;
+					read_head = pf->open_set_map_indices[ read_head ].left_child;
 				}
 			}
 		}
@@ -79,77 +79,77 @@ int32_t AddOpenSetMapIndicesLeaf(int32_t map_index)
 	return 0;
 }
 
-int32_t AddOpenSetLeaf( float f_score, int32_t g_score, int32_t map_index, int32_t came_along_edge )
+int32_t AddOpenSetLeaf( Pathfinder *pf, float f_score, int32_t g_score, int32_t map_index, int32_t came_along_edge )
 {
-	nodes_that_were_in_open_set_debug[number_of_nodes_that_were_in_open_set_debug] = (uint32_t)map_index;
-	number_of_nodes_that_were_in_open_set_debug++;
+	pf->nodes_that_were_in_open_set_debug[ pf->number_of_nodes_that_were_in_open_set_debug ] = (uint32_t)map_index;
+	pf->number_of_nodes_that_were_in_open_set_debug++;
 
-	if ( open_set_write_head >= OPEN_SET_MAX_SIZE )
+	if ( pf->open_set_write_head >= OPEN_SET_MAX_SIZE )
 	{
 		return -1;
 	}
-	if ( OpenSetIsEmpty() )
+	if ( OpenSetIsEmpty(pf) )
 	{
-		open_set[ open_set_root_index ].f_score = f_score;
-		open_set[ open_set_root_index ].g_score = g_score;
-		open_set[ open_set_root_index ].map_index = map_index;
-		open_set[ open_set_root_index ].came_along_edge = came_along_edge;
-		open_set[ open_set_root_index ].parent = -1;
-		open_set[ open_set_root_index ].left_child = -1;
-		open_set[ open_set_root_index ].right_child = -1;
+		pf->open_set[ pf->open_set_root_index ].f_score = f_score;
+		pf->open_set[ pf->open_set_root_index ].g_score = g_score;
+		pf->open_set[ pf->open_set_root_index ].map_index = map_index;
+		pf->open_set[ pf->open_set_root_index ].came_along_edge = came_along_edge;
+		pf->open_set[ pf->open_set_root_index ].parent = -1;
+		pf->open_set[ pf->open_set_root_index ].left_child = -1;
+		pf->open_set[ pf->open_set_root_index ].right_child = -1;
 
-		open_set_write_head++;
-		open_set_count++;
+		pf->open_set_write_head++;
+		pf->open_set_count++;
 	}
 	else
 	{
 		bool place_for_new_node_found = false;
-		int32_t read_head = open_set_root_index;
+		int32_t read_head = pf->open_set_root_index;
 
 		while (!place_for_new_node_found)
 		{
-			if ( f_score > open_set[read_head].f_score )
+			if ( f_score > pf->open_set[read_head].f_score )
 			{
-				if ( open_set[read_head].right_child == -1 )
+				if ( pf->open_set[read_head].right_child == -1 )
 				{
-					open_set[ open_set_write_head ].f_score = f_score;
-					open_set[ open_set_write_head ].g_score = g_score;
-					open_set[ open_set_write_head ].map_index = map_index;
-					open_set[ open_set_write_head ].came_along_edge = came_along_edge;
-					open_set[ open_set_write_head ].parent = read_head;
-					open_set[ open_set_write_head ].left_child = -1;
-					open_set[ open_set_write_head ].right_child = -1;
-					open_set[ read_head ].right_child = open_set_write_head;
+					pf->open_set[ pf->open_set_write_head ].f_score = f_score;
+					pf->open_set[ pf->open_set_write_head ].g_score = g_score;
+					pf->open_set[ pf->open_set_write_head ].map_index = map_index;
+					pf->open_set[ pf->open_set_write_head ].came_along_edge = came_along_edge;
+					pf->open_set[ pf->open_set_write_head ].parent = read_head;
+					pf->open_set[ pf->open_set_write_head ].left_child = -1;
+					pf->open_set[ pf->open_set_write_head ].right_child = -1;
+					pf->open_set[ read_head ].right_child = pf->open_set_write_head;
 
-					open_set_write_head++;
-					open_set_count++;
+					pf->open_set_write_head++;
+					pf->open_set_count++;
 					place_for_new_node_found = true;
 				}
 				else
 				{
-					read_head = open_set[ read_head ].right_child;
+					read_head = pf->open_set[ read_head ].right_child;
 				}
 			}
 			else // new key equal or less
 			{
-				if ( open_set[read_head].left_child == -1 )
+				if ( pf->open_set[read_head].left_child == -1 )
 				{
-					open_set[ open_set_write_head ].f_score = f_score;
-					open_set[ open_set_write_head ].g_score = g_score;
-					open_set[ open_set_write_head ].map_index = map_index;
-					open_set[ open_set_write_head ].came_along_edge = came_along_edge;
-					open_set[ open_set_write_head ].parent = read_head;
-					open_set[ open_set_write_head ].left_child = -1;
-					open_set[ open_set_write_head ].right_child = -1;
-					open_set[ read_head ].left_child = open_set_write_head;
+					pf->open_set[ pf->open_set_write_head ].f_score = f_score;
+					pf->open_set[ pf->open_set_write_head ].g_score = g_score;
+					pf->open_set[ pf->open_set_write_head ].map_index = map_index;
+					pf->open_set[ pf->open_set_write_head ].came_along_edge = came_along_edge;
+					pf->open_set[ pf->open_set_write_head ].parent = read_head;
+					pf->open_set[ pf->open_set_write_head ].left_child = -1;
+					pf->open_set[ pf->open_set_write_head ].right_child = -1;
+					pf->open_set[ read_head ].left_child = pf->open_set_write_head;
 
-					open_set_write_head++;
-					open_set_count++;
+					pf->open_set_write_head++;
+					pf->open_set_count++;
 					place_for_new_node_found = true;
 				}
 				else
 				{
-					read_head = open_set[ read_head ].left_child;
+					read_head = pf->open_set[ read_head ].left_child;
 				}
 			}
 		}
@@ -157,65 +157,65 @@ int32_t AddOpenSetLeaf( float f_score, int32_t g_score, int32_t map_index, int32
 	return 0;
 }
 
-int32_t AddClosedSetLeaf(int32_t map_index)
+int32_t AddClosedSetLeaf(Pathfinder *pf, int32_t map_index)
 {
-	if ( closed_set_write_head >= CLOSED_SET_MAX_SIZE )
+	if ( pf->closed_set_write_head >= CLOSED_SET_MAX_SIZE )
 	{
 		return -1;
 	}
-	if ( ClosedSetIsEmpty() )
+	if ( ClosedSetIsEmpty(pf) )
 	{
-		closed_set[ closed_set_root_index ].map_index = map_index;
-		closed_set[ closed_set_root_index ].parent = -1;
-		closed_set[ closed_set_root_index ].left_child = -1;
-		closed_set[ closed_set_root_index ].right_child = -1;
+		pf->closed_set[ pf->closed_set_root_index ].map_index = map_index;
+		pf->closed_set[ pf->closed_set_root_index ].parent = -1;
+		pf->closed_set[ pf->closed_set_root_index ].left_child = -1;
+		pf->closed_set[ pf->closed_set_root_index ].right_child = -1;
 
-		closed_set_write_head++;
-		closed_set_count++;
+		pf->closed_set_write_head++;
+		pf->closed_set_count++;
 	}
 	else
 	{
 		bool place_for_new_node_found = false;
-		int32_t read_head = closed_set_root_index;
+		int32_t read_head = pf->closed_set_root_index;
 
 		while (!place_for_new_node_found)
 		{
-			if ( map_index > closed_set[read_head].map_index )
+			if ( map_index > pf->closed_set[read_head].map_index )
 			{
-				if ( closed_set[read_head].right_child == -1 )
+				if ( pf->closed_set[read_head].right_child == -1 )
 				{
-					closed_set[ closed_set_write_head ].map_index = map_index;
-					closed_set[ closed_set_write_head ].parent = read_head;
-					closed_set[ closed_set_write_head ].left_child = -1;
-					closed_set[ closed_set_write_head ].right_child = -1;
-					closed_set[ read_head ].right_child = closed_set_write_head;
+					pf->closed_set[ pf->closed_set_write_head ].map_index = map_index;
+					pf->closed_set[ pf->closed_set_write_head ].parent = read_head;
+					pf->closed_set[ pf->closed_set_write_head ].left_child = -1;
+					pf->closed_set[ pf->closed_set_write_head ].right_child = -1;
+					pf->closed_set[ read_head ].right_child = pf->closed_set_write_head;
 
-					closed_set_write_head++;
-					closed_set_count++;
+					pf->closed_set_write_head++;
+					pf->closed_set_count++;
 					place_for_new_node_found = true;
 				}
 				else
 				{
-					read_head = closed_set[ read_head ].right_child;
+					read_head = pf->closed_set[ read_head ].right_child;
 				}
 			}
 			else // new key equal or less
 			{
-				if ( closed_set[read_head].left_child == -1 )
+				if ( pf->closed_set[read_head].left_child == -1 )
 				{
-					closed_set[ closed_set_write_head ].map_index = map_index;
-					closed_set[ closed_set_write_head ].parent = read_head;
-					closed_set[ closed_set_write_head ].left_child = -1;
-					closed_set[ closed_set_write_head ].right_child = -1;
-					closed_set[ read_head ].left_child = closed_set_write_head;
+					pf->closed_set[ pf->closed_set_write_head ].map_index = map_index;
+					pf->closed_set[ pf->closed_set_write_head ].parent = read_head;
+					pf->closed_set[ pf->closed_set_write_head ].left_child = -1;
+					pf->closed_set[ pf->closed_set_write_head ].right_child = -1;
+					pf->closed_set[ read_head ].left_child = pf->closed_set_write_head;
 
-					closed_set_write_head++;
-					closed_set_count++;
+					pf->closed_set_write_head++;
+					pf->closed_set_count++;
 					place_for_new_node_found = true;
 				}
 				else
 				{
-					read_head = closed_set[ read_head ].left_child;
+					read_head = pf->closed_set[ read_head ].left_child;
 				}
 			}
 		}
@@ -224,110 +224,110 @@ int32_t AddClosedSetLeaf(int32_t map_index)
 }
 
 // i want map_index, but these are sorted by f_score. okay?
-int32_t PullMapIndexWithLowestFScoreFromOpenSet(int32_t *map_index, int32_t *g_score, int32_t *came_along_edge)
+int32_t PullMapIndexWithLowestFScoreFromOpenSet(Pathfinder *pf, int32_t *map_index, int32_t *g_score, int32_t *came_along_edge)
 {
-	if (OpenSetIsEmpty())
+	if (OpenSetIsEmpty(pf))
 	{
 		return -1;
 	}
 	else
 	{
 		// find and get map_index
-		int32_t read_head = open_set_root_index;
-		while( open_set[read_head].left_child != -1 )
+		int32_t read_head = pf->open_set_root_index;
+		while( pf->open_set[read_head].left_child != -1 )
 		{
-			read_head = open_set[read_head].left_child;
+			read_head = pf->open_set[read_head].left_child;
 		}
-		*map_index = open_set[read_head].map_index;
-		*g_score = open_set[read_head].g_score;
-		*came_along_edge = open_set[read_head].came_along_edge;
+		*map_index = pf->open_set[read_head].map_index;
+		*g_score = pf->open_set[read_head].g_score;
+		*came_along_edge = pf->open_set[read_head].came_along_edge;
 
 		// rearrange
 
 		// am i root?
-		if (open_set[read_head].parent == -1)
+		if ( pf->open_set[read_head].parent == -1)
 		{
-			if (open_set[read_head].right_child != -1)
+			if ( pf->open_set[read_head].right_child != -1)
 			{
-				open_set[ open_set[read_head].right_child ].parent = -1;
-				open_set_root_index = open_set[read_head].right_child;
+				pf->open_set[ pf->open_set[read_head].right_child ].parent = -1;
+				pf->open_set_root_index = pf->open_set[read_head].right_child;
 			}
 		}
 		// not root, but got right child?
-		else if ( open_set[read_head].right_child != -1 )
+		else if ( pf->open_set[read_head].right_child != -1 )
 		{
-			open_set[ open_set[ read_head ].right_child ].parent = open_set[ read_head ].parent;
-			open_set[ open_set[ read_head ].parent ].left_child = open_set[ read_head ].right_child;
+			pf->open_set[ pf->open_set[ read_head ].right_child ].parent = pf->open_set[ read_head ].parent;
+			pf->open_set[ pf->open_set[ read_head ].parent ].left_child = pf->open_set[ read_head ].right_child;
 		}
 		else
 		{
-			open_set[ open_set[ read_head ].parent ].left_child = -1;
+			pf->open_set[ pf->open_set[ read_head ].parent ].left_child = -1;
 		}
 
-		open_set_count--;
+		pf->open_set_count--;
 	}
 	return 0;
 }
 
-bool MapIndexIsInClosedSet(int32_t map_index)
+bool MapIndexIsInClosedSet(Pathfinder *pf, int32_t map_index)
 {
-	if (ClosedSetIsEmpty())
+	if (ClosedSetIsEmpty(pf))
 	{
 		return false;
 	}
 	else
 	{
-		int32_t read_head = closed_set_root_index;
+		int32_t read_head = pf->closed_set_root_index;
 		bool keep_looking = true;
 		while (keep_looking)
 		{
-			if ( closed_set[read_head].map_index == map_index )
+			if ( pf->closed_set[read_head].map_index == map_index )
 			{
 				return true;
 			}
-			if ( map_index < closed_set[read_head].map_index )
+			if ( map_index < pf->closed_set[read_head].map_index )
 			{
-				closed_set[read_head].left_child != -1 ? read_head = closed_set[read_head].left_child : keep_looking = false;
+				pf->closed_set[read_head].left_child != -1 ? read_head = pf->closed_set[read_head].left_child : keep_looking = false;
 			}
 			else // if ( map_index > closed_set[read_head].map_index )
 			{
-				closed_set[read_head].right_child != -1 ? read_head = closed_set[read_head].right_child : keep_looking = false;
+				pf->closed_set[read_head].right_child != -1 ? read_head = pf->closed_set[read_head].right_child : keep_looking = false;
 			}
 		}
 	}
 	return false;
 }
 
-bool MapIndexIsInOpenSetMapIndices(int32_t map_index)
+bool MapIndexIsInOpenSetMapIndices(Pathfinder *pf, int32_t map_index)
 {
-	if (OpenSetMapIndicesIsEmpty())
+	if (OpenSetMapIndicesIsEmpty(pf))
 	{
 		return false;
 	}
 	else
 	{
-		int32_t read_head = open_set_map_indices_root_index;
+		int32_t read_head = pf->open_set_map_indices_root_index;
 		bool keep_looking = true;
 		while (keep_looking)
 		{
-			if ( open_set_map_indices[read_head].map_index == map_index )
+			if ( pf->open_set_map_indices[read_head].map_index == map_index )
 			{
 				return true;
 			}
-			if ( map_index < open_set_map_indices[read_head].map_index )
+			if ( map_index < pf->open_set_map_indices[read_head].map_index )
 			{
-				open_set_map_indices[read_head].left_child != -1 ? read_head = open_set_map_indices[read_head].left_child : keep_looking = false;
+				pf->open_set_map_indices[read_head].left_child != -1 ? read_head = pf->open_set_map_indices[read_head].left_child : keep_looking = false;
 			}
 			else // if ( map_index > closed_set[read_head].map_index )
 			{
-				open_set_map_indices[read_head].right_child != -1 ? read_head = open_set_map_indices[read_head].right_child : keep_looking = false;
+				pf->open_set_map_indices[read_head].right_child != -1 ? read_head = pf->open_set_map_indices[read_head].right_child : keep_looking = false;
 			}
 		}
 	}
 	return false;
 }
 
-void AnalyzeMapNode(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
+void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
 {
 	int32_t h_score;
 	int32_t g_score;
@@ -339,11 +339,11 @@ void AnalyzeMapNode(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_h
 		if ( map_nodes[ map_index ].edge[i] != -1 )
 		{
 			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
-			if (!MapIndexIsInClosedSet(neighbour) && !MapIndexIsInOpenSetMapIndices(neighbour))
+			if (!MapIndexIsInClosedSet(pf, neighbour) && !MapIndexIsInOpenSetMapIndices(pf, neighbour))
 			{
 				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 )
 				{
-					AddClosedSetLeaf(neighbour);
+					AddClosedSetLeaf(pf, neighbour);
 				}
 				else
 				{
@@ -356,18 +356,18 @@ void AnalyzeMapNode(int32_t map_index, int32_t accumulated_g_score, ivec2 goal_h
 					}
 					else
 					{
-						f_score = pathfind_weight_g * (float)g_score + pathfind_weight_h * (float)h_score;
+						f_score = pf->pathfind_weight_g * (float)g_score + pf->pathfind_weight_h * (float)h_score;
 					}
-					AddOpenSetLeaf( f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );
-					AddOpenSetMapIndicesLeaf(neighbour);
+					AddOpenSetLeaf( pf, f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );
+					AddOpenSetMapIndicesLeaf(pf, neighbour);
 				}
 			}
 		}
 	}
-	AddClosedSetLeaf(map_index);
+	AddClosedSetLeaf(pf, map_index);
 }
 
-void AnalyzeMapNodeForReachableNodes(int32_t map_index, int32_t accumulated_g_score, int available_movement_points)
+void AnalyzeMapNodeForReachableNodes(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, int available_movement_points)
 {
 	int32_t g_score;
 	int32_t neighbour;
@@ -377,11 +377,11 @@ void AnalyzeMapNodeForReachableNodes(int32_t map_index, int32_t accumulated_g_sc
 		if ( map_nodes[ map_index ].edge[i] != -1 )
 		{
 			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
-			if (!MapIndexIsInClosedSet(neighbour) && !MapIndexIsInOpenSetMapIndices(neighbour))
+			if (!MapIndexIsInClosedSet(pf, neighbour) && !MapIndexIsInOpenSetMapIndices(pf, neighbour))
 			{
 				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 )
 				{
-					AddClosedSetLeaf(neighbour);
+					AddClosedSetLeaf(pf, neighbour);
 				}
 				else
 				{
@@ -389,20 +389,38 @@ void AnalyzeMapNodeForReachableNodes(int32_t map_index, int32_t accumulated_g_sc
 
 					if (g_score > available_movement_points)
 					{
-						AddClosedSetLeaf(neighbour);
+						AddClosedSetLeaf(pf, neighbour);
 					}
 					else
 					{
 						float f_score = (float)g_score;
-						AddOpenSetLeaf( f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );
-						AddOpenSetMapIndicesLeaf(neighbour);
+						AddOpenSetLeaf( pf, f_score, g_score, neighbour, map_nodes[ map_index ].edge[i] );
+						AddOpenSetMapIndicesLeaf( pf, neighbour);
 					}
 				}
 			}
 		}
 	}
-	AddClosedSetLeaf(map_index);
+	AddClosedSetLeaf( pf, map_index);
 }
+
+void ZeroPathfinderCounters(Pathfinder *pf)
+{
+	pf->open_set_write_head = 0;
+	pf->open_set_root_index = 0;
+	pf->open_set_count = 0;
+
+	pf->open_set_map_indices_write_head = 0;
+	pf->open_set_map_indices_root_index = 0;
+	pf->open_set_map_indices_count = 0;
+
+	pf->closed_set_write_head = 0;
+	pf->closed_set_root_index = 0;
+	pf->closed_set_count = 0;
+
+	pf->number_of_nodes_that_were_in_open_set_debug = 0;
+}
+
 /*
 uint64_t starting1 = SDL_GetPerformanceCounter();
 uint64_t stopping1 = SDL_GetPerformanceCounter();
@@ -414,47 +432,42 @@ printf("This took %.04g\n", calculating1*1000.0);
 // 1. start from start node
 // 2. add nodes to open set and analyze
 // 3. if accumulated_g_score is higher than available movement points, throw node in closed set
-// 4. continue until open set
+// 4. continue until open set is empty
 // 5. return value all the nodes that were in open set (this could be array of int32_t and its size)
-// 6.
 
-int32_t FindReachableNodes(int32_t start, int available_movement_points)
+int32_t FindReachableNodes(Pathfinder *pf, int32_t start, int available_movement_points)
 {
 	int32_t reachable_nodes_count = 0;
 
-	number_of_nodes_that_were_in_open_set_debug = 0;
-	open_set_map_indices_count = 0;
-	open_set_map_indices_write_head = 0;
-	open_set_map_indices_root_index = 0;
-	open_set_write_head = 0;
-	open_set_root_index = 0;
-	open_set_count = 0;
-	closed_set_write_head = 0;
-	closed_set_root_index = 0;
-	closed_set_count = 0;
-	path_edges_size = 0;
+	ZeroPathfinderCounters(pf);
 
 	int32_t g_score = 0;
 	float f_score = 0.0f;
 
-	AddOpenSetLeaf( f_score, g_score, start, -1 );
-	AddOpenSetMapIndicesLeaf(start);
+	AddOpenSetLeaf( pf, f_score, g_score, start, -1 );
+	AddOpenSetMapIndicesLeaf( pf, start);
 
-	while (!OpenSetIsEmpty())
+	while (!OpenSetIsEmpty(pf))
 	{
 		int32_t map_index;
 		int32_t accumulated_g_score;
 		int32_t came_along_edge;
 
-		PullMapIndexWithLowestFScoreFromOpenSet(&map_index, &accumulated_g_score, &came_along_edge);
+		PullMapIndexWithLowestFScoreFromOpenSet( pf, &map_index, &accumulated_g_score, &came_along_edge);
 		came_along_edges[map_index] = came_along_edge;
-		AnalyzeMapNodeForReachableNodes(map_index, accumulated_g_score, available_movement_points);
+		AnalyzeMapNodeForReachableNodes( pf, map_index, accumulated_g_score, available_movement_points);
 	}
 
+	for (int i = 0; i < pf->number_of_nodes_that_were_in_open_set_debug; i++)
+	{
+		reachable_nodes[i] = pf->nodes_that_were_in_open_set_debug[i];
+	}
+
+	reachable_nodes_number = pf->number_of_nodes_that_were_in_open_set_debug;
 	return reachable_nodes_count;
 }
 
-uint32_t ReconstructPath(int32_t start, int32_t goal)
+uint32_t ReconstructPath(Pathfinder *pf, int32_t start, int32_t goal)
 {
 	int path_size = 0;
 	int n = 0;
@@ -474,7 +487,7 @@ uint32_t ReconstructPath(int32_t start, int32_t goal)
 	return path_size;
 }
 
-int32_t FindPath(int32_t start, int32_t goal)
+int32_t FindPath(Pathfinder *pf, int32_t start, int32_t goal)
 {
 	if (goal < 0)
 	{
@@ -495,49 +508,37 @@ int32_t FindPath(int32_t start, int32_t goal)
 
 	uint64_t initiating_pathfinding = SDL_GetPerformanceCounter();
 
-	number_of_nodes_that_were_in_open_set_debug = 0;
-
-	open_set_map_indices_count = 0;
-	open_set_map_indices_write_head = 0;
-	open_set_map_indices_root_index = 0;
-
-	open_set_write_head = 0;
-	open_set_root_index = 0;
-	open_set_count = 0;
-	closed_set_write_head = 0;
-	closed_set_root_index = 0;
-	closed_set_count = 0;
-	path_edges_size = 0;
+	ZeroPathfinderCounters(pf);
 
 	ivec2 start_hex = { map_nodes[start].x, map_nodes[start].y };
 	ivec2 goal_hex = { map_nodes[goal].x, map_nodes[goal].y };
 
 	int32_t h_score = CalculateHexDistance(start_hex, goal_hex);
 	int32_t g_score = 0;
-	float f_score = (float)g_score + pathfind_weight_h * (float) h_score;
+	float f_score = (float)g_score + pf->pathfind_weight_h * (float) h_score;
 
 	bool goal_found = false;
 	int32_t temp_score = 1337;
 
-	AddOpenSetLeaf( f_score, g_score, start, -1 );
-	AddOpenSetMapIndicesLeaf(start);
+	AddOpenSetLeaf( pf, f_score, g_score, start, -1 );
+	AddOpenSetMapIndicesLeaf( pf, start);
 
-	while (!goal_found && !OpenSetIsEmpty())
+	while (!goal_found && !OpenSetIsEmpty(pf))
 	{
 		int32_t map_index;
 		int32_t accumulated_g_score;
 		int32_t came_along_edge;
-		PullMapIndexWithLowestFScoreFromOpenSet(&map_index, &accumulated_g_score, &came_along_edge);
+		PullMapIndexWithLowestFScoreFromOpenSet(pf, &map_index, &accumulated_g_score, &came_along_edge);
 
 		came_along_edges[map_index] = came_along_edge;
 		if ( map_index == goal )
 		{
 			goal_found = true;
-			path_edges_size = ReconstructPath(start, goal);
+			path_edges_size = ReconstructPath(pf, start, goal);
 			temp_score = accumulated_g_score;
 			break;
 		}
-		AnalyzeMapNode(map_index, accumulated_g_score, goal_hex);
+		AnalyzeMapNode(pf, map_index, accumulated_g_score, goal_hex);
 	}
 
 	uint64_t pathfinding_completed = SDL_GetPerformanceCounter();
@@ -545,4 +546,18 @@ int32_t FindPath(int32_t start, int32_t goal)
 	snprintf(dumb_debug_string, 256, "Path found in %.04g milliseconds.\n", pathfinding_time*1000.0);
 
 	return temp_score;
+}
+
+void InitPathfinder(Pathfinder *pf)
+{
+	pf->pathfind_weight_h = 1.5f;
+	pf->pathfind_weight_g = 1.0f;
+
+	ZeroPathfinderCounters(pf);
+
+	pf->open_set = (ThickLeaf*)malloc( sizeof(ThickLeaf) * OPEN_SET_MAX_SIZE );
+	pf->open_set_map_indices = (SlimLeaf*)malloc( sizeof(SlimLeaf) * OPEN_SET_MAX_SIZE );
+	pf->closed_set = (SlimLeaf*)malloc( sizeof(SlimLeaf) * OPEN_SET_MAX_SIZE );
+	// pf->came_along_edges = (int32_t*)malloc( sizeof(int32_t) * OPEN_SET_MAX_SIZE );
+	pf->nodes_that_were_in_open_set_debug = (int32_t*)malloc(sizeof(int32_t) * OPEN_SET_MAX_SIZE);
 }

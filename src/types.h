@@ -12,6 +12,40 @@ typedef union vec2
 	};
 } vec2;
 
+typedef union vec3
+{
+	struct
+	{
+		float x;
+		float y;
+		float z;
+	};
+	struct
+	{
+		float r;
+		float g;
+		float b;
+	};
+} vec3;
+
+typedef union vec4
+{
+	struct
+	{
+		float x;
+		float y;
+		float z;
+		float w;
+	};
+	struct
+	{
+		float r;
+		float g;
+		float b;
+		float a;
+	};
+} vec4;
+
 typedef struct ivec2
 {
 	int32_t x;
@@ -139,7 +173,7 @@ typedef struct MapEdge
 	// TerrainWalkability terrain;
 } MapEdge;
 
-typedef struct OpenSetLeaf
+typedef struct ThickLeaf
 {
 	int32_t parent = -2; // parent -1 is root
 	int32_t left_child = -2; // index in open_set data structure
@@ -149,19 +183,46 @@ typedef struct OpenSetLeaf
 	float f_score = -2.0f; //g_score + h_score; // this is the key actually.
 	int32_t map_index = -2; // index to map_nodes array
 	int32_t came_along_edge = -2;
-} OpenSetLeaf;
+} ThickLeaf;
 // needs quick peek, removal and insertion
 // insertion moves write pointer forward
 // removal invalidates data, but doesn't move remaining data around
 // if root is removed, root pointer is shifted to old root's right child
 // root won't need removal if it has any remaining left children
 
-typedef struct ClosedSetLeaf
+typedef struct SlimLeaf
 {
 	int32_t parent = -2;
 	int32_t left_child = -2;
 	int32_t right_child = -2;
 	int32_t map_index = -2; // key
-} ClosedSetLeaf;
+} SlimLeaf;
 // closed set needs quick peeks and quick insertions
 // no individual removals from closed set, just clean wipes
+
+typedef struct Pathfinder
+{
+	int32_t open_set_write_head = 0;
+	int32_t open_set_root_index = 0;
+	int32_t open_set_count = 0;
+
+	int32_t open_set_map_indices_write_head = 0;
+	int32_t open_set_map_indices_root_index = 0;
+	int32_t open_set_map_indices_count = 0;
+
+	int32_t closed_set_write_head = 0;
+	int32_t closed_set_root_index = 0;
+	int32_t closed_set_count = 0;
+
+	float pathfind_weight_h = 1.5f;
+	float pathfind_weight_g = 1.0f;
+
+	ThickLeaf *open_set;
+	SlimLeaf *open_set_map_indices;
+	SlimLeaf *closed_set;
+
+	// int32_t *came_along_edges;
+
+	int32_t *nodes_that_were_in_open_set_debug;
+	int32_t number_of_nodes_that_were_in_open_set_debug;
+} Pathfinder;

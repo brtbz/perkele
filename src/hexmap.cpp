@@ -33,7 +33,7 @@ void DrawHexes()
 	glBindVertexArray(0);
 }
 
-void DrawHexDebugOverlay()
+void DrawHexDebugOverlay(vec3 overlay_color)
 {
 	glBindVertexArray(hex_debug_overlay_vao);
 	glUseProgram(hex_debug_overlay_sp);
@@ -58,7 +58,10 @@ void DrawHexDebugOverlay()
 	GLint uloc_time = glGetUniformLocation( hex_debug_overlay_sp, "time");
 	glUniform1i(uloc_time, master_timer);
 
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, number_of_nodes_that_were_in_open_set_debug );
+	GLint uloc_overlay_color = glGetUniformLocation( hex_debug_overlay_sp, "overlay_color" );
+	glUniform3f(uloc_overlay_color, overlay_color.r, overlay_color.g, overlay_color.b );
+
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, pathfinder->number_of_nodes_that_were_in_open_set_debug );
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
@@ -117,7 +120,14 @@ void UpdateHexMapBuffers()
 void UpdateHexMapBuffersForDebugOverlay()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, hex_indices_debug_overlay_buffer);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, number_of_nodes_that_were_in_open_set_debug * sizeof(int32_t), (const GLvoid*)&nodes_that_were_in_open_set_debug[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, pathfinder->number_of_nodes_that_were_in_open_set_debug * sizeof(int32_t), (const GLvoid*)&(pathfinder->nodes_that_were_in_open_set_debug[0]));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void UpdateHexMapBuffersForReachableNodesOverlay()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, hex_indices_debug_overlay_buffer);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, reachable_nodes_number * sizeof(int32_t), (const GLvoid*)&reachable_nodes[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

@@ -30,9 +30,43 @@ void DrawArmies(int32_t count)
 	glBindVertexArray(0);
 }
 
-void DrawMovingArmy(int32_t a)
+void DrawMovingArmy(int32_t a, int32_t start_hex, int32_t end_hex, float transition, int32_t base_sprite)
 {
+	glBindVertexArray(moving_army_vao);
+	glUseProgram(moving_army_sp);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, army_texture);
 
+	GLint input_texture_loc = glGetUniformLocation( moving_army_sp, "input_texture" );
+	glUniform1i( input_texture_loc, 0 );
+
+	GLint sprite_sheet_size_loc = glGetUniformLocation( moving_army_sp, "sprite_sheet_size" );
+	glUniform2f( sprite_sheet_size_loc, 2048.0f, 1536.0f );
+
+	GLint screen_size_loc = glGetUniformLocation( moving_army_sp, "screen_size" );
+	glUniform2f( screen_size_loc, viewport_size.x, viewport_size.y );
+
+	GLint camera_loc = glGetUniformLocation( moving_army_sp, "camera" );
+	glUniform4f( camera_loc, camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y );
+
+	GLint map_grid_size_loc = glGetUniformLocation( moving_army_sp, "map_grid_size" );
+	glUniform2i( map_grid_size_loc, map_width, map_height );
+
+	GLint start_hex_loc = glGetUniformLocation( moving_army_sp, "start_hex" );
+	GLint end_hex_loc = glGetUniformLocation( moving_army_sp, "end_hex" );
+	GLint transition_loc = glGetUniformLocation( moving_army_sp, "transition" );
+	GLint base_sprite_loc = glGetUniformLocation( moving_army_sp, "base_sprite" );
+
+	glUniform1i(start_hex_loc, start_hex);
+	glUniform1i(end_hex_loc, end_hex);
+	glUniform1f(transition_loc, transition);
+	glUniform1i(base_sprite_loc, base_sprite);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
+	glBindVertexArray(0);
 }
 
 void InitUnitDataBuffer()
@@ -228,8 +262,10 @@ void ArmyMover(int32_t army, int32_t *path, int32_t path_size, uint32_t allowed_
 {
 	// I guess most of the movement code is handled here in c++. 
 	// glsl is just told: now draw unit between these two hexes with transition being x percent complete
-	// only one unit moves at a time, so I guess there's no point in adding that 'between hexes' capability to the normal unit drawing code
+	// only one unit moves at a time(1), so I guess there's no point in adding that 'between hexes' capability to the normal unit drawing code
 	// when unit starts to move, stop drawing it in normal way, and resume normal operations once it stops.
+	//
+	// 1) but I want glorious WEGO-system! everyone should move at same time! (NOT YET!)
 }
 
 bool HexIsFree(int32_t hex)

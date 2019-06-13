@@ -224,9 +224,13 @@ void Init()
 
 
 	InitFont();
+	pathfinder = (Pathfinder*)malloc(sizeof(Pathfinder));
+	InitPathfinder(pathfinder);
 	InitHexMap();
 	InitArmyStuff();
 	InitNewCamera();
+
+
 
 	ArrangePiecesAroundOnTheBoardJohnImOnlyTesting();
 }

@@ -82,6 +82,10 @@ GLuint moving_army_vao;
 Army test_armies[183];
 
 Army *selected_army = NULL;
+bool army_moving = false; // ignore commands while true
+uint64_t some_movement_timer;
+
+
 
 // HEX MAP
 GLuint hex_sp;
@@ -91,11 +95,15 @@ GLuint hex_map_texture;
 GLuint hex_indices_buffer;
 GLuint hex_terrain_types_buffer;
 
-// miksei nää oo uint8?
 uint32_t map_width = 128;
 uint32_t map_height = map_width;
 uint32_t map_size = map_width * map_height;
-uint32_t *map_data; // this is used to tell OpenGL which kind of hex to draw (Other stuff is in MapNode)
+
+// this is used to tell OpenGL which kind of hex to draw (Other stuff is in MapNode)
+// THESE could be uint8 I guess, won't probably have too many different hex graphics
+// on the other hand, the maps are still small enough that it won't really matter...
+uint32_t *map_data;
+
 int32_t highlighted_hex = -2112;
 
 uint32_t hexes_to_draw_count = 0;
@@ -115,37 +123,27 @@ GLuint edge_texture;
 
 
 
+// PATHFINDER
 #define OPEN_SET_MAX_SIZE 16384
 #define CLOSED_SET_MAX_SIZE OPEN_SET_MAX_SIZE
-OpenSetLeaf open_set[OPEN_SET_MAX_SIZE];
-int32_t open_set_write_head = 0;
-int32_t open_set_root_index = 0;
-int32_t open_set_count = 0;
 
-// key is map_index, quick insert, quick peek, quick removal (maybe not removal)
-ClosedSetLeaf open_set_map_indices[OPEN_SET_MAX_SIZE]; // Need to rename ClosedSetLeaf as it got this new job
-int32_t open_set_map_indices_write_head = 0;
-int32_t open_set_map_indices_root_index = 0;
-int32_t open_set_map_indices_count = 0;
+Pathfinder *pathfinder;
 
-ClosedSetLeaf closed_set[CLOSED_SET_MAX_SIZE];
-int32_t closed_set_write_head = 0;
-int32_t closed_set_root_index = 0;
-int32_t closed_set_count = 0;
 int32_t *came_along_edges; // this a big ARRAY! array index is same as map index, value is edge's index
 int32_t path_edges[512];
 uint32_t path_edges_size = 0;
-float pathfind_weight_h = 1.5f;
-float pathfind_weight_g = 1.0f;
 bool draw_path = false;
-ivec2 current_path = { 0, 0 };
-uint32_t nodes_that_were_in_open_set_debug[OPEN_SET_MAX_SIZE];
-int32_t number_of_nodes_that_were_in_open_set_debug;
+// ivec2 current_path = { 0, 0 };
+
+
+
 GLuint hex_debug_overlay_sp;
 GLuint hex_debug_overlay_vao;
 GLuint hex_debug_overlay_vbo;
 GLuint hex_indices_debug_overlay_buffer;
 bool draw_hex_debug_overlay = true;
+int32_t reachable_nodes[OPEN_SET_MAX_SIZE]; // this is way too big btw.
+int32_t reachable_nodes_number;
 
 Camera camera;
 
