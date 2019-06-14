@@ -242,6 +242,9 @@ void Shutdown()
 	ClearHexMapStuff();
 	TakeDownArmyStuff();
 
+	ShutdownPathfinder(pathfinder);
+	free(pathfinder);
+
 	SDL_CloseAudioDevice(audio_dev);
 
 	SDL_GL_DeleteContext(gl_context);

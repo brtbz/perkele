@@ -561,3 +561,11 @@ void InitPathfinder(Pathfinder *pf)
 	// pf->came_along_edges = (int32_t*)malloc( sizeof(int32_t) * OPEN_SET_MAX_SIZE );
 	pf->nodes_that_were_in_open_set_debug = (int32_t*)malloc(sizeof(int32_t) * OPEN_SET_MAX_SIZE);
 }
+
+void ShutdownPathfinder(Pathfinder *pf)
+{
+	free(pf->open_set);
+	free(pf->open_set_map_indices);
+	free(pf->closed_set);
+	free(pf->nodes_that_were_in_open_set_debug);
+}

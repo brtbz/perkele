@@ -279,6 +279,8 @@ void Step(double delta)
 	static ivec2 hex_two = { 51, 23 };
 	static int32_t hex_distance_result = 0;
 	static int32_t some_temp_low_score = 0;
+
+	if (show_debug_ui)
 	{
 		ImGui::Begin("Hex Distance");
 		ImGui::InputInt2("hex one", (int*)&hex_one);
@@ -287,7 +289,7 @@ void Step(double delta)
 		//ImGui::Text("hex distance result: %d", hex_distance_result);
 		if ( ImGui::Button("Find Path") ) { some_temp_low_score = FindPath( pathfinder, hex_one.y * map_width + hex_one.x, hex_two.y * map_width + hex_two.x); draw_path = true; }
 		ImGui::Text("Some temp low score %d", some_temp_low_score);
-		// ImGui::InputFloat("H weight", &(pathfinder->pathfind_weight_h) ); ImGui::SameLine();
+		ImGui::InputFloat("H weight", &(pathfinder->pathfind_weight_h) ); ImGui::SameLine();
 		ShowHelpMarker("Heuristic weight for pathfind algorithm.");
 
 		ImGui::End();
