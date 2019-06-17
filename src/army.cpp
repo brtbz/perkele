@@ -90,6 +90,10 @@ void UpdateUnitDataBuffer()
 			0,//test_divisions[i].unit_type,
 			0,//test_divisions[i].unit_size
 		};
+		if (test_armies[i].draw == false)
+		{
+			unit_datum.y = 0;
+		}
 
 		unit_data[i] = unit_datum;
 	}
@@ -258,7 +262,8 @@ void MoveArmyToNewHex(int32_t army, int32_t hex)
 	map_nodes[ test_armies[army].position_hex ].occupier = army;
 }
 
-void ArmyMover(int32_t army, int32_t *path, int32_t path_size, uint32_t allowed_time)
+//void ArmyMover(int32_t army, int32_t *path, int32_t path_size, uint32_t allowed_time)
+void ArmyMover(int32_t army, int32_t start, int32_t end)
 {
 	// I guess most of the movement code is handled here in c++. 
 	// glsl is just told: now draw unit between these two hexes with transition being x percent complete
@@ -266,6 +271,38 @@ void ArmyMover(int32_t army, int32_t *path, int32_t path_size, uint32_t allowed_
 	// when unit starts to move, stop drawing it in normal way, and resume normal operations once it stops.
 	//
 	// 1) but I want glorious WEGO-system! everyone should move at same time! (NOT YET!)
+	moving_army = army;
+	test_armies[army].draw = false;
+	army_moving = true;
+	movement_starts = master_timer;
+	path_position = path_edges_size;
+	prev_hex = start;
+	moving_to_hex = map_edges[ path_edges[path_position] ].end_node_index;
+}
+
+void ArmyMoverEnd(int32_t army)
+{
+	movement_timer = master_timer;
+	if ( movement_starts + ms_per_hex < movement_timer )
+	{
+		path_position--;
+
+		if (path_position < 0)
+		{
+			//end
+			army_moving = false;
+			test_armies[army].draw = true;
+
+			MoveArmyToNewHex(army, current_path.y);
+			unit_data_buffer_needs_update = true;			
+		}
+		else
+		{
+			movement_starts = master_timer;
+			prev_hex = moving_to_hex;
+			moving_to_hex = map_edges[ path_edges[path_position] ].end_node_index;
+		}
+	}
 }
 
 bool HexIsFree(int32_t hex)
@@ -300,6 +337,7 @@ void InitArmyStuff()
 		test_armies[i].hits_max = 10;
 		test_armies[i].hits_current = 10;
 		test_armies[i].strength = 12;
+		test_armies[i].draw = true;
 		RandomName(&test_armies[i]);
 	}
 }

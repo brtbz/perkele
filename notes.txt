@@ -3,12 +3,18 @@ imgui can behave weirdly in windowed mode. there's some additional yoffset for m
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
 
 TODO: (in rough order of importance)
-animate unit movement
-zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
-edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
-pack path arrows into single draw call
-build files for windows (VC++2015 /w build.bat)
+clean up animation code a bit (timers end node start indices army moving moving army arming move)
+two or more factions for armies
+animation for attack (just a small bump against the attacked unit)
+death animation and sound! (just disappear)
+some kind of basic scenario with dozen or so units
+more complex combat mechanics
+zones of control for units
 fog or war
+edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
+build files for windows (VC++2015 /w build.bat)
+zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
+pack path arrows into single draw call
 loader for shader code should handle wrong filenames better (now it seems to just segfault)
 
 
@@ -38,7 +44,6 @@ enemies block movement, friends can pass each other, but not stop at same hex
 one unit per hex
 one move, one attack per turn. either one can be first. can't postpone second action, it must be taken immediately after.
 
-zone of controls?
 camera could use a rewrite
 
 xeen's palette is quite pretty actually, could use that more if I bother with the graphics (background bmp has the palette atm)

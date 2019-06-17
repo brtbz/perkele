@@ -145,15 +145,10 @@ void Step(double delta)
 	mouse_pos_map.y = ( (float)mouse_pos_screen.y * zoom_level + camera.Min().y );
 	highlighted_hex = GetMouseOveredHex(mouse_pos_map);
 
-	if (ui_hovered) { io.ConfigFlags ^= ImGuiConfigFlags_NoMouseCursorChange; }
-	else
-	{
-		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
-		SDL_SetCursor(cursor_arrow_bmp);
-		// if (map_nodes[highlighted_hex].occupier != -1) { SDL_SetCursor(cursor_swords_bmp); }
-		// else if ( selected_army != NULL ) { SDL_SetCursor(cursor_walk_bmp); }
-		// else { SDL_SetCursor(cursor_arrow_bmp);	}
-	}
+	int custom_cursor_should_be = 0;
+	// 0 arrow, 1 swords 
+	// Use SDL_SetCursor only once per frame to avoid flickering 
+	// (TODO?) keep track of current value and use SDL_SetCursor only when it changes?
 
 	HexesWithinCameraBounds();
 
@@ -162,76 +157,98 @@ void Step(double delta)
 		UpdateUnitDataBuffer();
 	}
 
-	if ( left_clicked && selected_army != NULL )
+	if (army_moving)
 	{
-		if (HexIsFree(highlighted_hex))
-		{
-			//selected_army->position_hex = highlighted_hex;
-			MoveArmyToNewHex( selected_army->index, highlighted_hex );
-			PlaySfx(SFX_UNIT_MOVE);
-			selected_army = NULL;
-			unit_data_buffer_needs_update = true;
-			path_edges_size = 0;
-			draw_path = false;
-		}
-		else if ( HexesAreNeighbours( selected_army->position_hex, highlighted_hex) )
-		{
-			Attack( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
-			PlaySfx(SFX_GOBLIN_ROAR);
-			selected_army = NULL;
-			unit_data_buffer_needs_update = true;
-			path_edges_size = 0;
-			draw_path = false;
-		}
-	}
-	else if ( left_clicked && selected_army == NULL )
-	{
-		for (int i = 0; i < 183; i++)
-		{
-			if ( test_armies[i].position_hex == highlighted_hex )
-			{
-				selected_army = &test_armies[i];
-				PlaySfx(SFX_UI_CLICK_A);
-			}
-		}
+		ArmyMoverEnd(moving_army);
 	}
 
-	if ( selected_army != NULL )
+	if (!army_moving) // disable UI while moving unit around the map. is that overkill?
 	{
-		if ( selected_army->position_hex == highlighted_hex)
+		if ( left_clicked && selected_army != NULL )
 		{
-			FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement_points_current);
-			draw_path = true;
-		}
-#if 0		
-		if ( selected_army->position_hex != highlighted_hex)
-		{
-			if ( current_path.x != selected_army->position_hex || current_path.y != highlighted_hex )
+			if (HexIsFree(highlighted_hex))
 			{
-				if ( FindPath(selected_army->position_hex, highlighted_hex) < 0 )
-				{
-					draw_path = false;
-				}
-				else
-				{
-					draw_path = true;
-				}
-				current_path.x = selected_army->position_hex;
-				current_path.y = highlighted_hex;
+				//selected_army->position_hex = highlighted_hex;
+				//MoveArmyToNewHex( selected_army->index, highlighted_hex );
+				ArmyMover(selected_army->index, selected_army->position_hex, highlighted_hex);
+				PlaySfx(SFX_UNIT_MOVE);
+				selected_army = NULL;
+				unit_data_buffer_needs_update = true;
+				path_edges_size = 0;
+				draw_path = false;
+			}
+			else if ( HexesAreNeighbours( selected_army->position_hex, highlighted_hex) )
+			{
+				Attack( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
+				PlaySfx(SFX_GOBLIN_ROAR);
+				selected_army = NULL;
+				unit_data_buffer_needs_update = true;
+				path_edges_size = 0;
+				draw_path = false;
 			}
 		}
+		else if ( left_clicked && selected_army == NULL )
+		{
+			for (int i = 0; i < 183; i++)
+			{
+				if ( test_armies[i].position_hex == highlighted_hex )
+				{
+					selected_army = &test_armies[i];
+					PlaySfx(SFX_UI_CLICK_A);
+				}
+			}
+		}
+
+		if ( selected_army != NULL )
+		{
+#if 0
+			if ( selected_army->position_hex == highlighted_hex)
+			{
+				FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement_points_current);
+				draw_path = true;
+			}
 #endif
-	}
-
-	if (selected_army != NULL)
-	{
-		if ( HexesAreNeighbours( selected_army->position_hex, highlighted_hex) )
-		{
-			if ( !HexIsFree(highlighted_hex) )
+#if 1		
+			if ( selected_army->position_hex != highlighted_hex)
 			{
-				SDL_SetCursor(cursor_swords_bmp);
+				if ( current_path.x != selected_army->position_hex || current_path.y != highlighted_hex )
+				{
+					if ( FindPath(pathfinder, selected_army->position_hex, highlighted_hex) < 0 )
+					{
+						draw_path = false;
+					}
+					else
+					{
+						draw_path = true;
+					}
+					current_path.x = selected_army->position_hex;
+					current_path.y = highlighted_hex;
+				}
+			}
+#endif
+		}
+
+		if (selected_army != NULL)
+		{
+			if ( HexesAreNeighbours( selected_army->position_hex, highlighted_hex) )
+			{
+				if ( !HexIsFree(highlighted_hex) )
+				{
+					//SDL_SetCursor(cursor_swords_bmp);
+					custom_cursor_should_be = 1;
+				}
 			}
 		}
+	}
+
+	if (ui_hovered) { io.ConfigFlags ^= ImGuiConfigFlags_NoMouseCursorChange; }
+	else
+	{
+		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+		if ( custom_cursor_should_be == 0)
+		{ SDL_SetCursor(cursor_arrow_bmp); }
+		else
+		{ SDL_SetCursor(cursor_swords_bmp); }
 	}
 
 
@@ -267,6 +284,7 @@ void Step(double delta)
 		ImGui::Text("Strength: %d", selected_army->strength);
 		ImGui::Text("Moves: %d / %d", selected_army->movement_points_current, selected_army->movement_points_max);
 		ImGui::Text("Hits:  %d / %d", selected_army->hits_current, selected_army->hits_max);
+		ImGui::Text("Position %d", selected_army->position_hex);
 		ImGui::Separator();
 		ImGui::Text("Base sprite: %d", selected_army->base_sprite);
 		ImGui::InputInt("change", (int*)&(selected_army->base_sprite) );
@@ -385,6 +403,8 @@ void Step(double delta)
 			ImGui::Text("open_set_count: %d", pathfinder->open_set_count);
 			ImGui::Text("closed_set_count: %d", pathfinder->closed_set_count);
 			ImGui::Separator();
+			ImGui::Text("Current Path %d %d", current_path.x, current_path.y);
+			ImGui::Text("Path_edges_size %u", path_edges_size);
 
 			ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
 			ImGui::SameLine();
@@ -507,18 +527,24 @@ void Step(double delta)
 		}
 		if (draw_hex_debug_overlay)
 		{
-			vec3 overlay_color = { 1.0f, 0.5f, 1.0f };
-			//UpdateHexMapBuffersForDebugOverlay();
+			vec3 overlay_color = { 1.0f, 1.0f, 1.0f };
+			UpdateHexMapBuffersForDebugOverlay();
 
-			UpdateHexMapBuffersForReachableNodesOverlay();
+			//UpdateHexMapBuffersForReachableNodesOverlay();
 			DrawHexDebugOverlay(overlay_color);
 		}
-		
 	}
 
 	glEnable(GL_DEPTH_TEST);
 	DrawArmies(unit_data_count);
 	glDisable(GL_DEPTH_TEST);
+	if (army_moving)
+	{
+		float transition = (float)(movement_timer - movement_starts) / (float)ms_per_hex;
+		DrawMovingArmy(moving_army, prev_hex, moving_to_hex, transition, test_armies[moving_army].base_sprite );
+	}
+
+	
 
 	
 

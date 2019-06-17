@@ -131,6 +131,7 @@ typedef struct Army
 	int16_t hits_max;
 	int16_t hits_current;
 	int16_t strength;
+	bool draw;
 	char name[32];
 } Army;
 

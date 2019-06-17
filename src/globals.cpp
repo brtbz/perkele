@@ -83,7 +83,13 @@ Army test_armies[183];
 
 Army *selected_army = NULL;
 bool army_moving = false; // ignore commands while true
-uint64_t some_movement_timer;
+uint32_t movement_starts;
+uint32_t movement_timer;
+uint32_t ms_per_hex = 20;
+int32_t moving_army = 0;
+int32_t moving_to_hex = -1;
+int32_t prev_hex = -1;
+int32_t path_position = -1;
 
 
 
@@ -133,7 +139,7 @@ int32_t *came_along_edges; // this a big ARRAY! array index is same as map index
 int32_t path_edges[512];
 uint32_t path_edges_size = 0;
 bool draw_path = false;
-// ivec2 current_path = { 0, 0 };
+ivec2 current_path = { 0, 0 };
 
 
 
