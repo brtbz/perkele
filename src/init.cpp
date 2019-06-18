@@ -223,7 +223,7 @@ void Init()
 
 
 
-	InitFont();
+	//InitFont();
 	pathfinder = (Pathfinder*)malloc(sizeof(Pathfinder));
 	InitPathfinder(pathfinder);
 	InitHexMap();
