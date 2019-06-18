@@ -541,6 +541,13 @@ int32_t FindPath(Pathfinder *pf, int32_t start, int32_t goal)
 		AnalyzeMapNode(pf, map_index, accumulated_g_score, goal_hex);
 	}
 
+	analyzed_nodes_number = 0;
+	for (int i = 0; i < pf->number_of_nodes_that_were_in_open_set_debug; i++)
+	{
+		analyzed_nodes[i] = pf->nodes_that_were_in_open_set_debug[i];
+		analyzed_nodes_number++;
+	}
+
 	uint64_t pathfinding_completed = SDL_GetPerformanceCounter();
 	double pathfinding_time = (double)(pathfinding_completed - initiating_pathfinding) / (double)perf_freq;
 	snprintf(dumb_debug_string, 256, "Path found in %.04g milliseconds.\n", pathfinding_time*1000.0);
@@ -548,9 +555,18 @@ int32_t FindPath(Pathfinder *pf, int32_t start, int32_t goal)
 	return temp_score;
 }
 
+void ClearPaths(Pathfinder *pf)
+{
+	ZeroPathfinderCounters(pf);
+	path_edges_size = -0;
+	draw_path = false;
+	reachable_nodes_number = 0;
+	analyzed_nodes_number = 0;
+}
+
 void InitPathfinder(Pathfinder *pf)
 {
-	pf->pathfind_weight_h = 1.5f;
+	pf->pathfind_weight_h = 0.99f;
 	pf->pathfind_weight_g = 1.0f;
 
 	ZeroPathfinderCounters(pf);

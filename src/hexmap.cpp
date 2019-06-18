@@ -33,7 +33,7 @@ void DrawHexes()
 	glBindVertexArray(0);
 }
 
-void DrawHexDebugOverlay(vec3 overlay_color)
+void DrawHexDebugOverlay(vec3 overlay_color, int number)
 {
 	glBindVertexArray(hex_debug_overlay_vao);
 	glUseProgram(hex_debug_overlay_sp);
@@ -61,7 +61,7 @@ void DrawHexDebugOverlay(vec3 overlay_color)
 	GLint uloc_overlay_color = glGetUniformLocation( hex_debug_overlay_sp, "overlay_color" );
 	glUniform3f(uloc_overlay_color, overlay_color.r, overlay_color.g, overlay_color.b );
 
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, pathfinder->number_of_nodes_that_were_in_open_set_debug );
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, number );
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
@@ -120,7 +120,7 @@ void UpdateHexMapBuffers()
 void UpdateHexMapBuffersForDebugOverlay()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, hex_indices_debug_overlay_buffer);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, pathfinder->number_of_nodes_that_were_in_open_set_debug * sizeof(int32_t), (const GLvoid*)&(pathfinder->nodes_that_were_in_open_set_debug[0]));
+	glBufferSubData(GL_ARRAY_BUFFER, 0, analyzed_nodes_number * sizeof(int32_t), (const GLvoid*)&analyzed_nodes[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -465,27 +465,6 @@ void LoadHexMapStuff()
 	}
 }
 
-
-#if 0
-int32_t GetRandomTerrain()
-{
-	// int32_t roll = rand() % 1000;
-	int32_t roll = MWC%1000;
-	int32_t terrain = 0;
-	if ( roll < 200 ) { terrain = 1; }
-	else if ( roll < 400 ) { terrain = 2; }
-	else if ( roll < 600 ) { terrain = 8; }
-	else if ( roll < 690 ) { terrain = 0; }
-	else if ( roll < 780 ) { terrain = 5; }
-	else if ( roll < 870 ) { terrain = 6; }
-	else if ( roll < 995 ) { terrain = 7; }
-	else if ( roll < 997 ) { terrain = 3; }
-	else if ( roll < 1000 ) {terrain = 4; }
-
-	return terrain;
-}
-#else
-
 int LoadMapTerrainFromCSV(const char* file_path, int expected_map_size, uint32_t* map_data_ptr)
 {
 	// OPTIONAL TODO: separate program that converts csv to something more tighter
@@ -629,7 +608,6 @@ int32_t GetRandomTerrain()
 	// return MWC % 120;
 	return MWC % 7;
 }
-#endif
 
 void InitMapNodes()
 {

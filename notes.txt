@@ -4,6 +4,9 @@ FIXED TEMPORARILY program seems to freeze if sound effect is playing, while tryi
 
 TODO: (in rough order of importance)
 clean up animation code a bit (timers end node start indices army moving moving army arming move)
+end turn button!
+units can move and attack once per turn
+some kind of overlay that shows units' remaining hitpoints
 two or more factions for armies
 animation for attack (just a small bump against the attacked unit)
 death animation and sound! (just disappear)
@@ -11,6 +14,7 @@ some kind of basic scenario with dozen or so units
 more complex combat mechanics
 zones of control for units
 fog or war
+devious and terrifying enemy AI to command armies of goblins all over the map and elsewhere
 edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
 build files for windows (VC++2015 /w build.bat)
 zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer

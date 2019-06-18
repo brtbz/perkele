@@ -150,6 +150,8 @@ GLuint hex_indices_debug_overlay_buffer;
 bool draw_hex_debug_overlay = true;
 int32_t reachable_nodes[OPEN_SET_MAX_SIZE]; // this is way too big btw.
 int32_t reachable_nodes_number;
+int32_t analyzed_nodes[OPEN_SET_MAX_SIZE];
+int32_t analyzed_nodes_number;
 
 Camera camera;
 

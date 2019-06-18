@@ -58,6 +58,7 @@ void Step(double delta)
 	bool zoom_adjusted = false;
 
 	bool left_clicked = false;
+	bool right_clicked = false;
 
 	int ui_hovered = 0;
 	if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) { ui_hovered = 1; }
@@ -104,6 +105,10 @@ void Step(double delta)
 				{
 					left_clicked = true;
 				}
+				else if ( evt.button.button == SDL_BUTTON_RIGHT)
+				{
+					right_clicked = true;
+				}
 			}
 			else if ( evt.type == SDL_MOUSEMOTION )
 			{
@@ -131,7 +136,18 @@ void Step(double delta)
 		if (keyboard_state[SDL_SCANCODE_W] | keyboard_state[SDL_SCANCODE_UP]) { camera_move_y = -1; }
 		if (keyboard_state[SDL_SCANCODE_S] | keyboard_state[SDL_SCANCODE_DOWN]) { camera_move_y = 1; }
 		if (keyboard_state[SDL_SCANCODE_A] | keyboard_state[SDL_SCANCODE_LEFT]) { camera_move_x = -1; }
-		if (keyboard_state[SDL_SCANCODE_D] | keyboard_state[SDL_SCANCODE_RIGHT]) { camera_move_x = 1; }		
+		if (keyboard_state[SDL_SCANCODE_D] | keyboard_state[SDL_SCANCODE_RIGHT]) { camera_move_x = 1; }
+
+		if (keyboard_state[SDL_SCANCODE_E] | keyboard_state[SDL_SCANCODE_HOME])
+		{
+			camera.IncreaseSizeBy(1.0f + (float)delta * -1.2f, mouse_pos_map);
+			zoom_adjusted = true;
+		}
+		if (keyboard_state[SDL_SCANCODE_Q] | keyboard_state[SDL_SCANCODE_END])
+		{
+			camera.IncreaseSizeBy(1.0f + (float)delta * 1.2f, mouse_pos_map);
+			zoom_adjusted = true;
+		}
 	}
 
 	float zoom_level = (float)camera.Size().x / viewport_size.x;
@@ -164,7 +180,13 @@ void Step(double delta)
 
 	if (!army_moving) // disable UI while moving unit around the map. is that overkill?
 	{
-		if ( left_clicked && selected_army != NULL )
+		if ( right_clicked && selected_army != NULL)
+		{
+			selected_army = NULL;
+			draw_path = false;
+			ClearPaths(pathfinder);
+		}
+		else if ( left_clicked && selected_army != NULL )
 		{
 			if (HexIsFree(highlighted_hex))
 			{
@@ -209,6 +231,11 @@ void Step(double delta)
 			}
 #endif
 #if 1		
+			// TODO: don't do this every frame
+			FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement_points_current);
+
+			draw_path = true;
+
 			if ( selected_army->position_hex != highlighted_hex)
 			{
 				if ( current_path.x != selected_army->position_hex || current_path.y != highlighted_hex )
@@ -308,7 +335,7 @@ void Step(double delta)
 		if ( ImGui::Button("Find Path") ) { some_temp_low_score = FindPath( pathfinder, hex_one.y * map_width + hex_one.x, hex_two.y * map_width + hex_two.x); draw_path = true; }
 		ImGui::Text("Some temp low score %d", some_temp_low_score);
 		ImGui::InputFloat("H weight", &(pathfinder->pathfind_weight_h) ); ImGui::SameLine();
-		ShowHelpMarker("Heuristic weight for pathfind algorithm.");
+		ShowHelpMarker("Heuristic weight for pathfind algorithm.\nHigher is faster, lower is more accurate.");
 
 		ImGui::End();
 
@@ -517,21 +544,23 @@ void Step(double delta)
 	glEnable(GL_DEPTH_TEST);
 	DrawHexes();
 	glDisable(GL_DEPTH_TEST);
-	//DrawEdgeAsArrow( map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].direction * 60.0f );
 
 	if (draw_path)
 	{
-		for (int i = 0; i <= path_edges_size; i++)
-		{
-			DrawEdgeAsArrow( map_edges[ path_edges[i] ].start_node_index, map_edges[ path_edges[i] ].end_node_index, map_edges[ path_edges[i] ].direction * 60.0f );
-		}
+		vec3 overlay_color = { 1.0f, 1.0f, 1.0f };
+		UpdateHexMapBuffersForReachableNodesOverlay();
+		DrawHexDebugOverlay(overlay_color, reachable_nodes_number);
+
 		if (draw_hex_debug_overlay)
 		{
-			vec3 overlay_color = { 1.0f, 1.0f, 1.0f };
+			overlay_color = { 1.0f, 0.5f, 1.0f };
 			UpdateHexMapBuffersForDebugOverlay();
+			DrawHexDebugOverlay(overlay_color, analyzed_nodes_number);
 
-			//UpdateHexMapBuffersForReachableNodesOverlay();
-			DrawHexDebugOverlay(overlay_color);
+			for (int i = 0; i <= path_edges_size; i++)
+			{
+				DrawEdgeAsArrow( map_edges[ path_edges[i] ].start_node_index, map_edges[ path_edges[i] ].end_node_index, map_edges[ path_edges[i] ].direction * 60.0f );
+			}			
 		}
 	}
 
