@@ -1,6 +1,7 @@
 BUGStofix:
 imgui can behave weirdly in windowed mode. there's some additional yoffset for mouse input or something. (this is likely about xfce's window manager and SDL2 and some old versions of the two)
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
+custom text rendering disabled while I figure out why Windows doesn't like it
 
 TODO: (in rough order of importance)
 clean up animation code a bit (timers end node start indices army moving moving army arming move)
@@ -16,10 +17,21 @@ zones of control for units
 fog or war
 devious and terrifying enemy AI to command armies of goblins all over the map and elsewhere
 edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
-build files for windows (VC++2015 /w build.bat)
 zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
 pack path arrows into single draw call
 loader for shader code should handle wrong filenames better (now it seems to just segfault)
+
+
+
+building:
+Linux (GCC)
+--build bundled libraries and perkele: 'make all'
+--build only perkele: 'make'
+Windows (MSVC2015):
+--build bundled libraries and perkele: 'build.bat'
+--build only perkele: 'qbuild.bat'
+
+dependencies: usual build stuff and SDL2
 
 
 

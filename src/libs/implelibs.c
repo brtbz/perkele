@@ -10,7 +10,9 @@
 #include "stb_truetype.h"
 
 #define INI_IMPLEMENTATION
-#define INI_STRNICMP( s1, s2, cnt ) ( __builtin_strncasecmp( s1, s2, cnt ) )  
+#ifndef _WIN32
+#define INI_STRNICMP( s1, s2, cnt ) ( __builtin_strncasecmp( s1, s2, cnt ) ) 
+#endif
 #include "ini.h"
 
 

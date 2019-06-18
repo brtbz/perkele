@@ -5,3 +5,9 @@ delagardi.ini
 perkele
 imgui.ini
 perkele.s
+*.exe
+*.exp
+*.lib
+*.dll
+*.EXE
+*.obj

@@ -1,9 +1,10 @@
 #define ASSERTS_ENABLED 1
 
+#include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <time.h>
-
-//#include <emmintrin.h>
 
 #include <SDL.h>
 
@@ -37,9 +38,16 @@ extern "C" {
 #include "loader.cpp"
 #include "loop.cpp"
 
+#ifdef _WIN32
+extern "C" {
+__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+#endif
 
 
-int main()
+
+int main(int argc, char* argv[])
 {
 
 	perf_freq = SDL_GetPerformanceFrequency();

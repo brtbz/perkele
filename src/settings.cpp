@@ -34,6 +34,8 @@ int32_t WriteSettingsToFile(DelagardiSettings settings)
 	fwrite(ini_data, 1, ini_size, fp);
 	fclose(fp);
 	free(ini_data);
+
+	return 0;
 }
 
 void DefaultSettings()
