@@ -240,8 +240,6 @@ int GetMouseOveredHex(vec2 m)
 
 		float ville_len = v2_length(ville_to_mouse);
 		float kalle_len = v2_length(kalle_to_mouse);
-		debug_ville_len = ville_len;
-		debug_kalle_len = kalle_len;
 
 		if ( ville_len <= kalle_len )
 		{

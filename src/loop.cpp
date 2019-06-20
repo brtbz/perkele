@@ -118,7 +118,6 @@ void Step(double delta)
 				}
 			}
 		}
-
 	}
 
 	SDL_GetMouseState( &(mouse_pos_screen.x), &(mouse_pos_screen.y) );
@@ -175,7 +174,7 @@ void Step(double delta)
 
 	if (army_moving)
 	{
-		ArmyMoverEnd(moving_army);
+		AdvanceArmyMoveAnimation(moving_army);
 	}
 
 	if (!army_moving) // disable UI while moving unit around the map. is that overkill?
@@ -190,9 +189,7 @@ void Step(double delta)
 		{
 			if (HexIsFree(highlighted_hex))
 			{
-				//selected_army->position_hex = highlighted_hex;
-				//MoveArmyToNewHex( selected_army->index, highlighted_hex );
-				ArmyMover(selected_army->index, selected_army->position_hex, highlighted_hex);
+				BeginArmyMoveAnimation(selected_army->index, selected_army->position_hex, highlighted_hex);
 				PlaySfx(SFX_UNIT_MOVE);
 				selected_army = NULL;
 				unit_data_buffer_needs_update = true;
@@ -223,14 +220,6 @@ void Step(double delta)
 
 		if ( selected_army != NULL )
 		{
-#if 0
-			if ( selected_army->position_hex == highlighted_hex)
-			{
-				FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement_points_current);
-				draw_path = true;
-			}
-#endif
-#if 1		
 			// TODO: don't do this every frame
 			FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement_points_current);
 
@@ -252,7 +241,6 @@ void Step(double delta)
 					current_path.y = highlighted_hex;
 				}
 			}
-#endif
 		}
 
 		if (selected_army != NULL)
@@ -320,33 +308,11 @@ void Step(double delta)
 		ImGui::End();
 	}
 
-	static ivec2 hex_one = { 40, 35 };
-	static ivec2 hex_two = { 51, 23 };
-	static int32_t hex_distance_result = 0;
-	static int32_t some_temp_low_score = 0;
-
 	if (show_debug_ui)
 	{
-		ImGui::Begin("Hex Distance");
-		ImGui::InputInt2("hex one", (int*)&hex_one);
-		ImGui::InputInt2("hex two", (int*)&hex_two);
-		//if (ImGui::Button("Calculate hex distance")) { hex_distance_result = CalculateHexDistance(hex_one, hex_two); }
-		//ImGui::Text("hex distance result: %d", hex_distance_result);
-		if ( ImGui::Button("Find Path") ) { some_temp_low_score = FindPath( pathfinder, hex_one.y * map_width + hex_one.x, hex_two.y * map_width + hex_two.x); draw_path = true; }
-		ImGui::Text("Some temp low score %d", some_temp_low_score);
-		ImGui::InputFloat("H weight", &(pathfinder->pathfind_weight_h) ); ImGui::SameLine();
-		ShowHelpMarker("Heuristic weight for pathfind algorithm.\nHigher is faster, lower is more accurate.");
-
-		ImGui::End();
-
-	}
-
-	if (show_debug_ui)
-	{
-		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+		// dear imgui feature demo
 		if (show_demo_window) { ImGui::ShowDemoWindow(&show_demo_window); }
 
-		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 		{
 			static float f = 0.0f;
 			static int counter = 0;
@@ -387,16 +353,10 @@ void Step(double delta)
 #endif
 			ImGui::Separator();
 
-			// ImGui::Text("Camera %.2f %.2f %.2f %.2f", camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y);
 			ImGui::Text("zoom_level: %.2f", zoom_level);
 			ImGui::Text("CameraSize %.2f %.2f", camera.Size().x, camera.Size().y);
 			ImGui::Text("CameraOrigo %.2f %.2f", camera.Origo().x, camera.Origo().y);
-/*
-			ImGui::Text("tile column min: %d max: %d", dumb_dbg.tile_column_min, dumb_dbg.tile_column_max);
-			ImGui::Text("tile row min: %d max: %d", dumb_dbg.tile_row_min, dumb_dbg.tile_row_max);
-			ImGui::Text("hexes to draw count %d", hexes_to_draw_count);
-			ImGui::Text("MOUSE: X: %d, Y: %d MAP: X: %.2f Y: %.2f", mouse_pos_screen.x, mouse_pos_screen.y, mouse_pos_map.x, mouse_pos_map.y);
-*/
+
 			ivec2 staggered_hex = { map_nodes[highlighted_hex].x, map_nodes[highlighted_hex].y };
 			ivec2 slanted_hex = StaggeredToSlanted( staggered_hex );
 			ImGui::Text("HIGHLIGHT HEX: %d (Staggered: X%d Y%d Slanted: X%d Y%d)", 
@@ -406,26 +366,15 @@ void Step(double delta)
 				slanted_hex.x,
 				slanted_hex.y);
 			ImGui::Text("island_id: %d", map_nodes[highlighted_hex].pathfind_island_id);
-/*
-			ImGui::Text("MapNode: %d, Neighbors: N: %d NE: %d SE: %d S: %d SW: %d NW: %d", 
-				map_nodes[highlighted_hex].index,
-				map_node_neighbours[highlighted_hex].n_north,
-				map_node_neighbours[highlighted_hex].n_northeast,
-				map_node_neighbours[highlighted_hex].n_southeast,
-				map_node_neighbours[highlighted_hex].n_south,
-				map_node_neighbours[highlighted_hex].n_southwest,
-				map_node_neighbours[highlighted_hex].n_northwest
-				);
-			ImGui::Text("Neighbor # %d", map_node_neighbours[highlighted_hex].n_count);
-*/
 
 			ImGui::Separator();
 			ImGui::Text("%s", dumb_debug_string);
 			ImGui::Text("%s", dumb_debug_string2);
-			//ImGui::Text("kalle len: %f ville len: %f", debug_kalle_len, debug_ville_len);
 
 			ImGui::Separator();
 			ImGui::Checkbox("Pathfind debug overlay", &draw_hex_debug_overlay);
+			ImGui::InputFloat("H weight", &(pathfinder->pathfind_weight_h) ); ImGui::SameLine();
+			ShowHelpMarker("Heuristic weight for pathfind algorithm.\nHigher is faster, lower is more accurate.");
 			ImGui::Text("total in open set: %d", pathfinder->number_of_nodes_that_were_in_open_set_debug);
 			ImGui::Text("open_set_count: %d", pathfinder->open_set_count);
 			ImGui::Text("closed_set_count: %d", pathfinder->closed_set_count);
@@ -437,12 +386,6 @@ void Step(double delta)
 			ImGui::SameLine();
 			if ( ImGui::Button("LOAD MAP") ) { int rc = LoadMapTerrainFromCSV(loadmap_str, map_size, map_data); }
 
-#if 0
-			ImGui::Separator();
-			ImGui::InputInt("edge", &show_edge, 1, 10);
-			ImGui::SameLine();
-			ImGui::Text("start %d end %d cost %d", map_edges[show_edge].start_node_index, map_edges[show_edge].end_node_index, map_edges[show_edge].cost);
-#endif
 			ImGui::End();
 		}
 	}
@@ -521,10 +464,6 @@ void Step(double delta)
 		AddStringToBeDrawn(text_string_loc_x, text_string_loc_y + 64.0f * (float)i, str0, IM_ARRAYSIZE(str0));
 	}
 	
-
-
-
-
 	glClearColor(223.0f/255.0f, 190.0f/255.0f, 138.0f/255.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -573,15 +512,8 @@ void Step(double delta)
 		DrawMovingArmy(moving_army, prev_hex, moving_to_hex, transition, test_armies[moving_army].base_sprite );
 	}
 
-	
-
-	
-
 	DrawStrings();
 
-
-
-	// Rendering
 	ImGui::Render();
 	//SDL_GL_MakeCurrent(window, gl_context); // ???
 	//glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
@@ -589,7 +521,6 @@ void Step(double delta)
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	SDL_GL_SwapWindow(window);
 }
-
 
 void MainLoop()
 {
@@ -603,17 +534,8 @@ void MainLoop()
 		uint64_t this_time_ticks = SDL_GetPerformanceCounter() - program_start_time_ticks;
 		uint64_t delta_ticks = this_time_ticks - last_time_ticks;
 		master_timer = (uint32_t)(1000.0 * ((double)this_time_ticks / (double)perf_freq));
-
-#if 0
-		delta_container[2] = delta_container[1];
-		delta_container[1] = delta_container[0];
-		delta_container[0] = delta_ticks;
-
-		uint64_t delta_average = (delta_container[0] + delta_container[1] + delta_container[2]) / 3;
-		double delta_sec = (double)delta_average / (double)perf_freq;
-#else
 		double delta_sec = (double)delta_ticks / (double)perf_freq;
-#endif
+
 		Step(delta_sec);
 
 		last_time_ticks = this_time_ticks;

@@ -57,20 +57,16 @@ void LoadFontShadersAndInitGLBuffers()
 
 void LoadFontAndBakeBitmap()
 {
-	printf("AARGH\n");
-	//unsigned char ttf_buffer[1<<20];
-	unsigned char ttf_buffer[1048576];
+	unsigned char ttf_buffer[1<<20];
 	//unsigned char temp_bitmap[512*512];
-	printf("AARGH\n");
+
 	const char *file_name = "data/fonts/deutsch.ttf";
-	printf("AARGH\n");
+
 	FILE *fp = fopen(file_name, "rb");
-	printf("AARGH\n");
-	//ASSERT_BARK(fp != NULL, "COULDN*T OPEN FONT FILE");
-	printf("AARGH\n");
-	int bytes_read = fread(ttf_buffer, 1, 1048576, fp);
-	//int bytes_read = fread(ttf_buffer, 1, 1<<20, fp);
-	printf("bytes read: %d\n", bytes_read);
+
+	ASSERT_BARK(fp != NULL, "COULDN*T OPEN FONT FILE");
+	int bytes_read = fread(ttf_buffer, 1, 1<<20, fp);
+	// printf("bytes read: %d\n", bytes_read);
 
 	int bake_rc = stbtt_BakeFontBitmap(ttf_buffer,0, 72.0, temp_bitmap,512,512, 32,96, cdata); // no guarantee this fits!
 	// can free ttf_buffer at this point
@@ -87,7 +83,6 @@ void LoadFontAndBakeBitmap()
 
 void InitFont()
 {
-	printf("AARGH\n");
 	LoadFontAndBakeBitmap();
 	LoadFontShadersAndInitGLBuffers();
 }

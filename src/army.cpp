@@ -262,8 +262,7 @@ void MoveArmyToNewHex(int32_t army, int32_t hex)
 	map_nodes[ test_armies[army].position_hex ].occupier = army;
 }
 
-//void ArmyMover(int32_t army, int32_t *path, int32_t path_size, uint32_t allowed_time)
-void ArmyMover(int32_t army, int32_t start, int32_t end)
+void BeginArmyMoveAnimation(int32_t army, int32_t start, int32_t end)
 {
 	// I guess most of the movement code is handled here in c++. 
 	// glsl is just told: now draw unit between these two hexes with transition being x percent complete
@@ -280,7 +279,7 @@ void ArmyMover(int32_t army, int32_t start, int32_t end)
 	moving_to_hex = map_edges[ path_edges[path_position] ].end_node_index;
 }
 
-void ArmyMoverEnd(int32_t army)
+void AdvanceArmyMoveAnimation(int32_t army)
 {
 	movement_timer = master_timer;
 	if ( movement_starts + ms_per_hex < movement_timer )

@@ -26,6 +26,12 @@ SDL_Window *window;
 const char* glsl_version = "#version 330";
 vec2 viewport_size = {640.0f, 480.0f};
 
+Camera camera;
+
+ivec2 mouse_pos_screen = {1, 1};
+vec2 mouse_pos_map;
+bool mouse_first_move_done = false;
+
 SDL_Cursor *cursor_arrow;
 SDL_Cursor *cursor_swords;
 SDL_Cursor *cursor_swords_bmp;
@@ -57,9 +63,10 @@ GLuint font_custom_buffer;
 float strings_buffer_data[6*LETTER_COUNTER_MAX];
 uint32_t letter_counter = 0;
 
+ImFont *im_font_roboto;
+ImFont *im_font_monofonto;
 
-float debug_ville_len = 0.0f;
-float debug_kalle_len = 0.0f;
+
 
 
 
@@ -139,7 +146,7 @@ int32_t *came_along_edges; // this a big ARRAY! array index is same as map index
 int32_t path_edges[512];
 uint32_t path_edges_size = 0;
 bool draw_path = false;
-ivec2 current_path = { 0, 0 };
+ivec2 current_path = { 0, 0 }; //these are start and end (not x and y)
 
 
 
@@ -153,23 +160,16 @@ int32_t reachable_nodes_number;
 int32_t analyzed_nodes[OPEN_SET_MAX_SIZE];
 int32_t analyzed_nodes_number;
 
-Camera camera;
+
 
 DumbDebugData dumb_dbg;
 char dumb_debug_string[256];
 char dumb_debug_string2[256];
 
-//vec2 mouse_pos_screen;
-ivec2 mouse_pos_screen = {1, 1};
-vec2 mouse_pos_map;
 
-bool mouse_first_move_done = false;
 
+// background image
 IndexedPaletteImage ipi;
 GLuint ipi_sp;
 GLuint ipi_vbo;
 GLuint ipi_vao;
-
-
-ImFont *im_font_roboto;
-ImFont *im_font_monofonto;

@@ -1,3 +1,29 @@
+/*
+Display modes:
+--fake fullscreen (borderless windowed with primary display's current resolution) SDL seems to handle this one best. default perhaps
+--real fullscreen (SDL seems to be unable to switch to other resolutions though it can report them (might be Linux (and Nvidia?) specific disability))
+--windowed (with window decoration). This has some mouse y-offset bug with some versions of SDL and possibly xfce's display manager (LightDM?) (or possibly compositor??)
+  should allow all kinds of resolutions for this one (within reasonable limits) (640x360 7680×4320?)
+List available display resolutions as reported by SDL, but have input boxes where you can enter some arbitrary values for x and y (within limits)
+This list can be quite big (got 109 entries) in some cases and include non-working modes.
+
+How to handle situations where settings file has options that produce black screen? (Tell user to delete the settings file in readme.txt?)
+or have that confirm box with 15 second timer?
+
+Ignore multi-monitor setups for now (just use the primary display)
+
+Audio options:
+sound effects on/off
+music on/off
+master gain
+sfx gain
+music gain
+
+Dev options:
+show debug window
+bypass main menu on startup
+*/
+
 DelagardiSettings GetDefaultSettings()
 {
 	DelagardiSettings settings_default = { 1280, 720, false, false, true };

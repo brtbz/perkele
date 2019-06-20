@@ -7,7 +7,7 @@ out vec2 unit_base_uv;
 
 uniform int start_hex; // location; start hex index and end hex index; start and end are supposed to be neighbours
 uniform int end_hex;
-uniform float transition; // percent of transition complete between start and end hex; 0.0f ... 1.0f
+uniform float transition; // amount of transition completed between start and end hex; 0.0f ... 1.0f
 uniform int base_sprite;
 
 uniform vec2 sprite_sheet_size;
@@ -48,10 +48,7 @@ void main()
 
 	float target_margin = 4.0f;
 	float target_y_offset = 0.0f;
-	vec4 target_position = vec4( target_x + target_margin, target_y + target_margin + target_y_offset, 32.0f - 2.0f * target_margin, 32.0f - 2.0f * target_margin ); // 55.0f, 64.0f
-
-
-
+	vec4 target_position = vec4( target_x + target_margin, target_y + target_margin + target_y_offset, 32.0f - 2.0f * target_margin, 32.0f - 2.0f * target_margin );
 
 
 
@@ -84,8 +81,6 @@ void main()
 	if ( hex_index_start % 2 == 0 ) { z += 0.0000001f; }
 
 	gl_Position = vec4(pos, z, 1.0f);
-
-
 
 
 
