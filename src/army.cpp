@@ -101,8 +101,7 @@ void UpdateUnitDataBuffer()
 	glBindBuffer(GL_ARRAY_BUFFER, unit_data_buffer);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, unit_data_count * sizeof(ivec4), (const GLvoid*)&(unit_data[0]) );
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//int division_count = 8;
-	//ivec4* unit_data;
+
 	unit_data_buffer_needs_update = false;
 }
 

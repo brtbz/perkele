@@ -453,9 +453,104 @@ void Step(double delta)
 		ImGui::SameLine();
 		if (ImGui::Button("Restore Defaults") ) { DefaultSettings(); }
 		ImGui::Text("%s", settings_msg);
+
+		ImGui::Separator();
+		ImGui::Text("DISPLAY");
+		static int e = 0;
+		static bool tempvsync = true;
+		static int dims[2] = { 640, 480 };
+		//static int height = 480;
+		ImGui::RadioButton("fake fullscreen (SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_ALLOW_HIGHDPI)", &e, 0);
+		ImGui::RadioButton("real fullscreen (SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI)", &e, 1);
+		ImGui::RadioButton("windowed (SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI)" , &e, 2);
+		ImGui::Text("Window/Screen Size:");
+		ImGui::InputInt2("Dimensions", &dims[0]);
+		dims[0] = ClampTo(640, 7680, dims[0]);
+		dims[1] = ClampTo(360, 4320, dims[1]);
+
+		// General BeginCombo() API, you have full control over your selection data and display type.
+		// (your selection data could be an index, a pointer to the object, an id for the object, a flag stored in the object itself, etc.)
+		// const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
+		// static const char* item_current = items[0];            // Here our selection is a single pointer stored outside the object.
+		static ImGuiComboFlags flags = 0;
+		static PerkeleDisplayMode *current_pdm = NULL;
+
+		if (ImGui::BeginCombo("Reported Available Fullscreeen Resolutions", current_pdm->name, flags)) // The second parameter is the label previewed before opening the combo.
+		{
+			for (int n = 0; n < perkele_display_modes_count; n++)
+			{
+				bool is_selected = (current_pdm == &perkele_display_modes[n]);
+				if (ImGui::Selectable(perkele_display_modes[n].name, is_selected))
+				{
+					current_pdm = &perkele_display_modes[n];
+					dims[0] = current_pdm->w;
+					dims[1] = current_pdm->h;
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		ImGui::Checkbox("Vertical Sync", &tempvsync);
+
+		ImGui::Separator();
+
+
+		static bool tempmus = true;
+		static bool tempsfx = true;
+		static float sfx_gain = 1.0f;
+
+		ImGui::Text("AUDIO");
+		ImGui::Checkbox("enable music", &tempmus);
+		ImGui::Checkbox("enable sound effects", &tempsfx);
+		ImGui::SliderFloat("master gainzz", &master_gain, 0.0f, 2.0f, "%.2f", 1.0f);
+		ImGui::SliderFloat("music gainzz", &music_gain, 0.0f, 2.0f, "%.2f", 1.0f);
+		ImGui::SliderFloat("sfxxz gainzz", &sfx_gain, 0.0f, 2.0f, "%.2f", 1.0f);
+
+		ImGui::Separator();
+
+		ImGui::Text("DEV");
+
+		static bool bypass_main_menu = true;
+		ImGui::Checkbox("enalbe debug ui", &show_debug_ui);
+		ImGui::Checkbox("bypass main menu on startup", &bypass_main_menu);
+
+		ImGui::Separator();
+
+		ImGui::Button("OKKsdsdasd");
+		ImGui::SameLine();
+		if (ImGui::Button("Cancleasdasdasd") ) { }
+
 		ImGui::End();
 	}
+/*
+Display modes:
+--fake fullscreen (borderless windowed with primary display's current resolution) SDL seems to handle this one best. default perhaps
+--real fullscreen (SDL seems to be unable to switch to other resolutions though it can report them (might be Linux (and Nvidia?) specific disability))
+--windowed (with window decoration). This has some mouse y-offset bug with some versions of SDL and possibly xfce's display manager (LightDM?) (or possibly compositor??)
+  should allow all kinds of resolutions for this one (within reasonable limits) (640x360 7680×4320?)
+List available display resolutions as reported by SDL, but have input boxes where you can enter some arbitrary values for x and y (within limits)
+This list can be quite big (got 109 entries) in some cases and include non-working modes.
 
+How to handle situations where settings file has options that produce black screen? (Tell user to delete the settings file in readme.txt?)
+or have that confirm box with 15 second timer?
+
+Ignore multi-monitor setups for now (just use the primary display)
+
+Audio options:
+sound effects on/off
+music on/off
+master gain
+sfx gain
+music gain
+
+Dev options:
+show debug window
+bypass main menu on startup
+*/
 	cm_set_master_gain((double)master_gain);
 	cm_set_gain(music_src, (double)music_gain);
 

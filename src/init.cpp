@@ -60,17 +60,17 @@ void Init()
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 	{
-		printf("Couldn't init SDL.\n");
+		fprintf(stderr, "Couldn't init SDL.\n");
 	}
 
 	int display_num = SDL_GetNumVideoDisplays();
-	printf("display_num: %d\n", display_num);
+	fprintf(stderr, "display_num: %d\n", display_num);
 
 	int display_mode_num = SDL_GetNumDisplayModes(display_num - 1);
-	printf("display_mode_num: %d\n", display_mode_num);
+	fprintf(stderr, "display_mode_num: %d\n", display_mode_num);
 	if (display_mode_num < 0)
 	{
-		printf("ERror: %s\n", SDL_GetError());
+		fprintf(stderr, "ERror: %s\n", SDL_GetError());
 	}
 
 	SDL_DisplayMode *display_modes = NULL;
@@ -80,11 +80,26 @@ void Init()
 		SDL_GetDisplayMode(0, i, &display_modes[i]);
 	}
 
-	for (int i = 0; i < display_mode_num; i++)
+	perkele_display_modes_count = display_mode_num;
+	perkele_display_modes = (PerkeleDisplayMode*)malloc(perkele_display_modes_count * sizeof(PerkeleDisplayMode));
+	for (int i = 0; i < perkele_display_modes_count; i++)
 	{
-		printf("%d:\t%dx%d@%dHz %u\n", i, display_modes[i].w, display_modes[i].h, display_modes[i].refresh_rate, display_modes[i].format);
+		perkele_display_modes[i].w = display_modes[i].w;
+		perkele_display_modes[i].h = display_modes[i].h;
+		snprintf(&(perkele_display_modes[i].name[0]), 64, "%d: %d x %d", i, perkele_display_modes[i].w, perkele_display_modes[i].h);
+
+		//snprintf(&display_mode_names[i][0], 64, "%d: %dx%d @ %d Hz", i, available_display_modes[i].w, available_display_modes[i].h, available_display_modes[i].refresh_rate);
+		fprintf(stderr, "%s\n", &(perkele_display_modes[i].name[0]));
 	}
 
+#if 0
+	for (int i = 0; i < display_mode_num; i++)
+	{
+		fprintf(stderr, "%d:\t%dx%d@%dHz %u\n", i, display_modes[i].w, display_modes[i].h, display_modes[i].refresh_rate, display_modes[i].format);
+	}
+	fprintf(stderr, "pixelformat %s\n", SDL_GetPixelFormatName(display_modes[0].format));
+#endif
+	
 	SDL_DisplayMode current_display_mode;
 	SDL_GetCurrentDisplayMode(0, &current_display_mode);
 

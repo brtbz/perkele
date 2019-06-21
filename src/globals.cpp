@@ -19,7 +19,14 @@ DelagardiSettings settings_temp = settings_confirmed;
 const char* settings_file_name = "delagardi.ini";
 char settings_msg[32] = "moi";
 
-
+typedef struct PerkeleDisplayMode
+{
+	char name[64];
+	int w;
+	int h;
+} PerkeleDisplayMode;
+PerkeleDisplayMode *perkele_display_modes;
+int perkele_display_modes_count = 0;
 
 SDL_GLContext gl_context;
 SDL_Window *window;

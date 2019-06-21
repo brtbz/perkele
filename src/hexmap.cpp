@@ -719,8 +719,8 @@ void InitMapNodes()
 		total_n_count += n_count;
 	}
 
-	printf("MAP SIZE: %d\n", map_size);
-	printf("TOTAL NEIGHBOUR COUNT: %d\n", total_n_count);
+	// printf("MAP SIZE: %d\n", map_size);
+	// printf("TOTAL NEIGHBOUR COUNT: %d\n", total_n_count);
 
 	map_edges = (MapEdge*)malloc(total_n_count * sizeof(MapEdge));
 
@@ -783,7 +783,7 @@ void InitMapNodes()
 			edge_number++;
 		}
 	}
-	printf("EDGE NUMBER IN THE END: %d\n", edge_number);
+	// printf("EDGE NUMBER IN THE END: %d\n", edge_number);
 	total_edge_count = edge_number;
 }
 
@@ -791,16 +791,6 @@ void UpdateEdgeTravelCosts()
 {
 	for (int i = 0; i < total_edge_count; i++)
 	{
-#if 0
-		if (map_nodes[ map_edges[i].end_node_index ].terrain == IMPASSABLE )
-		{
-			map_edges[i].terrain = IMPASSABLE;
-		}
-		else if (map_nodes[ map_edges[i].end_node_index ].terrain == PASSABLE )
-		{
-			map_edges[i].terrain = PASSABLE;
-		}
-#endif
 		if ( map_data[ map_edges[i].end_node_index ] == 5) // mountain
 		{
 			map_edges[i].cost = 4;
@@ -865,11 +855,11 @@ void InitHexMap()
 	int load_result = LoadMapTerrainFromCSV("data/maps/terrain_perke.csv", map_size, map_data);
 	if (load_result == 0)
 	{
-		printf("level load success!!!\n");
+		fprintf(stderr, "level load success!!!\n");
 	}
 	else
 	{
-		printf("level load failed mwha!\n");
+		fprintf(stderr, "level load failed mwha!\n");
 	}
 
 	hexes_to_draw_indices = (uint32_t*)malloc(map_size * sizeof(uint32_t));

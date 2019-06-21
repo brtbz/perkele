@@ -15,6 +15,7 @@ vec2 v2_add(vec2 a, vec2 b) { return v2( a.x + b.x, a.y + b.y ); }
 vec2 v2_sub(vec2 a, vec2 b) { return v2( a.x - b.x, a.y - b.y); }
 float v2_length( vec2 a) { return sqrtf(a.x*a.x + a.y*a.y); }
 
+// what to do when value is higher than INT_MAX?
 int ClampTo(int min, int max, int value)
 {
 	if ( value < min ) { return min; }
