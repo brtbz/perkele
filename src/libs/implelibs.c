@@ -9,12 +9,13 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb_truetype.h"
 
+/*
 #define INI_IMPLEMENTATION
 #ifndef _WIN32
 #define INI_STRNICMP( s1, s2, cnt ) ( __builtin_strncasecmp( s1, s2, cnt ) ) 
 #endif
 #include "ini.h"
-
+*/
 
 /*
 #define JSON_IMPLEMENTATION

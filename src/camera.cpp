@@ -60,8 +60,8 @@ void Camera::ConstrainSize()
 	float min_size_x = viewport_size.x * 0.1f;
 	float max_size_y = viewport_size.y * 3.9f;
 	float min_size_y = viewport_size.y * 0.1f;
-	size.x = ClampToF( min_size_x, max_size_x, size.x );
-	size.y = ClampToF( min_size_y, max_size_y, size.y );
+	size.x = ClampValueToRangeF( size.x, min_size_x, max_size_x );
+	size.y = ClampValueToRangeF( size.y, min_size_y, max_size_y );
 }
 
 vec2 Camera::ConstrainPositionOrigo()
@@ -77,8 +77,8 @@ vec2 Camera::ConstrainPositionOrigo()
 	float max_origo_x = map_width * tile_stride_x;
 	float max_origo_y = 20.0f + map_height * tile_stride_y;
 
-	desired_origo.x = ClampToF( min_origo_x, max_origo_x, origo.x );
-	desired_origo.y = ClampToF( min_origo_y, max_origo_y, origo.y );
+	desired_origo.x = ClampValueToRangeF( origo.x, min_origo_x, max_origo_x );
+	desired_origo.y = ClampValueToRangeF( origo.y, min_origo_y, max_origo_y );
 
 	return desired_origo;
 }
@@ -96,8 +96,8 @@ vec2 Camera::ConstrainThisOrigo(vec2 origo_seeking_approval)
 	float max_origo_x = map_width * tile_stride_x;
 	float max_origo_y = 20.0f + map_height * tile_stride_y;
 
-	desired_origo.x = ClampToF( min_origo_x, max_origo_x, origo_seeking_approval.x );
-	desired_origo.y = ClampToF( min_origo_y, max_origo_y, origo_seeking_approval.y );
+	desired_origo.x = ClampValueToRangeF( origo_seeking_approval.x, min_origo_x, max_origo_x );
+	desired_origo.y = ClampValueToRangeF( origo_seeking_approval.y, min_origo_y, max_origo_y );
 
 	return desired_origo;
 }

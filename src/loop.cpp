@@ -439,6 +439,7 @@ void Step(double delta)
 	if (show_settings_window)
 	{
 		ImGui::Begin("Settings");
+		/*
 		ImGui::Checkbox("Fullscreen###SETTINGS_FULLSCREEN", &settings_temp.fullscreen);
 		ImGui::Checkbox("Borderless###SETTINGS_BORDERLESS", &settings_temp.borderless);
 		ImGui::Checkbox("Vsync###SETTINGS_VSYNC", &settings_temp.vsync);
@@ -455,23 +456,29 @@ void Step(double delta)
 		ImGui::Text("%s", settings_msg);
 
 		ImGui::Separator();
+
+		*/
 		ImGui::Text("DISPLAY");
 		static int e = 0;
 		static bool tempvsync = true;
 		static int dims[2] = { 640, 480 };
-		//static int height = 480;
-		ImGui::RadioButton("fake fullscreen (SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_ALLOW_HIGHDPI)", &e, 0);
-		ImGui::RadioButton("real fullscreen (SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI)", &e, 1);
-		ImGui::RadioButton("windowed (SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI)" , &e, 2);
+
+
+
+
+		// common sdlwindow flags: SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI
+		ImGui::RadioButton("fake fullscreen", &e, 0); // additional flag: SDL_WINDOW_FULLSCREEN_DESKTOP
+		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("also known as borderless windowed\nwill use desktop resolution and ignore values below"); }
+		ImGui::RadioButton("real fullscreen", &e, 1); // additional flag: SDL_WINDOW_FULLSCREEN
+		ImGui::RadioButton("windowed " , &e, 2); // no additional flags
 		ImGui::Text("Window/Screen Size:");
 		ImGui::InputInt2("Dimensions", &dims[0]);
-		dims[0] = ClampTo(640, 7680, dims[0]);
-		dims[1] = ClampTo(360, 4320, dims[1]);
+		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("window dimemosinsen"); }
+		dims[0] = ClampValueToRange(dims[0], 640, 7680 );
+		dims[1] = ClampValueToRange(dims[1], 360, 4320 );
 
 		// General BeginCombo() API, you have full control over your selection data and display type.
 		// (your selection data could be an index, a pointer to the object, an id for the object, a flag stored in the object itself, etc.)
-		// const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
-		// static const char* item_current = items[0];            // Here our selection is a single pointer stored outside the object.
 		static ImGuiComboFlags flags = 0;
 		static PerkeleDisplayMode *current_pdm = NULL;
 
@@ -495,6 +502,7 @@ void Step(double delta)
 		}
 
 		ImGui::Checkbox("Vertical Sync", &tempvsync);
+		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Recommended to be on\nthis is currently the only way to limit frame rate"); }
 
 		ImGui::Separator();
 
@@ -526,31 +534,7 @@ void Step(double delta)
 
 		ImGui::End();
 	}
-/*
-Display modes:
---fake fullscreen (borderless windowed with primary display's current resolution) SDL seems to handle this one best. default perhaps
---real fullscreen (SDL seems to be unable to switch to other resolutions though it can report them (might be Linux (and Nvidia?) specific disability))
---windowed (with window decoration). This has some mouse y-offset bug with some versions of SDL and possibly xfce's display manager (LightDM?) (or possibly compositor??)
-  should allow all kinds of resolutions for this one (within reasonable limits) (640x360 7680×4320?)
-List available display resolutions as reported by SDL, but have input boxes where you can enter some arbitrary values for x and y (within limits)
-This list can be quite big (got 109 entries) in some cases and include non-working modes.
 
-How to handle situations where settings file has options that produce black screen? (Tell user to delete the settings file in readme.txt?)
-or have that confirm box with 15 second timer?
-
-Ignore multi-monitor setups for now (just use the primary display)
-
-Audio options:
-sound effects on/off
-music on/off
-master gain
-sfx gain
-music gain
-
-Dev options:
-show debug window
-bypass main menu on startup
-*/
 	cm_set_master_gain((double)master_gain);
 	cm_set_gain(music_src, (double)music_gain);
 

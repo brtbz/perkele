@@ -54,9 +54,11 @@ void CustomSDLCursors()
 
 void Init()
 {
-	DelagardiSettings settings = LoadSettings();
-	settings_temp = settings;
-	settings_confirmed = settings;
+
+	DefaultConfigValues(&perkele_configs);
+	ReadConfigsFromFile(&perkele_configs, config_file_name);
+	ValidateConfigs(&perkele_configs);
+	WriteConfigsToFile(&perkele_configs, config_file_name);
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 	{
@@ -103,36 +105,41 @@ void Init()
 	SDL_DisplayMode current_display_mode;
 	SDL_GetCurrentDisplayMode(0, &current_display_mode);
 
+	// CAN I DELETE THESE???
+	viewport_size.x = (float)perkele_configs.screen_w;
+	viewport_size.y = (float)perkele_configs.screen_h;
 
+	bool vsync_flag = perkele_configs.enable_vsync;
+	int create_window_flags = 0;
+	int create_window_w = perkele_configs.screen_w;
+	int create_window_h = perkele_configs.screen_h;
 
-	viewport_size.x = (float)settings.screen_width;
-	viewport_size.y = (float)settings.screen_height;
-	int borderless_flag = 0;
-	int fullscreen_flag = 0;
-	bool vsync_flag = settings.vsync;
-	if (settings.borderless) { borderless_flag = SDL_WINDOW_BORDERLESS; }
-	if (settings.fullscreen)
+	switch ( perkele_configs.screen_mode )
 	{
-		//fullscreen_flag = SDL_WINDOW_FULLSCREEN;
-		fullscreen_flag = SDL_WINDOW_FULLSCREEN_DESKTOP;
-		//viewport_size.x = (float)current_display_mode.w;
-		//viewport_size.y = (float)current_display_mode.h;
+		case 0:
+			create_window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_FULLSCREEN_DESKTOP;
+			create_window_w = current_display_mode.w;
+			create_window_h = current_display_mode.h;
+
+			//tempppp
+			viewport_size.x = (float)current_display_mode.w;
+			viewport_size.y = (float)current_display_mode.h;
+			break;
+		case 1:
+			create_window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_FULLSCREEN;
+			break;
+		case 2:
+			create_window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI;
 	}
 
-	//int create_window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_ALLOW_HIGHDPI;
-	int create_window_flags = SDL_WINDOW_OPENGL | borderless_flag | fullscreen_flag | SDL_WINDOW_ALLOW_HIGHDPI;
-
 	window = SDL_CreateWindow(
-		"laiska",
+		"PERKELE!",
 		10, //SDL_WINDOWPOS_UNDEFINED,
 		100, //SDL_WINDOWPOS_UNDEFINED,
-		viewport_size.x, //current_display_mode.w,
-		viewport_size.y, //current_display_mode.h,
+		create_window_w,
+		create_window_h,
 		create_window_flags
 		);
-
-	//SDL_SetWindowDisplayMode(window, &display_modes[3]);
-	//SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
 
 	SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "0");

@@ -15,15 +15,32 @@ vec2 v2_add(vec2 a, vec2 b) { return v2( a.x + b.x, a.y + b.y ); }
 vec2 v2_sub(vec2 a, vec2 b) { return v2( a.x - b.x, a.y - b.y); }
 float v2_length( vec2 a) { return sqrtf(a.x*a.x + a.y*a.y); }
 
-// what to do when value is higher than INT_MAX?
-int ClampTo(int min, int max, int value)
+bool ValueWithinRange(int value, int min, int max)
+{
+	if (value < min || value > max) 
+	{
+		return false;
+	}
+	return true;
+};
+
+bool ValueWithinRangeF(float value, float min, float max)
+{
+	if (value < min || value > max) 
+	{
+		return false;
+	}
+	return true;
+};
+
+int ClampValueToRange(int value, int min, int max)
 {
 	if ( value < min ) { return min; }
 	else if ( value > max ) { return max; }
 	else { return value; }
 }
 
-float ClampToF(float min, float max, float value)
+float ClampValueToRangeF(float value, float min, float max)
 {
 	if ( value < min ) { return min; }
 	else if ( value > max ) { return max; }

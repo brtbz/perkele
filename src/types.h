@@ -89,7 +89,7 @@ typedef struct IndexedPaletteImage
 	GLuint texture;
 	GLuint palette_texture;
 } IndexedPaletteImage;
-
+/*
 typedef struct DelagardiSettings
 {
 	int screen_width;
@@ -98,6 +98,37 @@ typedef struct DelagardiSettings
 	bool borderless;
 	bool vsync;
 } DelagardiSettings;
+*/
+typedef struct PerkeleConfigs
+{
+	int screen_mode;
+	int screen_w;
+	int screen_h;
+	bool enable_vsync;
+	bool enable_music;
+	bool enable_sfx;
+	float master_gain;
+	float music_gain;
+	float sfx_gain;
+	bool enable_debug_window;
+	bool bypass_main_menu;
+} PerkeleConfigs;
+
+typedef enum CFG_KEY_STRING
+{
+	SCREEN_MODE,
+	SCREEN_W,
+	SCREEN_H,
+	ENABLE_VSYNC,
+	ENABLE_MUSIC,
+	ENABLE_SFX,
+	MASTER_GAIN,
+	MUSIC_GAIN,
+	SFX_GAIN,
+	ENABLE_DEBUG_WINDOW,
+	BYPASS_MAIN_MENU,
+	KEY_STRING_COUNT,
+} CFG_KEY_STRING;
 
 typedef struct Sfx
 {

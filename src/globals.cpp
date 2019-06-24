@@ -14,9 +14,12 @@ bool show_memory_window = false;
 bool audio_enabled = false;
 
 
-DelagardiSettings settings_confirmed = { 1280, 720, false, false, true };
-DelagardiSettings settings_temp = settings_confirmed;
-const char* settings_file_name = "delagardi.ini";
+//DelagardiSettings settings_confirmed = { 1280, 720, false, false, true };
+//DelagardiSettings settings_temp = settings_confirmed;
+//const char* settings_file_name = "delagardi.ini";
+PerkeleConfigs perkele_configs;
+PerkeleConfigs perkele_configs_temp;
+const char* config_file_name = "perkele.cfg";
 char settings_msg[32] = "moi";
 
 typedef struct PerkeleDisplayMode

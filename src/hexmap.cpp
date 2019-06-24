@@ -153,10 +153,10 @@ void HexesWithinCameraBounds()
 	tile_row_min = (view_top_left.y - 48) / tile_height;
 	tile_row_max = ( view_bottom_right.y ) / tile_height; 
 
-	tile_column_min = ClampTo( 0, map_width - 1, tile_column_min);
-	tile_column_max = ClampTo( 0, map_width - 1, tile_column_max);
-	tile_row_min = ClampTo( 0, map_height - 1, tile_row_min);
-	tile_row_max = ClampTo( 0, map_height - 1, tile_row_max);
+	tile_column_min = ClampValueToRange( tile_column_min, 0, map_width - 1 );
+	tile_column_max = ClampValueToRange( tile_column_max, 0, map_width - 1 );
+	tile_row_min = ClampValueToRange( tile_row_min, 0, map_height - 1 );
+	tile_row_max = ClampValueToRange( tile_row_max, 0, map_height - 1 );
 
 	tile_rows_in_view = tile_row_max - tile_row_min + 1;
 	tile_columns_in_view = tile_column_max - tile_column_min + 1;
