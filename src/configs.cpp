@@ -60,7 +60,7 @@ void DefaultConfigValues(PerkeleConfigs *pc)
 	pc->enable_music = true;
 	pc->enable_sfx = true;
 	pc->master_gain = 1.0f;
-	pc->music_gain = 1.0f;
+	pc->music_gain = 0.5f;
 	pc->sfx_gain = 1.0f;
 	pc->enable_debug_window = false;
 	pc->bypass_main_menu = false;
@@ -112,7 +112,23 @@ int ReadConfigsFromFile(PerkeleConfigs *pc, const char *file_name)
 		"enable_debug_window",
 		"bypass_main_menu"
 	};
-
+	
+	typedef enum CFG_KEY_STRING
+	{
+		SCREEN_MODE,
+		SCREEN_W,
+		SCREEN_H,
+		ENABLE_VSYNC,
+		ENABLE_MUSIC,
+		ENABLE_SFX,
+		MASTER_GAIN,
+		MUSIC_GAIN,
+		SFX_GAIN,
+		ENABLE_DEBUG_WINDOW,
+		BYPASS_MAIN_MENU,
+		KEY_STRING_COUNT,
+	} CFG_KEY_STRING;
+	
 	FILE *fp = fopen(file_name, "r");
 	if ( fp == NULL )
 	{

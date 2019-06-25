@@ -75,6 +75,19 @@ void Step(double delta)
 		{
 			game_running = false;
 		}
+		/*
+		// Can't use this yet, because the camera doesn't know what to do when viewport size or aspect ratio changes
+		else if (evt.type == SDL_WINDOWEVENT)
+		{
+			if (evt.window.event == SDL_WINDOWEVENT_RESIZED)
+			{				
+				int w, h;
+				SDL_GL_GetDrawableSize(window, &w, &h);
+				viewport_size.x = (float)w;
+				viewport_size.y = (float)h;				
+			}
+		}
+		*/
 
 		else if (evt.type == SDL_KEYDOWN)
 		{
@@ -266,9 +279,8 @@ void Step(double delta)
 		{ SDL_SetCursor(cursor_swords_bmp); }
 	}
 
-
-	static float music_gain = 0.05f;
-	static float master_gain = 1.0f;
+	static float music_gain = perkele_configs.music_gain;
+	static float master_gain = perkele_configs.master_gain;
 
 	static bool show_demo_window = false;
 	static bool draw_ipi = true;
@@ -282,8 +294,6 @@ void Step(double delta)
 	static char str0[48] = "Victimae Paschali Laudes";
 
 	static char loadmap_str[128] = "data/maps/terrain_perke_no.csv";
-
-
 
 	static int show_edge = 0;
 
@@ -317,7 +327,7 @@ void Step(double delta)
 			static float f = 0.0f;
 			static int counter = 0;
 
-			ImGui::Begin("delagardiebug");                          // Create a window called "Hello, world!" and append into it.
+			ImGui::Begin("debug window");
 
 			ImGui::Checkbox("Demo", &show_demo_window);      // Edit bools storing our window open/close state
 			ImGui::SameLine();
@@ -334,9 +344,7 @@ void Step(double delta)
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			// ImGui::Text("Time: %d", master_timer);
-			ImGui::SliderFloat("master gain", &master_gain, 0.0f, 2.0f, "%.4f", 1.0f);
-			ImGui::SliderFloat("music gain", &music_gain, 0.0f, 2.0f, "%.4f", 1.0f);
-
+#if 0
 			static int sfx_number = 0;
 			ImGui::SliderInt("sfx", &sfx_number, 0, 1);
 			ImGui::SameLine();
@@ -344,7 +352,6 @@ void Step(double delta)
 			ImGui::SameLine();
 			if ( ImGui::Button("woah!") ) { cm_play(sfx[sfx_number].src); }
 
-#if 0
 			ImGui::Separator();
 			ImGui::InputText("text", str0, IM_ARRAYSIZE(str0));
 			ImGui::SliderInt("text c", &text_string_count, 0, 24);
@@ -439,41 +446,22 @@ void Step(double delta)
 	if (show_settings_window)
 	{
 		ImGui::Begin("Settings");
-		/*
-		ImGui::Checkbox("Fullscreen###SETTINGS_FULLSCREEN", &settings_temp.fullscreen);
-		ImGui::Checkbox("Borderless###SETTINGS_BORDERLESS", &settings_temp.borderless);
-		ImGui::Checkbox("Vsync###SETTINGS_VSYNC", &settings_temp.vsync);
-		ImGui::InputInt("Width###SETTINGS_WIDTH", &settings_temp.screen_width);
-		ImGui::InputInt("Height###SETTINGS_HEIGHT", &settings_temp.screen_height);
-		ImGui::Separator();
-		if (ImGui::Button("OK")) { SaveSettings(); }
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel")) { settings_temp = settings_confirmed; show_settings_window = !show_settings_window; }
-		ImGui::SameLine();
-		ImGui::Button("Apply Changes");
-		ImGui::SameLine();
-		if (ImGui::Button("Restore Defaults") ) { DefaultSettings(); }
-		ImGui::Text("%s", settings_msg);
 
-		ImGui::Separator();
-
-		*/
 		ImGui::Text("DISPLAY");
-		static int e = 0;
-		static bool tempvsync = true;
-		static int dims[2] = { 640, 480 };
-
-
-
+		static int e = perkele_configs.screen_mode;
+		static bool tempvsync = perkele_configs.enable_vsync;
+		static int dims[2] = { int(viewport_size.x), (int)viewport_size.y };
 
 		// common sdlwindow flags: SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI
 		ImGui::RadioButton("fake fullscreen", &e, 0); // additional flag: SDL_WINDOW_FULLSCREEN_DESKTOP
-		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("also known as borderless windowed\nwill use desktop resolution and ignore values below"); }
-		ImGui::RadioButton("real fullscreen", &e, 1); // additional flag: SDL_WINDOW_FULLSCREEN
+		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("also known as borderless windowed"); }
+		//ImGui::RadioButton("real fullscreen", &e, 1); // additional flag: SDL_WINDOW_FULLSCREEN
+		ImGui::Text("real fullscreen not yet supported");
 		ImGui::RadioButton("windowed " , &e, 2); // no additional flags
-		ImGui::Text("Window/Screen Size:");
+		ImGui::Text(" ");
+		ImGui::Text("Window Size: (fake fullscreen mode will ignore these values)");
 		ImGui::InputInt2("Dimensions", &dims[0]);
-		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("window dimemosinsen"); }
+		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("window dimensions"); }
 		dims[0] = ClampValueToRange(dims[0], 640, 7680 );
 		dims[1] = ClampValueToRange(dims[1], 360, 4320 );
 
@@ -506,31 +494,45 @@ void Step(double delta)
 
 		ImGui::Separator();
 
-
 		static bool tempmus = true;
 		static bool tempsfx = true;
 		static float sfx_gain = 1.0f;
 
 		ImGui::Text("AUDIO");
-		ImGui::Checkbox("enable music", &tempmus);
-		ImGui::Checkbox("enable sound effects", &tempsfx);
-		ImGui::SliderFloat("master gainzz", &master_gain, 0.0f, 2.0f, "%.2f", 1.0f);
-		ImGui::SliderFloat("music gainzz", &music_gain, 0.0f, 2.0f, "%.2f", 1.0f);
-		ImGui::SliderFloat("sfxxz gainzz", &sfx_gain, 0.0f, 2.0f, "%.2f", 1.0f);
+		// ImGui::Checkbox("enable music", &tempmus);
+		// ImGui::Checkbox("enable sound effects", &tempsfx);
+		ImGui::SliderFloat("master gain", &master_gain, 0.0f, 2.0f, "%.2f", 1.0f);
+		ImGui::SliderFloat("music gain", &music_gain, 0.0f, 2.0f, "%.2f", 1.0f);
+		ImGui::SliderFloat("sfx gain", &sfx_gain, 0.0f, 2.0f, "%.2f", 1.0f);
 
 		ImGui::Separator();
 
 		ImGui::Text("DEV");
 
-		static bool bypass_main_menu = true;
-		ImGui::Checkbox("enalbe debug ui", &show_debug_ui);
+		static bool bypass_main_menu = perkele_configs.bypass_main_menu;
+		ImGui::Checkbox("enable debug ui", &show_debug_ui);
 		ImGui::Checkbox("bypass main menu on startup", &bypass_main_menu);
 
 		ImGui::Separator();
 
-		ImGui::Button("OKKsdsdasd");
+		if (ImGui::Button("OK###SETTINGS_WINDOW"))
+		{
+			perkele_configs.master_gain = master_gain;
+			perkele_configs.music_gain = music_gain;
+			perkele_configs.sfx_gain = sfx_gain;
+			perkele_configs.bypass_main_menu = bypass_main_menu;
+			perkele_configs.enable_debug_window = show_debug_ui;
+			perkele_configs.screen_mode = e;
+			perkele_configs.screen_w = dims[0];
+			perkele_configs.screen_h = dims[1];
+			perkele_configs.enable_vsync = tempvsync;
+			ValidateConfigs(&perkele_configs);
+			WriteConfigsToFile(&perkele_configs, config_file_name);
+			show_settings_window = false;
+		}
+		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Changed display options require restart to take effect."); }
 		ImGui::SameLine();
-		if (ImGui::Button("Cancleasdasdasd") ) { }
+		if (ImGui::Button("Cancel###SETTINGS_WINDOW") ) { show_settings_window = false; }
 
 		ImGui::End();
 	}

@@ -7,6 +7,7 @@ uint32_t master_timer = 0; //ms
 bool game_running = true;
 bool show_debug_ui = true;
 bool show_settings_window = false;
+bool bypass_main_menu = false;
 bool show_main_menu = false;
 bool show_memory_window = false;
 

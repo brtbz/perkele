@@ -54,7 +54,6 @@ void CustomSDLCursors()
 
 void Init()
 {
-
 	DefaultConfigValues(&perkele_configs);
 	ReadConfigsFromFile(&perkele_configs, config_file_name);
 	ValidateConfigs(&perkele_configs);
@@ -89,18 +88,8 @@ void Init()
 		perkele_display_modes[i].w = display_modes[i].w;
 		perkele_display_modes[i].h = display_modes[i].h;
 		snprintf(&(perkele_display_modes[i].name[0]), 64, "%d: %d x %d", i, perkele_display_modes[i].w, perkele_display_modes[i].h);
-
-		//snprintf(&display_mode_names[i][0], 64, "%d: %dx%d @ %d Hz", i, available_display_modes[i].w, available_display_modes[i].h, available_display_modes[i].refresh_rate);
-		fprintf(stderr, "%s\n", &(perkele_display_modes[i].name[0]));
+		// fprintf(stderr, "%s\n", &(perkele_display_modes[i].name[0]));
 	}
-
-#if 0
-	for (int i = 0; i < display_mode_num; i++)
-	{
-		fprintf(stderr, "%d:\t%dx%d@%dHz %u\n", i, display_modes[i].w, display_modes[i].h, display_modes[i].refresh_rate, display_modes[i].format);
-	}
-	fprintf(stderr, "pixelformat %s\n", SDL_GetPixelFormatName(display_modes[0].format));
-#endif
 	
 	SDL_DisplayMode current_display_mode;
 	SDL_GetCurrentDisplayMode(0, &current_display_mode);
@@ -141,6 +130,7 @@ void Init()
 		create_window_flags
 		);
 
+	//SDL_SetWindowResizable(window, SDL_TRUE);
 
 	SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "0");
 
@@ -244,6 +234,12 @@ void Init()
 	srand((unsigned int)time(NULL));
 
 
+
+	// these switches and values are all over. maybe they could all gather to some place nice
+	bypass_main_menu = perkele_configs.bypass_main_menu;
+	bypass_main_menu ? show_main_menu = false : show_main_menu = true;
+
+	show_debug_ui = perkele_configs.enable_debug_window;
 
 	// InitFont();
 	pathfinder = (Pathfinder*)malloc(sizeof(Pathfinder));
