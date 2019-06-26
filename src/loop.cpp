@@ -14,6 +14,60 @@ static void ShowHelpMarker(const char* desc)
 }
 ///
 
+static void ShowMenuButtonOverlay(bool* p_open)
+{
+	const float distance = 2.0f;
+	ImVec2 window_pos = ImVec2( ImGui::GetIO().DisplaySize.x - distance, 0 + distance );
+	ImVec2 window_pos_pivot = ImVec2( 1.0f, 0.0f );
+
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+	ImGui::SetNextWindowSize( ImVec2(60.0f, 40.0f) );
+	ImGui::SetNextWindowBgAlpha(0.8f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	if (ImGui::Begin("Example: Simple overlay", p_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+	{
+		if (ImGui::Button("MENU", ImVec2(60.0f, 40.0f))) { show_main_menu = !show_main_menu; }
+	}
+	ImGui::End();
+	ImGui::PopStyleVar(2);
+}
+
+static void ShowEndTurnButtonOverlay(bool* p_open)
+{
+	const float distance = 4.0f;
+	ImVec2 window_pos = ImVec2( ImGui::GetIO().DisplaySize.x / 2.0f, ImGui::GetIO().DisplaySize.y - distance );
+	ImVec2 window_pos_pivot = ImVec2(0.5f, 1.0f);
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+	ImGui::SetNextWindowBgAlpha(0.8f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	if (ImGui::Begin("END TURN BUTTON OVERLAY", p_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+	{
+		if (ImGui::Button("END TURN", ImVec2(160.0f, 40.0f) )) { }
+	}
+	ImGui::End();
+	ImGui::PopStyleVar(2);
+}
+
+void ShowCoolInfoOverlayTopBar(bool* p_open)
+{
+	float distance = 2.0f;
+	ImVec2 window_pos = ImVec2( ImGui::GetIO().DisplaySize.x / 2.0f, 0 + distance );
+	ImVec2 window_pos_pivot = ImVec2( 0.5f, 1.0f );
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+	ImGui::SetNextWindowSize(ImVec2(896.0f, 18.0f));
+	ImGui::SetNextWindowBgAlpha(0.5f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+
+	if ( ImGui::Begin("Cool Info Overlay Top Bar", p_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav) )
+	{
+		ImGui::Text("Turn: 1 & Other cool info here in the infor overlay top bar yeah!");
+	}
+	ImGui::End();
+	ImGui::PopStyleVar(1);
+}
+
 void DrawIPI(int palette_phase, bool phase_shift, float zoom_level)
 {
 	glBindVertexArray(ipi_vao);
@@ -462,8 +516,8 @@ void Step(double delta)
 		ImGui::Text("Window Size: (fake fullscreen mode will ignore these values)");
 		ImGui::InputInt2("Dimensions", &dims[0]);
 		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("window dimensions"); }
-		dims[0] = ClampValueToRange(dims[0], 640, 7680 );
-		dims[1] = ClampValueToRange(dims[1], 360, 4320 );
+		dims[0] = ClampValueToRange(dims[0], 1024, 7680 );
+		dims[1] = ClampValueToRange(dims[1], 600, 4320 );
 
 		// General BeginCombo() API, you have full control over your selection data and display type.
 		// (your selection data could be an index, a pointer to the object, an id for the object, a flag stored in the object itself, etc.)
@@ -503,7 +557,7 @@ void Step(double delta)
 		// ImGui::Checkbox("enable sound effects", &tempsfx);
 		ImGui::SliderFloat("master gain", &master_gain, 0.0f, 2.0f, "%.2f", 1.0f);
 		ImGui::SliderFloat("music gain", &music_gain, 0.0f, 2.0f, "%.2f", 1.0f);
-		ImGui::SliderFloat("sfx gain", &sfx_gain, 0.0f, 2.0f, "%.2f", 1.0f);
+		//ImGui::SliderFloat("sfx gain", &sfx_gain, 0.0f, 2.0f, "%.2f", 1.0f);
 
 		ImGui::Separator();
 
@@ -515,7 +569,7 @@ void Step(double delta)
 
 		ImGui::Separator();
 
-		if (ImGui::Button("OK###SETTINGS_WINDOW"))
+		if (ImGui::Button("OK###SETTINGS_WINDOW_OK"))
 		{
 			perkele_configs.master_gain = master_gain;
 			perkele_configs.music_gain = music_gain;
@@ -532,9 +586,27 @@ void Step(double delta)
 		}
 		if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Changed display options require restart to take effect."); }
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel###SETTINGS_WINDOW") ) { show_settings_window = false; }
+		if (ImGui::Button("Cancel###SETTINGS_WINDOW_CANCEL") ) { show_settings_window = false; }
 
 		ImGui::End();
+	}
+
+	static bool show_menu_button = true;
+	if (show_menu_button && !show_main_menu )
+	{
+		ShowMenuButtonOverlay(&show_menu_button);		
+	}
+
+	static bool show_end_turn_button = true;
+	if (show_end_turn_button)
+	{
+		ShowEndTurnButtonOverlay(&show_end_turn_button);
+	}
+
+	static bool show_cool_info_overlay_topbar = true;
+	if (show_cool_info_overlay_topbar)
+	{
+		ShowCoolInfoOverlayTopBar(&show_cool_info_overlay_topbar);
 	}
 
 	cm_set_master_gain((double)master_gain);

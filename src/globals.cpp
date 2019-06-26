@@ -31,11 +31,13 @@ typedef struct PerkeleDisplayMode
 } PerkeleDisplayMode;
 PerkeleDisplayMode *perkele_display_modes;
 int perkele_display_modes_count = 0;
+#define PRKL_MIN_SCREEN_W 1024
+#define PRKL_MIN_SCREEN_H 600
 
 SDL_GLContext gl_context;
 SDL_Window *window;
 const char* glsl_version = "#version 330";
-vec2 viewport_size = {640.0f, 480.0f};
+vec2 viewport_size = {1024.0f, 600.0f};
 
 Camera camera;
 

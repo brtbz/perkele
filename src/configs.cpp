@@ -212,13 +212,15 @@ int ReadConfigsFromFile(PerkeleConfigs *pc, const char *file_name)
 		}
 	}
 	fclose(fp);
+
+	return 0;
 }
 
 void ValidateConfigs(PerkeleConfigs *pc)
 {
 	if ( !ValueWithinRange( pc->screen_mode, 0, 2 )) { pc->screen_mode = 0; }
-	pc->screen_w = ClampValueToRange( pc->screen_w, 640, 7680 );
-	pc->screen_h = ClampValueToRange( pc->screen_h, 360, 4320 );
+	pc->screen_w = ClampValueToRange( pc->screen_w, 1024, 7680 );
+	pc->screen_h = ClampValueToRange( pc->screen_h, 600, 4320 );
 	if ( !ValueWithinRange( pc->enable_vsync, 0, 1 )) { pc->enable_vsync = 1; }
 	if ( !ValueWithinRange( pc->enable_music, 0, 1 )) { pc->enable_music = 1; }
 	if ( !ValueWithinRange( pc->enable_sfx, 0, 1 )) { pc->enable_sfx = 1; }

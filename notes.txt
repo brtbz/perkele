@@ -56,6 +56,10 @@ glad by who?
 Other notes
 -----------
 
+hardware requirements!
+minimum display size is 1024x600!
+opengl 3.3
+
 armies block each other
 enemies block movement, friends can pass each other, but not stop at same hex
 one unit per hex

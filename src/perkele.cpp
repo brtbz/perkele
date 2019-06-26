@@ -14,7 +14,6 @@ extern "C" {
 #include "stb_vorbis.h"
 #include "stb_image.h"
 #include "stb_truetype.h"
-//#include "ini.h"
 }
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -27,7 +26,6 @@ extern "C" {
 
 #include "matik.cpp"
 #include "globals.cpp"
-//#include "settings.cpp"
 #include "configs.cpp"
 #include "audio.cpp"
 #include "camera.cpp"
