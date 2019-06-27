@@ -44,7 +44,7 @@ static void ShowEndTurnButtonOverlay(bool* p_open)
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	if (ImGui::Begin("END TURN BUTTON OVERLAY", p_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 	{
-		if (ImGui::Button("END TURN", ImVec2(160.0f, 40.0f) )) { }
+		if (ImGui::Button("END TURN", ImVec2(160.0f, 40.0f) )) { game_turn++; }
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(2);
@@ -57,12 +57,13 @@ void ShowCoolInfoOverlayTopBar(bool* p_open)
 	ImVec2 window_pos_pivot = ImVec2( 0.5f, 1.0f );
 	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
 	ImGui::SetNextWindowSize(ImVec2(896.0f, 18.0f));
-	ImGui::SetNextWindowBgAlpha(0.5f);
+	ImGui::SetNextWindowBgAlpha(0.3f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 
 	if ( ImGui::Begin("Cool Info Overlay Top Bar", p_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav) )
 	{
-		ImGui::Text("Turn: 1 & Other cool info here in the infor overlay top bar yeah!");
+		// use ImGui's columns to group the text here nicely
+		ImGui::Text("Turn: %d & Other cool info here in the info overlay top bar yeah!", game_turn);
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(1);

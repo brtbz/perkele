@@ -19,6 +19,11 @@ master gain
 sfx gain
 music gain
 
+UI Options:
+map screen edge scrolling: on/off (default: on)
+
+Key bindings:
+
 Dev options:
 show debug window
 bypass main menu on startup

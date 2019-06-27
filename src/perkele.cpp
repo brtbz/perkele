@@ -32,6 +32,7 @@ extern "C" {
 #include "text.cpp"
 #include "hexmap.cpp"
 #include "army.cpp"
+#include "morrigan.cpp"
 #include "pathfinder.cpp"
 #include "init.cpp"
 #include "loader.cpp"

@@ -81,8 +81,7 @@ ImFont *im_font_monofonto;
 
 
 
-
-
+int32_t game_turn = 0;
 
 // ARMY
 GLuint army_sp;

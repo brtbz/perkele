@@ -335,6 +335,11 @@ void InitArmyStuff()
 		test_armies[i].hits_max = 10;
 		test_armies[i].hits_current = 10;
 		test_armies[i].strength = 12;
+		test_armies[i].faction = 0;
+		test_armies[i].wounded_soldiers = 0;
+		test_armies[i].dead_soldiers = 0;
+		test_armies[i].armor = 15;
+		test_armies[i].dead = false;
 		test_armies[i].draw = true;
 		RandomName(&test_armies[i]);
 	}
