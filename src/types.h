@@ -131,8 +131,7 @@ typedef struct Army
 	int32_t index;
 	int32_t position_hex;
 	ArmyBaseSprite base_sprite;
-	int16_t movement_points_max;
-	int16_t movement_points_current;
+	int16_t movement;
 	int16_t hits_max;
 	int16_t hits_current;
 	int16_t wounded_soldiers;
@@ -140,6 +139,8 @@ typedef struct Army
 	int16_t armor;
 	int16_t strength;
 	int16_t faction;
+	bool move_done;
+	bool action_done;
 	bool dead;
 	bool draw;
 	char name[32];

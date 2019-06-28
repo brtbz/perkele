@@ -330,8 +330,7 @@ void InitArmyStuff()
 		test_armies[i].index = i;
 		test_armies[i].base_sprite = (ArmyBaseSprite)(i % 183);
 		test_armies[i].position_hex = i;
-		test_armies[i].movement_points_max = 5;
-		test_armies[i].movement_points_current = 5;
+		test_armies[i].movement = 5;
 		test_armies[i].hits_max = 10;
 		test_armies[i].hits_current = 10;
 		test_armies[i].strength = 12;
@@ -339,6 +338,8 @@ void InitArmyStuff()
 		test_armies[i].wounded_soldiers = 0;
 		test_armies[i].dead_soldiers = 0;
 		test_armies[i].armor = 15;
+		test_armies[i].move_done = false;
+		test_armies[i].action_done = false;
 		test_armies[i].dead = false;
 		test_armies[i].draw = true;
 		RandomName(&test_armies[i]);

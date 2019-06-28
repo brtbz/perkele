@@ -1,54 +1,13 @@
 void CustomSDLCursors()
 {
-	uint8_t swords_cursor_data[4*32] = {
-		0, 0, 0, 0, 24, 0, 0, 24, 
-		36, 0, 0, 36, 34, 0, 0, 68, 
-		41, 0, 0, 148, 20, 128, 1, 40, 
-		10, 64, 2, 80, 5, 32, 4, 160, 
-		2, 144, 9, 64, 1, 72, 18, 128, 
-		0, 164, 37, 0, 0, 82, 74, 0, 
-		0, 41, 148, 0, 0, 21, 40, 0, 
-		0, 10, 80, 0, 0, 4, 160, 0, 
-		0, 9, 80, 0, 0, 18, 200, 0, 
-		2, 37, 164, 64, 5, 74, 82, 160, 
-		5, 148, 41, 160, 5, 8, 16, 160, 
-		4, 208, 11, 32, 2, 48, 12, 64, 
-		5, 8, 16, 160, 9, 200, 19, 144, 
-		18, 48, 12, 72, 36, 0, 0, 36, 
-		72, 0, 0, 18, 80, 0, 0, 10, 
-		32, 0, 0, 4, 0, 0, 0, 0
-	};
-
-	uint8_t swords_cursor_mask[4*32] = {
-		0, 0, 0, 0, 24, 0, 0, 24, 
-		60, 0, 0, 60, 62, 0, 0, 124, 
-		63, 0, 0, 252, 31, 128, 1, 248, 
-		15, 192, 3, 240, 7, 224, 7, 224, 
-		3, 240, 15, 192, 1, 248, 31, 128, 
-		0, 252, 63, 0, 0, 126, 126, 0, 
-		0, 63, 252, 0, 0, 31, 248, 0, 
-		0, 15, 240, 0, 0, 7, 224, 0, 
-		0, 15, 240, 0, 0, 31, 248, 0, 
-		2, 63, 252, 64, 7, 126, 126, 224, 
-		7, 252, 63, 224, 7, 248, 31, 224, 
-		7, 240, 15, 224, 3, 240, 15, 192, 
-		7, 248, 31, 224, 15, 248, 31, 240, 
-		30, 48, 12, 120, 60, 0, 0, 60, 
-		120, 0, 0, 30, 112, 0, 0, 14, 
-		32, 0, 0, 4, 0, 0, 0, 0
-	};
-
-	cursor_arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-	cursor_swords = SDL_CreateCursor( &swords_cursor_data[0], &swords_cursor_mask[0], 32, 32, 14, 14 );
-
 	SDL_Surface *swords_bmp = SDL_LoadBMP("data/gfx/cursorsword.bmp");
-	cursor_swords_bmp = SDL_CreateColorCursor(swords_bmp, 22, 22);
+	cursor_swords = SDL_CreateColorCursor(swords_bmp, 22, 22);
 
 	SDL_Surface *walk_bmp = SDL_LoadBMP("data/gfx/cursorwalk.bmp");
-	cursor_walk_bmp = SDL_CreateColorCursor(walk_bmp, 16, 16);
+	cursor_walk = SDL_CreateColorCursor(walk_bmp, 16, 16);
 
 	SDL_Surface *arrow_bmp = SDL_LoadBMP("data/gfx/cursorarrow.bmp");
-	cursor_arrow_bmp = SDL_CreateColorCursor(arrow_bmp, 1, 0);
+	cursor_arrow = SDL_CreateColorCursor(arrow_bmp, 1, 0);
 
 }
 

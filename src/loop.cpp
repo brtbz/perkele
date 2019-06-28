@@ -289,7 +289,7 @@ void Step(double delta)
 		if ( selected_army != NULL )
 		{
 			// TODO: don't do this every frame
-			FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement_points_current);
+			FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement);
 
 			draw_path = true;
 
@@ -329,9 +329,9 @@ void Step(double delta)
 	{
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 		if ( custom_cursor_should_be == 0)
-		{ SDL_SetCursor(cursor_arrow_bmp); }
+		{ SDL_SetCursor(cursor_arrow); }
 		else
-		{ SDL_SetCursor(cursor_swords_bmp); }
+		{ SDL_SetCursor(cursor_swords); }
 	}
 
 	static float music_gain = perkele_configs.music_gain;
@@ -362,7 +362,7 @@ void Step(double delta)
 		ImGui::Begin("SELECTED UNIT");
 		ImGui::Text("%s", selected_army->name);
 		ImGui::Text("Strength: %d", selected_army->strength);
-		ImGui::Text("Moves: %d / %d", selected_army->movement_points_current, selected_army->movement_points_max);
+		ImGui::Text("Movement: %d", selected_army->movement);
 		ImGui::Text("Hits:  %d / %d", selected_army->hits_current, selected_army->hits_max);
 		ImGui::Text("Position %d", selected_army->position_hex);
 		ImGui::Separator();
