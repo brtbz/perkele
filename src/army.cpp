@@ -289,6 +289,7 @@ void AdvanceArmyMoveAnimation(int32_t army)
 		{
 			//end
 			army_moving = false;
+			test_armies[army].move_done = true;
 			test_armies[army].draw = true;
 
 			MoveArmyToNewHex(army, current_path.y);

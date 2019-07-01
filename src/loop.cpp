@@ -44,7 +44,7 @@ static void ShowEndTurnButtonOverlay(bool* p_open)
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	if (ImGui::Begin("END TURN BUTTON OVERLAY", p_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 	{
-		if (ImGui::Button("END TURN", ImVec2(160.0f, 40.0f) )) { game_turn++; }
+		if (ImGui::Button("END TURN", ImVec2(160.0f, 40.0f) )) { game_turn++; EndTurn(); }
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(2);
@@ -101,6 +101,27 @@ void DrawIPI(int palette_phase, bool phase_shift, float zoom_level)
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glUseProgram(0);
+	glBindVertexArray(0);
+}
+
+void DrawPoints(int hex_index, float size, vec3 point_color)
+{
+	glBindVertexArray(points_vao);
+	glUseProgram(points_sp);
+
+	glPointSize(size);
+
+	GLint camera_loc = glGetUniformLocation( points_sp, "camera");
+	GLint point_color_loc = glGetUniformLocation( points_sp, "point_color");
+	GLint hex_index_loc = glGetUniformLocation(points_sp, "hex_index");
+
+	glUniform4f( camera_loc, camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y );
+	glUniform3f( point_color_loc, point_color.r, point_color.g, point_color.b);
+	glUniform1i( hex_index_loc, hex_index);
+
+	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
 	glBindVertexArray(0);
@@ -667,6 +688,25 @@ void Step(double delta)
 	}
 
 	DrawStrings();
+
+	for ( int i = 0; i < 183; i++)
+	{
+		vec3 color_green = {0.0f, 1.0f, 0.0f };
+		vec3 color_red = { 1.0f, 0.0f, 0.0f};
+		vec3 color_black = { 0.0f, 0.0f, 0.0f };
+
+		if (test_armies[i].move_done == true)
+		{
+			DrawPoints(test_armies[i].position_hex, 8.0f, color_black);
+			DrawPoints(test_armies[i].position_hex, 5.0f, color_red);
+		}
+		else
+		{
+			DrawPoints(test_armies[i].position_hex, 8.0f, color_black);
+			DrawPoints(test_armies[i].position_hex, 5.0f, color_green);
+		}
+	}
+	
 
 	ImGui::Render();
 	//SDL_GL_MakeCurrent(window, gl_context); // ???

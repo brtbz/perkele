@@ -180,3 +180,10 @@ IndexedPaletteImage ipi;
 GLuint ipi_sp;
 GLuint ipi_vbo;
 GLuint ipi_vao;
+
+
+
+// unit overlay points
+GLuint points_sp;
+GLuint points_vbo;
+GLuint points_vao;

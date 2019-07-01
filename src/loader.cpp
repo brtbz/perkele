@@ -211,6 +211,31 @@ GLuint CreateEmptyTexture(int w, int h)
 	return new_texture;
 }
 
+void LoadPoints()
+{
+    GLuint points_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/points-vert.glsl");
+    GLuint points_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/points-frag.glsl");
+    points_sp = NewProgram(points_vs, points_fs);
+
+    GLfloat vertex_data[] = {
+    	0.0f, 0.0f, 0.0f
+    };
+    glGenVertexArrays(1, &points_vao);
+    glBindVertexArray(points_vao);
+    glGenBuffers(1, &points_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
+
+    GLint attrib_loc_position = glGetAttribLocation(points_sp, "position");
+    glEnableVertexAttribArray(attrib_loc_position);
+    glVertexAttribPointer(attrib_loc_position, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid*)0 );
+
+    glBindBuffer(GL_ARRAY_BUFFER,0);
+    glBindVertexArray(0);
+
+}
+
 void LoadInitialData()
 {
 	if ( LoadMusicAndSounds())
@@ -253,4 +278,6 @@ void LoadInitialData()
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
+
+	LoadPoints();
 }

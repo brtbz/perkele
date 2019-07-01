@@ -43,6 +43,10 @@ void MoveToNextFaction()
 
 void EndTurn()
 {
+	for (int i = 0; i < 183; i++)
+	{
+		test_armies[i].move_done = false;
+	}
 /*
 	for each army
 		army_has_moved = false
