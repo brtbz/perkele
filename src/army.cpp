@@ -23,6 +23,14 @@ void DrawArmies(int32_t count)
 	GLint time_loc = glGetUniformLocation( army_sp, "time" );
 	glUniform1i( time_loc, master_timer );
 
+	GLint selected_army_pos_loc = glGetUniformLocation( army_sp, "selected_army");
+	int32_t selected_army_position_hex = -1;
+	if ( selected_army )
+	{
+		selected_army_position_hex = selected_army->position_hex;
+	}
+	glUniform1i( selected_army_pos_loc, selected_army_position_hex );
+
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -211,49 +219,6 @@ void RandomName(Army *a)
 	a->name[31] = '\0';
 }
 
-void Kill(Army *a)
-{
-
-}
-
-void Attack(Army *attacker, Army *defender)
-{
-	float attacker_strength = (float)attacker->strength;
-	float defender_strength = (float)defender->strength;
-
-	float attacker_bonus = 0.0f;
-	float defender_bonus = 0.2f;
-
-	attacker_strength += attacker_bonus;
-	defender_strength += defender_bonus;
-
-	int attacker_roll = MWC % 20;
-	int defender_roll = MWC % 20;
-
-	attacker_strength += attacker_roll;
-	defender_strength += defender_roll;
-
-	if (attacker_strength > defender_strength)
-	{
-		// attacker wins!
-		defender->hits_current -= 2;
-	}
-	else
-	{
-		// defender wins!
-		attacker->hits_current -= 1;
-	}
-
-	if (attacker->hits_current <= 0)
-	{
-		Kill(attacker);
-	}
-	if (defender->hits_current <= 0)
-	{
-		Kill(defender);
-	}
-}
-
 void MoveArmyToNewHex(int32_t army, int32_t hex)
 {
 	map_nodes[ test_armies[army].position_hex ].occupier = -1;
@@ -293,7 +258,8 @@ void AdvanceArmyMoveAnimation(int32_t army)
 			test_armies[army].draw = true;
 
 			MoveArmyToNewHex(army, current_path.y);
-			unit_data_buffer_needs_update = true;			
+			draw_path = false;
+			unit_data_buffer_needs_update = true;		
 		}
 		else
 		{
@@ -344,6 +310,8 @@ void InitArmyStuff()
 		test_armies[i].dead = false;
 		test_armies[i].draw = true;
 		RandomName(&test_armies[i]);
+
+		MoveArmyToNewHex(i, i);
 	}
 }
 

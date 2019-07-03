@@ -187,3 +187,9 @@ GLuint ipi_vao;
 GLuint points_sp;
 GLuint points_vbo;
 GLuint points_vao;
+
+
+
+bool ignore_move_rules = true;
+char combat_result_str1[256];
+char combat_result_str2[256];

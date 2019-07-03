@@ -8,6 +8,10 @@ in vec2 unit_base_uv;
 //in vec2 unit_type_uv;
 //in vec2 unit_size_uv;
 
+flat in int selected;
+
+uniform int time;
+
 void main()
 {
 	vec4 base_color = texture(input_texture, unit_base_uv);
@@ -35,8 +39,17 @@ void main()
 		discard;
 	}
 
+	if ( selected == 1 )
+	{
 
-	color = base_color;
+		float blink_alpha = 0.2f + 0.2f * ( 0.5f * ( 1.0f + sin( 0.01f * float(time) ) ) );
+		vec4 blink_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		color = mix( base_color, blink_color, blink_alpha );
+	}
+	else
+	{
+		color = base_color;
+	}
 }
 
 

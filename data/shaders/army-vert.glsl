@@ -7,6 +7,8 @@ out vec2 unit_base_uv;
 //out vec2 unit_type_uv;
 //out vec2 unit_size_uv;
 
+flat out int selected; //used as bool
+
 in ivec4 unit_data; // hex_index (location)
 					// unit_base (wehrmacht, luftwaffe, red army)
 					// unit_type (infantry, tanks)
@@ -18,10 +20,11 @@ uniform vec2 screen_size;
 
 uniform vec4 camera; // x1, y1, x2, y2
 
-//uniform ivec2 map_bitmap_size;
 uniform ivec2 map_grid_size; // in hexes
 
 uniform int time;
+
+uniform int selected_army;
 
 void main()
 {
@@ -31,6 +34,15 @@ void main()
 	int unit_base = unit_data.y;
 	int unit_type = unit_data.z;
 	int unit_size = unit_data.w;
+
+	if ( hex_index == selected_army )
+	{
+		selected = 1;
+	}
+	else
+	{
+		selected = 0;
+	}
 
 	vec2 view_size = vec2( camera.z - camera.x, camera.w - camera.y );
 

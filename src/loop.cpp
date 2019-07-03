@@ -276,18 +276,21 @@ void Step(double delta)
 		}
 		else if ( left_clicked && selected_army != NULL )
 		{
-			if (HexIsFree(highlighted_hex))
+			if (HexIsFree(highlighted_hex) && selected_army->move_done == false)
 			{
-				BeginArmyMoveAnimation(selected_army->index, selected_army->position_hex, highlighted_hex);
-				PlaySfx(SFX_UNIT_MOVE);
-				selected_army = NULL;
-				unit_data_buffer_needs_update = true;
-				path_edges_size = 0;
-				draw_path = false;
+				if (ignore_move_rules || HexIsInReachableNodes(highlighted_hex))
+				{
+					BeginArmyMoveAnimation(selected_army->index, selected_army->position_hex, highlighted_hex);
+					PlaySfx(SFX_UNIT_MOVE);
+					// selected_army = NULL;
+					unit_data_buffer_needs_update = true;
+					path_edges_size = 0;
+					draw_path = false;
+				}
 			}
-			else if ( HexesAreNeighbours( selected_army->position_hex, highlighted_hex) )
+			else if ( HexesAreNeighbours( selected_army->position_hex, highlighted_hex) && map_nodes[highlighted_hex].occupier > -1 )
 			{
-				Attack( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
+				ResolveCombat( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
 				PlaySfx(SFX_GOBLIN_ROAR);
 				selected_army = NULL;
 				unit_data_buffer_needs_update = true;
@@ -297,17 +300,21 @@ void Step(double delta)
 		}
 		else if ( left_clicked && selected_army == NULL )
 		{
-			for (int i = 0; i < 183; i++)
+			if ( map_nodes[highlighted_hex].occupier > -1 )
 			{
-				if ( test_armies[i].position_hex == highlighted_hex )
+				if ( test_armies[ map_nodes[highlighted_hex].occupier ].move_done == false )
 				{
-					selected_army = &test_armies[i];
-					PlaySfx(SFX_UI_CLICK_A);
+					selected_army = &test_armies[ map_nodes[highlighted_hex].occupier ];
+					PlaySfx(SFX_UI_CLICK_A);	
+				}
+				else
+				{
+					// PlaySfx(SFX_UI_CLICK_ERROR);
 				}
 			}
 		}
 
-		if ( selected_army != NULL )
+		if ( selected_army != NULL && selected_army->move_done == false )
 		{
 			// TODO: don't do this every frame
 			FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement);
@@ -394,6 +401,40 @@ void Step(double delta)
 		ImGui::End();
 	}
 
+	{
+		ImGui::Begin("highlighted unit");
+		if ( highlighted_hex > -1 && map_nodes[highlighted_hex].occupier > -1 )
+		{
+			int army_index = map_nodes[highlighted_hex].occupier;
+			ImGui::Text("%s", test_armies[ army_index ].name );
+			ImGui::Text("Strength: %d", test_armies[ army_index ].strength);
+			ImGui::Text("Armor: %d", test_armies[ army_index ].armor);
+			ImGui::Text("Movement: %d", test_armies[ army_index ].movement);
+			ImGui::Text("Hits:  %d / %d", test_armies[ army_index ].hits_current, test_armies[ army_index ].hits_max);
+			ImGui::Text("Wounded: %d Dead: %d", test_armies[army_index].wounded_soldiers, test_armies[army_index].dead_soldiers)	;
+		}
+		ImGui::End();
+	}
+
+	{
+		ImGui::Begin("Combat Results");
+		ImGui::Text("%s", combat_result_str1);
+		ImGui::Text("%s", combat_result_str2);
+		ImGui::End();
+	}
+
+	if (selected_army != NULL)
+	{
+		ImGui::Begin("REST BUTTON!");
+		if (ImGui::Button("REST"))
+		{
+			int hits_recovered = selected_army->wounded_soldiers;
+			selected_army->hits_current += hits_recovered;
+			selected_army->wounded_soldiers = 0;
+		}
+		ImGui::End();
+	}
+
 	if (show_debug_ui)
 	{
 		// dear imgui feature demo
@@ -455,6 +496,7 @@ void Step(double delta)
 			ImGui::Text("%s", dumb_debug_string2);
 
 			ImGui::Separator();
+			ImGui::Checkbox("Ignore move rules", &ignore_move_rules);
 			ImGui::Checkbox("Pathfind debug overlay", &draw_hex_debug_overlay);
 			ImGui::InputFloat("H weight", &(pathfinder->pathfind_weight_h) ); ImGui::SameLine();
 			ShowHelpMarker("Heuristic weight for pathfind algorithm.\nHigher is faster, lower is more accurate.");
@@ -706,7 +748,6 @@ void Step(double delta)
 			DrawPoints(test_armies[i].position_hex, 5.0f, color_green);
 		}
 	}
-	
 
 	ImGui::Render();
 	//SDL_GL_MakeCurrent(window, gl_context); // ???

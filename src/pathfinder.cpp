@@ -467,6 +467,19 @@ int32_t FindReachableNodes(Pathfinder *pf, int32_t start, int available_movement
 	return reachable_nodes_count;
 }
 
+bool HexIsInReachableNodes(int32_t hex)
+{
+	for (int i = 0; i < reachable_nodes_number; i++)
+	{
+		if ( hex == reachable_nodes[i])
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 uint32_t ReconstructPath(Pathfinder *pf, int32_t start, int32_t goal)
 {
 	int path_size = 0;
