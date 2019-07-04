@@ -187,9 +187,12 @@ GLuint ipi_vao;
 GLuint points_sp;
 GLuint points_vbo;
 GLuint points_vao;
-
+GLuint points_color_buffer;
+vec3 points_colors[183];
 
 
 bool ignore_move_rules = true;
 char combat_result_str1[256];
 char combat_result_str2[256];
+char active_faction_str[32];
+int active_faction = 0;

@@ -77,6 +77,28 @@ void DrawMovingArmy(int32_t a, int32_t start_hex, int32_t end_hex, float transit
 	glBindVertexArray(0);
 }
 
+void DrawAllPoints(float size, bool black)
+{
+	glBindVertexArray(points_vao);
+	glUseProgram(points_sp);
+
+	glPointSize(size);
+
+	GLint camera_loc = glGetUniformLocation( points_sp, "camera");
+	GLint black_loc = glGetUniformLocation( points_sp, "black");
+
+	glUniform4f( camera_loc, camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y );
+
+	int black_int = 0;
+	black ? black_int = 1 : black_int = 0;
+	glUniform1i(black_loc, black_int );
+
+	glDrawArraysInstanced(GL_POINTS, 0, 1, 183);
+
+	glUseProgram(0);
+	glBindVertexArray(0);
+}
+
 void InitUnitDataBuffer()
 {
 	unit_data = (ivec4*)malloc( unit_limit * sizeof(ivec4) );
@@ -189,6 +211,59 @@ void LoadArmyGraphicStuff()
 	glBindVertexArray(0);
 }
 
+void LoadPoints() // indicator for units that shows whether they are active or used their move already and so on
+{
+    GLuint points_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/points-vert.glsl");
+    GLuint points_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/points-frag.glsl");
+    points_sp = NewProgram(points_vs, points_fs);
+
+    GLfloat vertex_data[] = {
+    	0.0f, 0.0f, 0.0f
+    };
+
+    glGenVertexArrays(1, &points_vao);
+    glBindVertexArray(points_vao);
+    glGenBuffers(1, &points_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
+
+    GLint attrib_loc_position = glGetAttribLocation(points_sp, "position");
+    glEnableVertexAttribArray(attrib_loc_position);
+    glVertexAttribPointer(attrib_loc_position, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid*)0 );
+
+    glBindBuffer(GL_ARRAY_BUFFER,0);
+
+
+
+    glGenBuffers(1, &points_color_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, points_color_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * unit_limit * 3, NULL, GL_DYNAMIC_DRAW);
+
+    GLint points_color_loc = glGetAttribLocation( points_sp, "points_color");
+    glEnableVertexAttribArray(points_color_loc);
+    glVertexAttribPointer(points_color_loc, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid*)0 );
+    glVertexAttribDivisor( points_color_loc, 1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+
+    // temporary solution(!) :)
+	// glGenBuffers(1, &unit_data_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, unit_data_buffer);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(int) * unit_limit * 4, NULL, GL_DYNAMIC_DRAW);
+
+	GLint unit_data_loc = glGetAttribLocation( points_sp, "unit_data" );
+	glEnableVertexAttribArray( unit_data_loc );
+	glVertexAttribIPointer( unit_data_loc, 4, GL_UNSIGNED_INT, 4*sizeof(GLuint), (GLvoid*)0 );
+	glVertexAttribDivisor( unit_data_loc, 1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+}
+
 void RandomName(Army *a)
 {
 	const char* names[] = 
@@ -216,6 +291,12 @@ void RandomName(Army *a)
 
 	int random_name = rand() % 64;
 	strncpy(a->name, names[random_name], 31);
+	a->name[31] = '\0';
+}
+
+void SetArmyName(Army *a, const char *name)
+{
+	strncpy(a->name, name, 32);
 	a->name[31] = '\0';
 }
 
@@ -277,10 +358,43 @@ bool HexIsFree(int32_t hex)
 
 void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 {
-	MoveArmyToNewHex(177, 3763);
-	MoveArmyToNewHex(176, 4148);
-	MoveArmyToNewHex(174, 30 * 128 + 55);
+	MoveArmyToNewHex(177, 4532);
+	MoveArmyToNewHex(176, 4533);
+	MoveArmyToNewHex(174, 4534);
 	test_armies[177].base_sprite = GOBLIN_BATHROBE_RED;
+
+	test_armies[174].faction = FACTION_GOBLINS;
+	test_armies[176].faction = FACTION_GOBLINS;
+	test_armies[177].faction = FACTION_GOBLINS;
+
+
+	MoveArmyToNewHex(100, 3891);
+	MoveArmyToNewHex(101, 3892);
+	MoveArmyToNewHex(102, 3893);
+	MoveArmyToNewHex(103, 3894);
+	test_armies[100].base_sprite = SURFER_BOY;
+	test_armies[101].base_sprite = SURFER_BOY;
+	test_armies[102].base_sprite = SURFER_BOY;
+	test_armies[103].base_sprite = SURFER_BOY;
+
+	test_armies[100].movement = 6;
+	test_armies[101].movement = 6;
+	test_armies[102].movement = 6;
+	test_armies[103].movement = 6;
+
+	test_armies[100].faction = FACTION_SURFERS;
+	test_armies[101].faction = FACTION_SURFERS;
+	test_armies[102].faction = FACTION_SURFERS;
+	test_armies[103].faction = FACTION_SURFERS;
+
+	SetArmyName(&test_armies[100], "1st Surfer Battalion 'Sweden'");
+	SetArmyName(&test_armies[101], "2nd Surfer Battalion 'Norway'");
+	SetArmyName(&test_armies[102], "3rd Surfer Battalion 'Stockholm'");
+	SetArmyName(&test_armies[103], "4th Surfer Battalion 'Narvik'");
+
+	SetArmyName(&test_armies[174], "1st Royal Goblin Battalion");
+	SetArmyName(&test_armies[176], "2nd Royal Goblin Battalion");
+	SetArmyName(&test_armies[177], "3rd Royal Goblin Battalion");
 
 	vec2 temp_hehe = {-1.0f, -1.0f};
 	vec2 temp_vec2 = { 860.0f, 650.0f };
@@ -298,8 +412,8 @@ void InitArmyStuff()
 		test_armies[i].base_sprite = (ArmyBaseSprite)(i % 183);
 		test_armies[i].position_hex = i;
 		test_armies[i].movement = 5;
-		test_armies[i].hits_max = 10;
-		test_armies[i].hits_current = 10;
+		test_armies[i].hits_max = 15;
+		test_armies[i].hits_current = 15;
 		test_armies[i].strength = 12;
 		test_armies[i].faction = 0;
 		test_armies[i].wounded_soldiers = 0;
@@ -311,7 +425,7 @@ void InitArmyStuff()
 		test_armies[i].draw = true;
 		RandomName(&test_armies[i]);
 
-		MoveArmyToNewHex(i, i);
+		MoveArmyToNewHex(i, i); // assigns the correct occupier for the map nodes
 	}
 }
 

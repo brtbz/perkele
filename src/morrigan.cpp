@@ -55,38 +55,55 @@ CombatTableEntry combat_table[41] =
 };
 
 
-typedef enum Faction
-{
-	FACTION_RED,
-	FACTION_BLUE,
-	FACTION_GREEN,
-	FACTION_COUNT
-} Faction;
 
 int faction_count = FACTION_COUNT;
-int active_faction = 0;
+// int active_faction = 0;
+
+const char* faction_names[] = 
+{
+	"REDS",
+	"GREENS",
+	"BLUES",
+	"GOBLINS",
+	"SURFERS",
+};
+
+void MoveToNextFaction();
 
 void FactionTakesItsTurn(int faction)
-{
-	/*
+{	
 	int faction_army_count = 0;
 
-	for each army
-		if ( army.faction == faction && army.dead == false)
-			faction_army_count++
+	for (int i = 0; i < 183; i++)
+	{
+		if ( test_armies[i].faction == faction && test_armies[i].dead == false)
+		{
+			faction_army_count++;
+		}
+	}
 
-	if (faction_army_count == 0)
-		MoveToNextFaction()
+	if ( faction_army_count < 1)
+	{
+		MoveToNextFaction();
 		// endless loop if all the armies are dead :)
+	}
 
-	*/
+	strncpy(active_faction_str, faction_names[active_faction], 32);
+
+	for (int i = 0; i < 183; i++)
+	{
+		if (test_armies[i].faction == active_faction && test_armies[i].dead == false)
+		{
+			test_armies[i].move_done = false;
+		}
+	}
 }
 
 void MoveToNextFaction()
 {
 	active_faction++;
 
-	if (active_faction >= FACTION_COUNT)
+	if (active_faction > FACTION_COUNT)
 	{
 		active_faction = 0;
 		game_turn++;
@@ -96,18 +113,9 @@ void MoveToNextFaction()
 
 void EndTurn()
 {
-	for (int i = 0; i < 183; i++)
-	{
-		test_armies[i].move_done = false;
-	}
-/*
-	for each army
-		army_has_moved = false
-		army_has_attacked = false
-		army.movement_points_cur = army.movement_point_max
+	selected_army = NULL;
 
 	MoveToNextFaction();
-*/
 }
 
 void DestroyArmy(Army *a)

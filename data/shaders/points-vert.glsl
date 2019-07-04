@@ -1,10 +1,17 @@
 #version 330 core
 layout (location = 0) in vec3 position;
-uniform int hex_index;
 uniform vec4 camera; // x1, y1, x2, y2
+layout (location = 1) in ivec4 unit_data; // hex_index (location)
+					// unit_base (wehrmacht, luftwaffe, red army)
+					// unit_type (infantry, tanks)
+					// unit_size (division, corps, regiment)
+					// the three last are small enough that they can be baked in just one int
+layout (location = 2) in vec3 points_color;
+out vec3 points_color_frag;
 
 void main()
 {
+	int hex_index = unit_data.x;
 	ivec2 map_grid_size = ivec2( 128, 128 );
 
 	vec2 view_size = vec2( camera.z - camera.x, camera.w - camera.y );
@@ -31,4 +38,6 @@ void main()
 	pos.y = pos.y - 2.0f * ( target_position.y / view_size.y );
 
     gl_Position = vec4(pos.x,pos.y, 0.0f, 1.0f);
+
+    points_color_frag = points_color;
 }  
