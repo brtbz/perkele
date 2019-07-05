@@ -356,6 +356,53 @@ bool HexIsFree(int32_t hex)
 	return map_nodes[ hex ].occupier == -1 ? true : false;
 }
 
+void SaveUnitLocationsToFile(const char* file_path)
+{
+	int data_size = 0;
+	data_size = 183 * sizeof(Army);
+
+	uint8_t *data = (uint8_t*)malloc(data_size);
+
+	memcpy(data, &test_armies[0], data_size);
+
+	FILE *fp = fopen(file_path, "wb");
+
+	fwrite(data, data_size, 1, fp);
+
+	fclose(fp);
+
+	free(data);
+}
+
+int LoadUnitLocationsFromFile(const char* file_path)
+{
+	FILE *fp = fopen(file_path, "rb");
+
+	if ( fp == NULL )
+	{
+		fprintf(stderr, "can'f find %s\n", file_path );
+
+		return -1;
+	}
+
+	fpos_t begin;
+	fgetpos(fp, &begin);
+	fseek(fp, 0, SEEK_END);
+	int file_size = ftell(fp);
+	fsetpos(fp, &begin);
+
+	uint8_t *data = (uint8_t*)malloc(file_size);
+
+	fread(data, file_size, 1, fp);
+
+	memcpy(&test_armies[0], data, file_size);
+
+	fclose(fp);
+	free(data);
+
+	return 0;
+}
+
 void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 {
 	MoveArmyToNewHex(177, 4532);
@@ -400,6 +447,20 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	vec2 temp_vec2 = { 860.0f, 650.0f };
 	camera.IncreaseSizeBy(0.42f, temp_hehe);
 	camera.MoveToNewMin(temp_vec2);
+
+
+
+	for ( int i = 0; i < map_size; i++)
+	{
+		map_nodes[i].occupier = -1;
+	}
+
+	LoadUnitLocationsFromFile("autosave.hws");
+	for (int i = 0; i < 183; i++)
+	{
+		MoveArmyToNewHex(i, test_armies[i].position_hex ); // assigns the correct occupier for the map nodes
+	}
+	unit_data_buffer_needs_update = true;
 }
 
 void InitArmyStuff()
@@ -425,11 +486,12 @@ void InitArmyStuff()
 		test_armies[i].draw = true;
 		RandomName(&test_armies[i]);
 
-		MoveArmyToNewHex(i, i); // assigns the correct occupier for the map nodes
+		// MoveArmyToNewHex(i, i); // assigns the correct occupier for the map nodes
 	}
 }
 
 void TakeDownArmyStuff()
 {
+	SaveUnitLocationsToFile("autosave.hws");
 	FreeUnitDataBuffer();
 }

@@ -28,6 +28,7 @@ extern "C" {
 #include "globals.cpp"
 #include "configs.cpp"
 #include "audio.cpp"
+#include "background.cpp"
 #include "camera.cpp"
 #include "text.cpp"
 #include "hexmap.cpp"
@@ -49,7 +50,6 @@ __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 
 int main(int argc, char* argv[])
 {
-
 	perf_freq = SDL_GetPerformanceFrequency();
 	program_start_time_ticks = SDL_GetPerformanceCounter();
 	printf("-----\n%.4f\tProgram start.\n-----\n", 0.0);

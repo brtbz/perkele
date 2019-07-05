@@ -840,6 +840,22 @@ void FloodFillIslandIds()
 	}
 }
 
+/*
+void InitHexMapAgain() // LoadNewMap()
+{
+	LoadHexMapStuff();
+	LoadHexMapDebugOverlayStuff();
+
+	LoadEdgeYeah();
+
+	UpdateHexMapBuffers();
+
+	InitMapNodes();
+	UpdateEdgeTravelCosts();
+	FloodFillIslandIds();
+}
+*/
+
 void InitHexMap()
 {
 	rng_z = rand();
@@ -852,7 +868,7 @@ void InitHexMap()
 		map_data[i] = GetRandomTerrain();
 	}
 
-	int load_result = LoadMapTerrainFromCSV("data/maps/terrain_perke.csv", map_size, map_data);
+	int load_result = LoadMapTerrainFromCSV("data/maps/terrain_perke_no2.csv", map_size, map_data);
 	if (load_result == 0)
 	{
 		fprintf(stderr, "level load success!!!\n");

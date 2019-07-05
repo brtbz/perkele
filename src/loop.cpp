@@ -69,43 +69,6 @@ void ShowCoolInfoOverlayTopBar(bool* p_open)
 	ImGui::PopStyleVar(1);
 }
 
-void DrawIPI(int palette_phase, bool phase_shift, float zoom_level)
-{
-	glBindVertexArray(ipi_vao);
-	glUseProgram(ipi_sp);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, ipi.texture);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, ipi.palette_texture);
-
-	GLint input_texture_loc = glGetUniformLocation( ipi_sp, "input_texture");
-	glUniform1i( input_texture_loc, 0);
-
-	GLint palette_texture_loc = glGetUniformLocation( ipi_sp, "palette_texture");
-	glUniform1i( palette_texture_loc, 1);
-
-	GLint time_loc = glGetUniformLocation( ipi_sp, "time");
-	glUniform1ui( time_loc, master_timer);
-
-	GLint zoom_loc = glGetUniformLocation( ipi_sp, "zoom_level");
-	glUniform1f(zoom_loc, zoom_level);
-
-	GLint phase_shift_loc = glGetUniformLocation( ipi_sp, "phase_shift");
-	glUniform1i( phase_shift_loc, phase_shift );
-
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
-	glBindVertexArray(0);
-}
-
 void Step(double delta)
 {
 	int camera_move_x = 0;
@@ -497,7 +460,7 @@ void Step(double delta)
 
 			ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
 			ImGui::SameLine();
-			if ( ImGui::Button("LOAD MAP") ) { int rc = LoadMapTerrainFromCSV(loadmap_str, map_size, map_data); }
+			if ( ImGui::Button("LOAD MAP") ) { int rc = LoadMapTerrainFromCSV(loadmap_str, map_size, map_data); /*InitHexMapAgain();*/ }
 
 			ImGui::End();
 		}
@@ -757,7 +720,6 @@ void Step(double delta)
 void MainLoop()
 {
 	uint64_t last_time_ticks = SDL_GetPerformanceCounter() - program_start_time_ticks;
-	uint64_t delta_container[3] = {0,0,0};
 
 	StartMusic();
 
