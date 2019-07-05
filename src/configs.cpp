@@ -67,8 +67,11 @@ void DefaultConfigValues(PerkeleConfigs *pc)
 	pc->master_gain = 1.0f;
 	pc->music_gain = 0.5f;
 	pc->sfx_gain = 1.0f;
+	pc->mouse_edge_scroll = true;
 	pc->enable_debug_window = false;
 	pc->bypass_main_menu = false;
+	pc->ignore_move_rules = false;
+	pc->pathfind_debug_overlay = false;
 };
 
 void WriteConfigsToFile(PerkeleConfigs *pc, const char *file_name)
@@ -94,9 +97,14 @@ void WriteConfigsToFile(PerkeleConfigs *pc, const char *file_name)
 	write_head += snprintf(&temp_file[write_head], LINE_MAX, "music_gain=%.2f\n", pc->music_gain);
 	write_head += snprintf(&temp_file[write_head], LINE_MAX, "sfx_gain=%.2f\n", pc->sfx_gain);
 
+	write_head += snprintf(&temp_file[write_head], LINE_MAX, "\n# GAME\n");
+	write_head += snprintf(&temp_file[write_head], LINE_MAX, "mouse_edge_scroll=%d\n", pc->mouse_edge_scroll);
+
 	write_head += snprintf(&temp_file[write_head], LINE_MAX, "\n# DEV\n");
 	write_head += snprintf(&temp_file[write_head], LINE_MAX, "enable_debug_window=%d\n", pc->enable_debug_window);
 	write_head += snprintf(&temp_file[write_head], LINE_MAX, "bypass_main_menu=%d\n", pc->bypass_main_menu);
+	write_head += snprintf(&temp_file[write_head], LINE_MAX, "ignore_move_rules=%d\n", pc->ignore_move_rules);
+	write_head += snprintf(&temp_file[write_head], LINE_MAX, "pathfind_debug_overlay=%d\n", pc->pathfind_debug_overlay);
 
 	fwrite(&temp_file[0], 1, write_head, fp);
 	fclose(fp);
@@ -114,8 +122,11 @@ int ReadConfigsFromFile(PerkeleConfigs *pc, const char *file_name)
 		"master_gain",
 		"music_gain",
 		"sfx_gain",
+		"mouse_edge_scroll",
 		"enable_debug_window",
-		"bypass_main_menu"
+		"bypass_main_menu",
+		"ignore_move_rules",
+		"pathfind_debug_overlay"
 	};
 	
 	typedef enum CFG_KEY_STRING
@@ -129,8 +140,11 @@ int ReadConfigsFromFile(PerkeleConfigs *pc, const char *file_name)
 		MASTER_GAIN,
 		MUSIC_GAIN,
 		SFX_GAIN,
+		MOUSE_EDGE_SCROLL,
 		ENABLE_DEBUG_WINDOW,
 		BYPASS_MAIN_MENU,
+		IGNORE_MOVE_RULES,
+		PATHFIND_DEBUG_OVERLAY,
 		KEY_STRING_COUNT,
 	} CFG_KEY_STRING;
 	
@@ -201,12 +215,24 @@ int ReadConfigsFromFile(PerkeleConfigs *pc, const char *file_name)
 							pc->sfx_gain = atof(token);
 							break;
 
+						case MOUSE_EDGE_SCROLL:
+							pc->mouse_edge_scroll = (bool)atoi(token);
+							break;
+
 						case ENABLE_DEBUG_WINDOW:
 							pc->enable_debug_window = (bool)atoi(token);
 							break;
 
 						case BYPASS_MAIN_MENU:
 							pc->bypass_main_menu = (bool)atoi(token);
+							break;
+
+						case IGNORE_MOVE_RULES:
+							pc->ignore_move_rules = (bool)atoi(token);
+							break;
+
+						case PATHFIND_DEBUG_OVERLAY:
+							pc->pathfind_debug_overlay = (bool)atoi(token);
 							break;
 
 						default :
@@ -232,6 +258,9 @@ void ValidateConfigs(PerkeleConfigs *pc)
 	pc->master_gain = ClampValueToRangeF( pc->master_gain, 0.0f, 2.0f );
 	pc->music_gain = ClampValueToRangeF( pc->music_gain, 0.0f, 2.0f );
 	pc->sfx_gain = ClampValueToRangeF( pc->sfx_gain, 0.0f, 2.0f );
+	if ( !ValueWithinRange( pc->mouse_edge_scroll, 0, 1)) { pc->mouse_edge_scroll = 1; }
 	if ( !ValueWithinRange( pc->enable_debug_window, 0, 1 )) { pc->enable_debug_window = 0; }
 	if ( !ValueWithinRange( pc->bypass_main_menu, 0, 1 )) { pc->bypass_main_menu = 0; }
+	if ( !ValueWithinRange( pc->ignore_move_rules, 0, 1 )) { pc->ignore_move_rules = 0; }
+	if ( !ValueWithinRange( pc->pathfind_debug_overlay, 0, 1)) { pc->pathfind_debug_overlay = 0; }
 }

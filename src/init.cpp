@@ -199,6 +199,10 @@ void Init()
 	bypass_main_menu ? show_main_menu = false : show_main_menu = true;
 
 	show_debug_ui = perkele_configs.enable_debug_window;
+	mouse_edge_scroll = perkele_configs.mouse_edge_scroll;
+
+	draw_hex_debug_overlay = perkele_configs.pathfind_debug_overlay;
+	ignore_move_rules = perkele_configs.ignore_move_rules;
 
 	// InitFont();
 	pathfinder = (Pathfinder*)malloc(sizeof(Pathfinder));

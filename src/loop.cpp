@@ -153,7 +153,7 @@ void Step(double delta)
 
 	SDL_GetMouseState( &(mouse_pos_screen.x), &(mouse_pos_screen.y) );
 
-	if (mouse_first_move_done)
+	if (mouse_edge_scroll && mouse_first_move_done)
 	{
 		if ( mouse_pos_screen.x == 0 ) { camera_move_x = -1; }
 		if ( mouse_pos_screen.y == 0 ) { camera_move_y = -1; }
@@ -460,7 +460,7 @@ void Step(double delta)
 
 			ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
 			ImGui::SameLine();
-			if ( ImGui::Button("LOAD MAP") ) { int rc = LoadMapTerrainFromCSV(loadmap_str, map_size, map_data); /*InitHexMapAgain();*/ }
+			if ( ImGui::Button("LOAD MAP") ) { LoadNewMap(loadmap_str); }
 
 			ImGui::End();
 		}
@@ -576,11 +576,18 @@ void Step(double delta)
 
 		ImGui::Separator();
 
+		ImGui::Text("GAME");
+		ImGui::Checkbox("Edge Scroll Map", &mouse_edge_scroll);
+
+		ImGui::Separator();
+
 		ImGui::Text("DEV");
 
 		static bool bypass_main_menu = perkele_configs.bypass_main_menu;
 		ImGui::Checkbox("enable debug ui", &show_debug_ui);
 		ImGui::Checkbox("bypass main menu on startup", &bypass_main_menu);
+		ImGui::Checkbox("Ignore move rules", &ignore_move_rules);
+		ImGui::Checkbox("Pathfind debug overlay", &draw_hex_debug_overlay);
 
 		ImGui::Separator();
 
@@ -589,8 +596,11 @@ void Step(double delta)
 			perkele_configs.master_gain = master_gain;
 			perkele_configs.music_gain = music_gain;
 			perkele_configs.sfx_gain = sfx_gain;
+			perkele_configs.mouse_edge_scroll = mouse_edge_scroll;
 			perkele_configs.bypass_main_menu = bypass_main_menu;
 			perkele_configs.enable_debug_window = show_debug_ui;
+			perkele_configs.ignore_move_rules = ignore_move_rules;
+			perkele_configs.pathfind_debug_overlay = draw_hex_debug_overlay;
 			perkele_configs.screen_mode = e;
 			perkele_configs.screen_w = dims[0];
 			perkele_configs.screen_h = dims[1];

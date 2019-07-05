@@ -607,6 +607,20 @@ int32_t GetRandomTerrain()
 	return MWC % 7;
 }
 
+void ClearSomeMapNodeDataAfterLoadingNewMap()
+{
+	for (int i = 0; i < map_size; i++)
+	{
+		map_nodes[i].occupier = -1;
+		map_nodes[i].pathfind_island_id = -1;
+		map_nodes[i].terrain = PASSABLE;
+		if (map_data[i] == 5 || map_data[i] == 6)
+		{
+			map_nodes[i].terrain = IMPASSABLE;
+		}		
+	}
+}
+
 void InitMapNodes()
 {
 	int32_t total_n_count = 0;
@@ -840,21 +854,22 @@ void FloodFillIslandIds()
 	}
 }
 
-/*
-void InitHexMapAgain() // LoadNewMap()
+void MoveArmyToNewHex(int32_t army, int32_t hex);
+void LoadNewMap(const char* file_path)
 {
-	LoadHexMapStuff();
-	LoadHexMapDebugOverlayStuff();
+	int rc = LoadMapTerrainFromCSV(file_path, map_size, map_data);
+	ClearSomeMapNodeDataAfterLoadingNewMap();
 
-	LoadEdgeYeah();
-
-	UpdateHexMapBuffers();
-
-	InitMapNodes();
 	UpdateEdgeTravelCosts();
 	FloodFillIslandIds();
+	UpdateHexMapBuffers();
+
+	for (int i = 0; i < 183; i++)
+	{
+		MoveArmyToNewHex(i, test_armies[i].position_hex ); // assigns the correct occupier for the map nodes
+	}
+	unit_data_buffer_needs_update = true;
 }
-*/
 
 void InitHexMap()
 {

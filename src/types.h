@@ -101,8 +101,11 @@ typedef struct PerkeleConfigs
 	float master_gain;
 	float music_gain;
 	float sfx_gain;
+	bool mouse_edge_scroll;
 	bool enable_debug_window;
 	bool bypass_main_menu;
+	bool ignore_move_rules;
+	bool pathfind_debug_overlay;
 } PerkeleConfigs;
 
 typedef struct Sfx

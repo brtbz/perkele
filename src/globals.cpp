@@ -10,6 +10,7 @@ bool show_settings_window = false;
 bool bypass_main_menu = false;
 bool show_main_menu = false;
 bool show_memory_window = false;
+bool mouse_edge_scroll = true;
 
 
 bool audio_enabled = false;
