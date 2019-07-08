@@ -50,6 +50,43 @@ static void ShowEndTurnButtonOverlay(bool* p_open)
 	ImGui::PopStyleVar(2);
 }
 
+void ShowRestButton(bool* p_open)
+{
+	const float distance = 4.0f;
+	ImVec2 window_pos = ImVec2( ImGui::GetIO().DisplaySize.x / 2.0f - 164.0f, ImGui::GetIO().DisplaySize.y - distance );
+	ImVec2 window_pos_pivot = ImVec2(0.5f, 1.0f);
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+	ImGui::SetNextWindowBgAlpha(0.8f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	if (ImGui::Begin("REST BUTTON OVERLAY", p_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+	{
+		if (ImGui::Button("REST", ImVec2(160.0f, 40.0f) ))
+		{
+			if (selected_army != NULL && selected_army->move_done == false && selected_army->action_done == false)
+			{
+				PlaySfx(SFX_GOBLIN_ROAR);
+				int hits_recovered = selected_army->wounded_soldiers;
+				selected_army->hits_current += hits_recovered;
+				selected_army->wounded_soldiers = 0;
+				selected_army->move_done = true;
+				selected_army->action_done = true;
+
+				unit_data_buffer_needs_update = true; // or does it???
+
+				selected_army = NULL;
+				draw_path = false;
+			}
+			else
+			{
+				PlaySfx(SFX_UI_CLICK_ERROR);
+			}
+		}
+	}
+	ImGui::End();
+	ImGui::PopStyleVar(2);
+}
+
 void ShowCoolInfoOverlayTopBar(bool* p_open)
 {
 	float distance = 2.0f;
@@ -64,6 +101,58 @@ void ShowCoolInfoOverlayTopBar(bool* p_open)
 	{
 		// use ImGui's columns to group the text here nicely
 		ImGui::Text("Turn: %d - %s (cool info here in the info overlay top bar yeah!)", game_turn, active_faction_str);
+	}
+	ImGui::End();
+	ImGui::PopStyleVar(1);
+}
+
+void ShowHighlightedUnitInfo(bool* p_open)
+{
+	ImVec2 window_pos = ImVec2( ImGui::GetIO().DisplaySize.x - 202.0f, 48.0f );
+	ImVec2 window_pos_pivot = ImVec2(0.0f, 0.0f);
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+	ImGui::SetNextWindowSize(ImVec2(200.0f, 160.0f));
+	ImGui::SetNextWindowBgAlpha(0.3f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+
+	if (ImGui::Begin("highlighted unit",  p_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+	{
+		if ( highlighted_hex > -1 && map_nodes[highlighted_hex].occupier > -1 )
+		{
+			int army_index = map_nodes[highlighted_hex].occupier;
+			ImGui::Text("%s", test_armies[ army_index ].name );
+			ImGui::Text("faction: %s", faction_names[ test_armies[ army_index ].faction ]);
+			ImGui::Text("Strength: %d", test_armies[ army_index ].strength);
+			ImGui::Text("Armor: %d", test_armies[ army_index ].armor);
+			ImGui::Text("Movement: %d", test_armies[ army_index ].movement);
+			ImGui::Text("Hits:  %d / %d", test_armies[ army_index ].hits_current, test_armies[ army_index ].hits_max);
+			ImGui::Text("Wounded: %d Dead: %d", test_armies[army_index].wounded_soldiers, test_armies[army_index].dead_soldiers)	;
+		}
+	}
+	ImGui::End();
+	ImGui::PopStyleVar(1);
+}
+
+void ShowSelectedUnitInfo(bool* p_open)
+{
+	ImVec2 window_pos = ImVec2( ImGui::GetIO().DisplaySize.x - 202.0f, 212.0f );
+	ImVec2 window_pos_pivot = ImVec2(0.0f, 0.0f);
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+	ImGui::SetNextWindowSize(ImVec2(200.0f, 160.0f));
+	ImGui::SetNextWindowBgAlpha(0.3f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+
+	if (ImGui::Begin("selectedd unit",  p_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+	{
+		if (selected_army != NULL)
+		{
+			ImGui::Text("SELECTED UNIT");
+			ImGui::Text("%s", selected_army->name);
+			ImGui::Text("Strength: %d", selected_army->strength);
+			ImGui::Text("Movement: %d", selected_army->movement);
+			ImGui::Text("Hits:  %d / %d", selected_army->hits_current, selected_army->hits_max);
+			ImGui::Text("Position %d", selected_army->position_hex);
+		}
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(1);
@@ -234,7 +323,7 @@ void Step(double delta)
 					PlaySfx(SFX_UI_CLICK_ERROR);
 				}
 			}
-			else if ( HexesAreNeighbours( selected_army->position_hex, highlighted_hex) && map_nodes[highlighted_hex].occupier > -1 )
+			else if ( selected_army->action_done == false && HexesAreNeighbours( selected_army->position_hex, highlighted_hex) && map_nodes[highlighted_hex].occupier > -1 )
 			{
 				ResolveCombat( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
 				PlaySfx(SFX_GOBLIN_ROAR);
@@ -335,7 +424,7 @@ void Step(double delta)
 	ImGui_ImplSDL2_NewFrame(window);
 	ImGui::NewFrame();
 
-	if (selected_army != NULL)
+	if (0 && selected_army != NULL)
 	{
 		ImGui::Begin("SELECTED UNIT");
 		ImGui::Text("%s", selected_army->name);
@@ -351,38 +440,24 @@ void Step(double delta)
 		ImGui::End();
 	}
 
-	{
-		ImGui::Begin("highlighted unit");
-		if ( highlighted_hex > -1 && map_nodes[highlighted_hex].occupier > -1 )
-		{
-			int army_index = map_nodes[highlighted_hex].occupier;
-			ImGui::Text("%s", test_armies[ army_index ].name );
-			ImGui::Text("faction: %d", test_armies[ army_index ].faction);
-			ImGui::Text("Strength: %d", test_armies[ army_index ].strength);
-			ImGui::Text("Armor: %d", test_armies[ army_index ].armor);
-			ImGui::Text("Movement: %d", test_armies[ army_index ].movement);
-			ImGui::Text("Hits:  %d / %d", test_armies[ army_index ].hits_current, test_armies[ army_index ].hits_max);
-			ImGui::Text("Wounded: %d Dead: %d", test_armies[army_index].wounded_soldiers, test_armies[army_index].dead_soldiers)	;
-		}
-		ImGui::End();
-	}
+	bool show_highlighted_unit_info = true;
+	ShowHighlightedUnitInfo(&show_highlighted_unit_info);
+
+	bool show_selected_unit_info = true;
+	ShowSelectedUnitInfo(&show_selected_unit_info);
+
+	const float distance = 2.0f;
+	ImVec2 window_pos = ImVec2( ImGui::GetIO().DisplaySize.x - distance, 0 + distance );
+	ImVec2 window_pos_pivot = ImVec2( 1.0f, 0.0f );
+
+
 
 	{
-		ImGui::Begin("Combat Results");
+		ImGui::SetNextWindowPos( ImVec2( ImGui::GetIO().DisplaySize.x - 404.0f , ImGui::GetIO().DisplaySize.y - 76.0f ) );
+		ImGui::SetNextWindowSize( ImVec2(400.0f, 72.0f));
+		ImGui::Begin("Combat Results", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 		ImGui::Text("%s", combat_result_str1);
 		ImGui::Text("%s", combat_result_str2);
-		ImGui::End();
-	}
-
-	if (selected_army != NULL)
-	{
-		ImGui::Begin("REST BUTTON!");
-		if (ImGui::Button("REST"))
-		{
-			int hits_recovered = selected_army->wounded_soldiers;
-			selected_army->hits_current += hits_recovered;
-			selected_army->wounded_soldiers = 0;
-		}
 		ImGui::End();
 	}
 
@@ -633,6 +708,9 @@ void Step(double delta)
 	{
 		ShowCoolInfoOverlayTopBar(&show_cool_info_overlay_topbar);
 	}
+
+	static bool show_rest_button = true;
+	ShowRestButton(&show_rest_button);
 
 	cm_set_master_gain((double)master_gain);
 	cm_set_gain(music_src, (double)music_gain);

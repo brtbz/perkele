@@ -95,6 +95,7 @@ void FactionTakesItsTurn(int faction)
 		if (test_armies[i].faction == active_faction && test_armies[i].dead == false)
 		{
 			test_armies[i].move_done = false;
+			test_armies[i].action_done = false;
 		}
 	}
 }
@@ -225,4 +226,6 @@ void ResolveCombat(Army *attacker, Army *defender)
 	{
 		DestroyArmy(defender);
 	}
+
+	attacker->action_done = true;
 }
