@@ -254,6 +254,8 @@ void Step(double delta)
 	ImGui_ImplSDL2_NewFrame(window);
 	ImGui::NewFrame();
 
+	ShowGUIFrames();
+
 	ShowHighlightedUnitInfo();
 
 	ShowSelectedUnitInfo();
@@ -277,11 +279,11 @@ void Step(double delta)
 
 	if (show_settings_window)
 	{
-		DrawSettingsWindow();
+		ShowSettingsWindow();
 	}
 
 	static bool show_menu_button = true;
-	if (show_menu_button && !show_main_menu )
+	if (show_menu_button )
 	{
 		ShowMenuButtonOverlay();		
 	}

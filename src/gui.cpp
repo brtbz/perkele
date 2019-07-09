@@ -151,13 +151,13 @@ void ShowCombatResultsWindow()
 {
 	ImGui::SetNextWindowPos( ImVec2( ImGui::GetIO().DisplaySize.x - 404.0f , ImGui::GetIO().DisplaySize.y - 76.0f ) );
 	ImGui::SetNextWindowSize( ImVec2(400.0f, 72.0f));
-	ImGui::Begin("Combat Results", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+	ImGui::Begin("Combat Results", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoMove);
 	ImGui::Text("%s", combat_result_str1);
 	ImGui::Text("%s", combat_result_str2);
 	ImGui::End();
 }
 
-void DrawSettingsWindow()
+void ShowSettingsWindow()
 {
 	const float padding_to_screen_edge = 100.0f;
 	const float max_width = 720.0f;
@@ -393,4 +393,46 @@ void ShowDebugUI()
 
 		ImGui::End();
 	}
+}
+
+void ShowGUIFrames()
+{
+	ImGuiWindowFlags gui_frame_window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar
+		| ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing 
+		| ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus; // | ImGuiWindowFlags_NoMouseInputs;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+	{
+		ImVec2 window_pos = ImVec2( 0.0f, 0.0f );
+		ImVec2 window_pos_pivot = ImVec2( 0.0f, 0.0f );
+		ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+		ImGui::SetNextWindowSize(ImVec2( ImGui::GetIO().DisplaySize.x , 38.0f));
+		// ImGui::SetNextWindowBgAlpha(0.3f);
+
+		ImGui::Begin("GUI_Frame_1", NULL, gui_frame_window_flags);
+		ImGui::End();
+	}
+
+	{
+		ImVec2 window_pos = ImVec2( ImGui::GetIO().DisplaySize.x - 210.0f, 0.0f );
+		ImVec2 window_pos_pivot = ImVec2( 0.0f, 0.0f );
+		ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+		ImGui::SetNextWindowSize(ImVec2( 210.0f, ImGui::GetIO().DisplaySize.y));
+		// ImGui::SetNextWindowBgAlpha(0.3f);
+
+		ImGui::Begin("GUI_Frame_2", NULL, gui_frame_window_flags);
+		ImGui::End();
+	}
+	{
+		ImVec2 window_pos = ImVec2( 0.0f, ImGui::GetIO().DisplaySize.y - 48.0f );
+		ImVec2 window_pos_pivot = ImVec2( 0.0f, 0.0f );
+		ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+		ImGui::SetNextWindowSize(ImVec2( ImGui::GetIO().DisplaySize.x, 48.0f));
+		// ImGui::SetNextWindowBgAlpha(0.3f);
+
+		ImGui::Begin("GUI_Frame_3", NULL, gui_frame_window_flags);
+		ImGui::End();
+	}
+	ImGui::PopStyleVar(2);
 }
