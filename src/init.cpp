@@ -8,7 +8,20 @@ void CustomSDLCursors()
 
 	SDL_Surface *arrow_bmp = SDL_LoadBMP("data/gfx/cursorarrow.bmp");
 	cursor_arrow = SDL_CreateColorCursor(arrow_bmp, 1, 0);
+}
 
+void ImGuiCustomStyleSetup()
+{
+    ImGuiStyle* style = &ImGui::GetStyle();
+    style->WindowRounding = 0.0f;
+    style->ScrollbarRounding = 0.0f;
+    style->WindowTitleAlign = ImVec2(0.5f, 0.5f);
+
+	ImVec4* colors = ImGui::GetStyle().Colors;
+	colors[ImGuiCol_FrameBg]                = ImVec4(0.32f, 0.41f, 0.54f, 0.54f);
+	colors[ImGuiCol_Button]                 = ImVec4(0.00f, 0.42f, 0.74f, 1.00f);
+	colors[ImGuiCol_WindowBg]               = ImVec4(0.00f, 0.13f, 0.24f, 1.00f);
+	colors[ImGuiCol_TitleBgActive]          = ImVec4(0.06f, 0.56f, 0.89f, 1.00f);
 }
 
 void Init()
@@ -82,8 +95,8 @@ void Init()
 
 	window = SDL_CreateWindow(
 		"PERKELE!",
-		10, //SDL_WINDOWPOS_UNDEFINED,
-		100, //SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
 		create_window_w,
 		create_window_h,
 		create_window_flags
@@ -163,6 +176,9 @@ void Init()
 	/* Start audio */
 	SDL_PauseAudioDevice(audio_dev, 0);
 
+	music_gain = perkele_configs.music_gain;
+	master_gain = perkele_configs.master_gain;
+
 
 
 	// Setup Dear ImGui context
@@ -182,6 +198,9 @@ void Init()
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 	//ImGui::StyleColorsClassic();
+	ImGuiCustomStyleSetup();
+
+
 
 	// Setup Platform/Renderer bindings
 	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);

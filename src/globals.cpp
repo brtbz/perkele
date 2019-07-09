@@ -55,6 +55,9 @@ cm_Source *music_src;
 SDL_AudioDeviceID audio_dev;
 Sfx sfx[37] = {};
 
+float master_gain;
+float music_gain;
+
 
 
 // TEXT
