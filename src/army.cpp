@@ -351,6 +351,31 @@ void AdvanceArmyMoveAnimation(int32_t army)
 	}
 }
 
+void BeginArmyAttackAnimation(int32_t army, int32_t start, int32_t end)
+{
+	// attack animation is a move animation that goes nowhere, just quickly bumps against the target
+	moving_army = army;
+	test_armies[army].draw = false;
+	army_attacking = true;
+	movement_starts = master_timer;
+}
+
+void AdvanceArmyAttackAnimation(int32_t army)
+{
+	movement_timer = master_timer;
+	if ( movement_starts + 10 * ms_per_hex < movement_timer )
+	{
+		// attack anim done
+
+		army_attacking = false;
+		test_armies[army].move_done = true;
+		test_armies[army].draw = true;
+
+		draw_path = false;
+		unit_data_buffer_needs_update = true;
+	}
+}
+
 bool HexIsFree(int32_t hex)
 {
 	return map_nodes[ hex ].occupier == -1 ? true : false;

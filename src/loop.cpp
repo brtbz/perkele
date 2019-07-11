@@ -133,7 +133,12 @@ void Step(double delta)
 		AdvanceArmyMoveAnimation(moving_army);
 	}
 
-	if (!army_moving) // disable UI while moving unit around the map. is that overkill?
+	if (army_attacking)
+	{
+		AdvanceArmyAttackAnimation(moving_army);
+	}
+
+	if (!army_moving && !army_attacking) // disable UI while moving unit around the map. is that overkill?
 	{
 		if ( right_clicked && selected_army != NULL)
 		{
@@ -161,6 +166,8 @@ void Step(double delta)
 			}
 			else if ( selected_army->action_done == false && HexesAreNeighbours( selected_army->position_hex, highlighted_hex) && map_nodes[highlighted_hex].occupier > -1 )
 			{
+				defenders_hex = highlighted_hex;
+				BeginArmyAttackAnimation( selected_army->index, selected_army->position_hex, defenders_hex );
 				ResolveCombat( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
 				PlaySfx(SFX_GOBLIN_ROAR);
 				selected_army = NULL;
@@ -357,18 +364,29 @@ void Step(double delta)
 		float transition = (float)(movement_timer - movement_starts) / (float)ms_per_hex;
 		DrawMovingArmy(moving_army, prev_hex, moving_to_hex, transition, test_armies[moving_army].base_sprite );
 	}
+	if (army_attacking)
+	{
+		float transition = (float)(movement_timer - movement_starts) / (float)(10 * ms_per_hex);
+		transition *= 3.1419f;
+		transition = sinf(transition);
+		transition *= 0.8f;
+		transition = ClampValueToRangeF(transition, 0.0f, 1.0f);
+
+		DrawMovingArmy(moving_army, test_armies[moving_army].position_hex, defenders_hex, transition, test_armies[moving_army].base_sprite );	
+	}
 
 	DrawStrings();
 
 	{
 		vec3 color_green = {0.0f, 1.0f, 0.0f };
+		vec3 color_dark_green = {0.0f, 0.5f, 0.0f};
 		vec3 color_red = { 1.0f, 0.0f, 0.0f};
 		vec3 color_blue = { 0.0f, 0.0f, 1.0f};
 		for ( int i = 0; i < 183; i++)
 		{
 			if (test_armies[i].move_done == true && test_armies[i].faction == active_faction )
 			{
-				points_colors[i] = color_red;
+				points_colors[i] = color_dark_green;
 			}
 			else if ( test_armies[i].move_done == false && test_armies[i].faction == active_faction )
 			{
@@ -376,7 +394,7 @@ void Step(double delta)
 			}
 			else
 			{
-				points_colors[i] = color_blue;
+				points_colors[i] = color_red;
 			}
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, points_color_buffer);
