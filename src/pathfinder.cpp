@@ -1,3 +1,11 @@
+/*
+units can pass through other units of the same faction
+
+1. pathfinder needs to know WHO is going to use the path (or maybe just which faction?)
+2. if map node has occupier, but factions match, it goes to open set instead
+3. reachable nodes set that is made like this, requires another pass where ALL the nodes with ANY occupier are removed
+*/
+
 bool OpenSetIsEmpty(Pathfinder *pf)
 {
 	return pf->open_set_count == 0 ? true : false;
@@ -327,7 +335,7 @@ bool MapIndexIsInOpenSetMapIndices(Pathfinder *pf, int32_t map_index)
 	return false;
 }
 
-void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex)
+void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex, int faction)
 {
 	int32_t h_score;
 	int32_t g_score;
@@ -341,7 +349,7 @@ void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_sco
 			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
 			if (!MapIndexIsInClosedSet(pf, neighbour) && !MapIndexIsInOpenSetMapIndices(pf, neighbour))
 			{
-				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 )
+				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 && test_armies[ map_nodes[neighbour].occupier ].faction != faction )
 				{
 					AddClosedSetLeaf(pf, neighbour);
 				}
@@ -367,7 +375,7 @@ void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_sco
 	AddClosedSetLeaf(pf, map_index);
 }
 
-void AnalyzeMapNodeForReachableNodes(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, int available_movement_points)
+void AnalyzeMapNodeForReachableNodes(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, int available_movement_points, int faction)
 {
 	int32_t g_score;
 	int32_t neighbour;
@@ -379,7 +387,7 @@ void AnalyzeMapNodeForReachableNodes(Pathfinder *pf, int32_t map_index, int32_t 
 			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
 			if (!MapIndexIsInClosedSet(pf, neighbour) && !MapIndexIsInOpenSetMapIndices(pf, neighbour))
 			{
-				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 )
+				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 && test_armies[ map_nodes[neighbour].occupier ].faction != faction )
 				{
 					AddClosedSetLeaf(pf, neighbour);
 				}
@@ -435,7 +443,7 @@ printf("This took %.04g\n", calculating1*1000.0);
 // 4. continue until open set is empty
 // 5. return value all the nodes that were in open set (this could be array of int32_t and its size)
 
-int32_t FindReachableNodes(Pathfinder *pf, int32_t start, int available_movement_points)
+int32_t FindReachableNodes(Pathfinder *pf, int32_t start, int available_movement_points, int faction)
 {
 	int32_t reachable_nodes_count = 0;
 
@@ -455,16 +463,22 @@ int32_t FindReachableNodes(Pathfinder *pf, int32_t start, int available_movement
 
 		PullMapIndexWithLowestFScoreFromOpenSet( pf, &map_index, &accumulated_g_score, &came_along_edge);
 		came_along_edges[map_index] = came_along_edge;
-		AnalyzeMapNodeForReachableNodes( pf, map_index, accumulated_g_score, available_movement_points);
+		AnalyzeMapNodeForReachableNodes( pf, map_index, accumulated_g_score, available_movement_points, faction);
 	}
 
+	int rn = 0;
 	for (int i = 0; i < pf->number_of_nodes_that_were_in_open_set_debug; i++)
 	{
-		reachable_nodes[i] = pf->nodes_that_were_in_open_set_debug[i];
+		if ( map_nodes[ pf->nodes_that_were_in_open_set_debug[i] ].occupier == -1 )
+		{
+			reachable_nodes[rn] = pf->nodes_that_were_in_open_set_debug[i];
+			rn++;
+		}
 	}
+	reachable_nodes_number = rn;
 
-	reachable_nodes_number = pf->number_of_nodes_that_were_in_open_set_debug;
-	return reachable_nodes_count;
+	//return reachable_nodes_count;
+	return rn;
 }
 
 bool HexIsInReachableNodes(int32_t hex)
@@ -500,7 +514,7 @@ uint32_t ReconstructPath(Pathfinder *pf, int32_t start, int32_t goal)
 	return path_size;
 }
 
-int32_t FindPath(Pathfinder *pf, int32_t start, int32_t goal)
+int32_t FindPath(Pathfinder *pf, int32_t start, int32_t goal, int faction)
 {
 	if (goal < 0)
 	{
@@ -551,7 +565,7 @@ int32_t FindPath(Pathfinder *pf, int32_t start, int32_t goal)
 			temp_score = accumulated_g_score;
 			break;
 		}
-		AnalyzeMapNode(pf, map_index, accumulated_g_score, goal_hex);
+		AnalyzeMapNode(pf, map_index, accumulated_g_score, goal_hex, faction);
 	}
 
 	analyzed_nodes_number = 0;

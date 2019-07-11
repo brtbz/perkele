@@ -199,7 +199,7 @@ void Step(double delta)
 		if ( selected_army != NULL && selected_army->move_done == false )
 		{
 			// TODO: don't do this every frame
-			FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement);
+			FindReachableNodes(pathfinder, selected_army->position_hex, selected_army->movement, selected_army->faction);
 
 			draw_path = true;
 
@@ -207,7 +207,7 @@ void Step(double delta)
 			{
 				if ( current_path.x != selected_army->position_hex || current_path.y != highlighted_hex )
 				{
-					if ( FindPath(pathfinder, selected_army->position_hex, highlighted_hex) < 0 )
+					if ( FindPath(pathfinder, selected_army->position_hex, highlighted_hex, selected_army->faction) < 0 )
 					{
 						draw_path = false;
 					}
