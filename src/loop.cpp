@@ -366,10 +366,10 @@ void Step(double delta)
 	}
 	if (army_attacking)
 	{
-		float transition = (float)(movement_timer - movement_starts) / (float)(10 * ms_per_hex);
+		float transition = (float)(movement_timer - movement_starts) / (float)(attack_anim_len);
 		transition *= 3.1419f;
 		transition = sinf(transition);
-		transition *= 0.8f;
+		transition *= 0.5f;
 		transition = ClampValueToRangeF(transition, 0.0f, 1.0f);
 
 		DrawMovingArmy(moving_army, test_armies[moving_army].position_hex, defenders_hex, transition, test_armies[moving_army].base_sprite );	

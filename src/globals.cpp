@@ -102,6 +102,7 @@ Army test_armies[183];
 Army *selected_army = NULL;
 bool army_moving = false; // ignore commands while true
 bool army_attacking = false;
+uint32_t attack_anim_len = 200;
 int32_t defenders_hex = -1;
 uint32_t movement_starts;
 uint32_t movement_timer;

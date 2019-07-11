@@ -363,7 +363,7 @@ void BeginArmyAttackAnimation(int32_t army, int32_t start, int32_t end)
 void AdvanceArmyAttackAnimation(int32_t army)
 {
 	movement_timer = master_timer;
-	if ( movement_starts + 10 * ms_per_hex < movement_timer )
+	if ( movement_starts + attack_anim_len < movement_timer )
 	{
 		// attack anim done
 
