@@ -77,6 +77,45 @@ void DrawMovingArmy(int32_t a, int32_t start_hex, int32_t end_hex, float transit
 	glBindVertexArray(0);
 }
 
+void DrawHits(int32_t hex, vec3 color, int hits)
+{
+	glBindVertexArray(hits_vao);
+	glUseProgram(hits_sp);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, hits_texture);
+
+	GLint input_texture_loc = glGetUniformLocation( hits_sp, "input_texture" );
+	glUniform1i( input_texture_loc, 0 );
+
+	GLint sprite_sheet_size_loc = glGetUniformLocation( hits_sp, "sprite_sheet_size" );
+	glUniform2f( sprite_sheet_size_loc, 64.0f, 64.0f );
+
+	GLint screen_size_loc = glGetUniformLocation( hits_sp, "screen_size" );
+	glUniform2f( screen_size_loc, viewport_size.x, viewport_size.y );
+
+	GLint camera_loc = glGetUniformLocation( hits_sp, "camera" );
+	glUniform4f( camera_loc, camera.Min().x, camera.Min().y, camera.Max().x, camera.Max().y );
+
+	GLint map_grid_size_loc = glGetUniformLocation( hits_sp, "map_grid_size" );
+	glUniform2i( map_grid_size_loc, map_width, map_height );
+
+	GLint hex_loc = glGetUniformLocation( hits_sp, "hex");
+	glUniform1i( hex_loc, hex );
+
+	GLint hits_loc = glGetUniformLocation( hits_sp, "hits");
+	glUniform1i( hits_loc, hits);
+
+	// temp hopefully
+	GLint color_loc = glGetUniformLocation( hits_sp, "faction_color");
+	glUniform3f(color_loc, color.r, color.g, color.b);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
+	glBindVertexArray(0);
+}
+
 void DrawAllPoints(float size, bool black)
 {
 	glBindVertexArray(points_vao);
@@ -209,6 +248,51 @@ void LoadArmyGraphicStuff()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+}
+
+void LoadHits() // hitpoint overlay
+{
+	int w, h;
+	hits_texture = LoadTexture("data/gfx/hits.png", &w, &h);
+	GLuint hits_vs = NewShader(GL_VERTEX_SHADER, "data/shaders/hits-vert.glsl");
+	GLuint hits_fs = NewShader(GL_FRAGMENT_SHADER, "data/shaders/hits-frag.glsl");
+	hits_sp = NewProgram(hits_vs, hits_fs);
+
+	GLfloat vertex_data[] = {
+		// x     y       u    v
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		-1.0f,  1.0f,  0.0f, 1.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+	};
+
+    glGenVertexArrays(1, &hits_vao);
+    glBindVertexArray(hits_vao);
+    glGenBuffers(1, &hits_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, hits_vbo);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
+
+	GLint position_loc = glGetAttribLocation(hits_sp, "position");
+	glEnableVertexAttribArray(position_loc);
+	glVertexAttribPointer( position_loc, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)0 );
+
+	GLint uv_coord_loc = glGetAttribLocation(hits_sp, "uv_coord");
+	glEnableVertexAttribArray( uv_coord_loc );
+	glVertexAttribPointer( uv_coord_loc, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)(2*sizeof(GLfloat)));
+
+	// unit location buffer (int? or use that ivec4 that others are using already?)
+
+	// faction color buffer (vec3?)
+
+	// unit hit point buffer (int)
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
 }
 
 void LoadPoints() // indicator for units that shows whether they are active or used their move already and so on
@@ -505,6 +589,7 @@ void InitArmyStuff()
 		test_armies[i].wounded_soldiers = 0;
 		test_armies[i].dead_soldiers = 0;
 		test_armies[i].armor = 15;
+		test_armies[i].zone_of_control = 1;
 		test_armies[i].move_done = false;
 		test_armies[i].action_done = false;
 		test_armies[i].dead = false;
@@ -513,6 +598,8 @@ void InitArmyStuff()
 
 		// MoveArmyToNewHex(i, i); // assigns the correct occupier for the map nodes
 	}
+
+	LoadHits();
 }
 
 void TakeDownArmyStuff()

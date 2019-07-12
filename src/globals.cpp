@@ -197,6 +197,11 @@ GLuint points_vao;
 GLuint points_color_buffer;
 vec3 points_colors[183];
 
+GLuint hits_sp;
+GLuint hits_vbo;
+GLuint hits_vao;
+GLuint hits_texture;
+
 
 bool ignore_move_rules = true;
 char combat_result_str1[256];

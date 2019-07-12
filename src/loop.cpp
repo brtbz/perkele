@@ -405,6 +405,34 @@ void Step(double delta)
 		DrawAllPoints(5.0f, false);
 	}
 
+	for (int i = 0; i < 183; i++)
+	{
+		int hits = test_armies[i].hits_current;
+		hits = ClampValueToRange(hits, 0, 15);
+
+		vec3 color_faction = { 0.9f, 0.6f, 0.9f};;
+
+		if (test_armies[i].faction == FACTION_GOBLINS)
+		{
+			color_faction = { 0.9f, 0.6f, 0.4f};
+		}
+		else if ( test_armies[i].faction == FACTION_SURFERS)
+		{
+			color_faction = { 0.5f, 1.0f, 0.8f };
+		}
+
+		if (test_armies[i].move_done == true || test_armies[i].faction != active_faction)
+		{
+			color_faction.r -= 0.2f;
+			color_faction.g -= 0.2f;
+			color_faction.b -= 0.2f;
+		}
+
+		int hex = test_armies[i].position_hex;
+
+		DrawHits(hex, color_faction, hits);
+	}
+
 	ImGui::Render();
 	//SDL_GL_MakeCurrent(window, gl_context); // ???
 	//glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);

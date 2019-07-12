@@ -167,6 +167,7 @@ typedef struct Army
 	int16_t armor;
 	int16_t strength;
 	int16_t faction;
+	int32_t zone_of_control; // maybe this could be bool, but maybe there could be more to zones-of-control than just yes/no
 	bool move_done;
 	bool action_done;
 	bool dead;

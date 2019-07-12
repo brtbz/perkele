@@ -1,16 +1,18 @@
 BUGStofix:
 reachable nodes flicker when mouse-overing unreachable nodes
+pathfinder (and a future AI using it) should be able to handle temporary 'islands' in the node graph created by enemy units
 imgui can behave weirdly in windowed mode. there's some additional yoffset for mouse input or something. (this is likely about xfce's window manager and SDL2 and some old versions of the two)
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
 custom text rendering disabled while I figure out why Windows doesn't like it
 managed to move two units to one hex somehow, but couldn't reproduce that
 
+
+
 TODO: (in rough order of importance)
-units can pass through other units of the same faction
-zones of control for units
+zones of control for units. Units CAN have zone of control, but not all do
+units can retreat from battle. defender being pushed back from its hex.
 clean up animation code a bit (timers end node start indices army moving moving army arming move)
 units can move and attack once per turn
-some kind of overlay that shows units' remaining hitpoints
 death animation and sound! (just disappear)
 some kind of basic scenario with dozen or so units
 more complex combat mechanics

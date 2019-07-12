@@ -62,8 +62,12 @@ void ShowRestButton()
 			{
 				PlaySfx(SFX_GOBLIN_ROAR);
 				int hits_recovered = selected_army->wounded_soldiers;
+				if (CheckForEnemyZonesOfControl(selected_army->position_hex, selected_army->faction))
+				{
+					hits_recovered = 1;
+				}
 				selected_army->hits_current += hits_recovered;
-				selected_army->wounded_soldiers = 0;
+				selected_army->wounded_soldiers -= hits_recovered;
 				selected_army->move_done = true;
 				selected_army->action_done = true;
 
@@ -78,6 +82,7 @@ void ShowRestButton()
 			}
 		}
 	}
+	
 	ImGui::End();
 	ImGui::PopStyleVar(1);
 }

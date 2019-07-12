@@ -6,6 +6,28 @@ units can pass through other units of the same faction
 3. reachable nodes set that is made like this, requires another pass where ALL the nodes with ANY occupier are removed
 */
 
+bool CheckForEnemyZonesOfControl(int32_t hex, int own_faction)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		if ( map_nodes[hex].edge[i] != -1 )
+		{
+			int32_t edge = map_nodes[hex].edge[i];
+
+			if ( map_nodes[ map_edges[edge].end_node_index ].occupier != -1 )
+			{
+				int32_t occupier = map_nodes[ map_edges[edge].end_node_index ].occupier;
+
+				if ( test_armies[occupier].faction != own_faction )
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 bool OpenSetIsEmpty(Pathfinder *pf)
 {
 	return pf->open_set_count == 0 ? true : false;
