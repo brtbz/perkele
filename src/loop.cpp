@@ -138,6 +138,11 @@ void Step(double delta)
 		AdvanceArmyAttackAnimation(moving_army);
 	}
 
+	if (selected_army != NULL && selected_army->move_done == true && selected_army->action_done == true)
+	{
+		selected_army = NULL;
+	}
+
 	if (!army_moving && !army_attacking) // disable UI while moving unit around the map. is that overkill?
 	{
 		if ( right_clicked && selected_army != NULL)
@@ -154,7 +159,6 @@ void Step(double delta)
 				{
 					BeginArmyMoveAnimation(selected_army->index, selected_army->position_hex, highlighted_hex);
 					PlaySfx(SFX_UNIT_MOVE);
-					// selected_army = NULL;
 					unit_data_buffer_needs_update = true;
 					path_edges_size = 0;
 					draw_path = false;
@@ -170,7 +174,6 @@ void Step(double delta)
 				BeginArmyAttackAnimation( selected_army->index, selected_army->position_hex, defenders_hex );
 				ResolveCombat( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
 				PlaySfx(SFX_GOBLIN_ROAR);
-				selected_army = NULL;
 				unit_data_buffer_needs_update = true;
 				path_edges_size = 0;
 				draw_path = false;
@@ -227,8 +230,12 @@ void Step(double delta)
 			{
 				if ( !HexIsFree(highlighted_hex) )
 				{
-					//SDL_SetCursor(cursor_swords_bmp);
-					custom_cursor_should_be = 1;
+					if (selected_army->action_done == false)
+					{
+						//SDL_SetCursor(cursor_swords_bmp);
+						custom_cursor_should_be = 1;
+					}
+
 				}
 			}
 		}

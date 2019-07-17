@@ -9,15 +9,14 @@ managed to move two units to one hex somehow, but couldn't reproduce that
 
 
 TODO: (in rough order of importance)
-zones of control for units. Units CAN have zone of control, but not all do
 units can retreat from battle. defender being pushed back from its hex.
 clean up animation code a bit (timers end node start indices army moving moving army arming move)
-units can move and attack once per turn
 death animation and sound! (just disappear)
 some kind of basic scenario with dozen or so units
 more complex combat mechanics
 new ui theme to replace dear imgui's default one
 fog or war
+zone of control should be togglable feature (some units have it, some ignore it and so on)
 devious and terrifying enemy AI to command armies of goblins all over the map and elsewhere
 edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
 camera could use a rewrite, so it can (among other things) handle changing aspect ratio, so I can allow resizable window

@@ -357,7 +357,7 @@ bool MapIndexIsInOpenSetMapIndices(Pathfinder *pf, int32_t map_index)
 	return false;
 }
 
-void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex, int faction)
+void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, ivec2 goal_hex, int faction, int start_hex)
 {
 	int32_t h_score;
 	int32_t g_score;
@@ -369,7 +369,7 @@ void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_sco
 		if ( map_nodes[ map_index ].edge[i] != -1 )
 		{
 			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
-			if (CheckForEnemyZonesOfControl(map_index, faction))
+			if (map_index != start_hex && CheckForEnemyZonesOfControl(map_index, faction))
 			{
 				// no op
 			}
@@ -401,7 +401,7 @@ void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_sco
 	AddClosedSetLeaf(pf, map_index);
 }
 
-void AnalyzeMapNodeForReachableNodes(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, int available_movement_points, int faction)
+void AnalyzeMapNodeForReachableNodes(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_score, int available_movement_points, int faction, int start_hex)
 {
 	int32_t g_score;
 	int32_t neighbour;
@@ -411,7 +411,7 @@ void AnalyzeMapNodeForReachableNodes(Pathfinder *pf, int32_t map_index, int32_t 
 		if ( map_nodes[ map_index ].edge[i] != -1 )
 		{
 			neighbour = map_edges[ map_nodes[ map_index ].edge[i] ].end_node_index;
-			if ( CheckForEnemyZonesOfControl( map_index, faction ) )
+			if ( map_index != start_hex && CheckForEnemyZonesOfControl( map_index, faction ) )
 			{
 				// no op
 			}
@@ -493,7 +493,7 @@ int32_t FindReachableNodes(Pathfinder *pf, int32_t start, int available_movement
 
 		PullMapIndexWithLowestFScoreFromOpenSet( pf, &map_index, &accumulated_g_score, &came_along_edge);
 		came_along_edges[map_index] = came_along_edge;
-		AnalyzeMapNodeForReachableNodes( pf, map_index, accumulated_g_score, available_movement_points, faction);
+		AnalyzeMapNodeForReachableNodes( pf, map_index, accumulated_g_score, available_movement_points, faction, start);
 	}
 
 	int rn = 0;
@@ -595,7 +595,7 @@ int32_t FindPath(Pathfinder *pf, int32_t start, int32_t goal, int faction)
 			temp_score = accumulated_g_score;
 			break;
 		}
-		AnalyzeMapNode(pf, map_index, accumulated_g_score, goal_hex, faction);
+		AnalyzeMapNode(pf, map_index, accumulated_g_score, goal_hex, faction, start);
 	}
 
 	analyzed_nodes_number = 0;

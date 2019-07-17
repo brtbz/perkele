@@ -452,7 +452,7 @@ void AdvanceArmyAttackAnimation(int32_t army)
 		// attack anim done
 
 		army_attacking = false;
-		test_armies[army].move_done = true;
+		test_armies[army].action_done = true;
 		test_armies[army].draw = true;
 
 		draw_path = false;
