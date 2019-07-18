@@ -117,13 +117,13 @@ void ShowHighlightedUnitInfo()
 		if ( highlighted_hex > -1 && map_nodes[highlighted_hex].occupier > -1 )
 		{
 			int army_index = map_nodes[highlighted_hex].occupier;
-			ImGui::Text("%s", test_armies[ army_index ].name );
-			ImGui::Text("faction: %s", faction_names[ test_armies[ army_index ].faction ]);
-			ImGui::Text("Strength: %d", test_armies[ army_index ].strength);
-			ImGui::Text("Armor: %d", test_armies[ army_index ].armor);
-			ImGui::Text("Movement: %d", test_armies[ army_index ].movement);
-			ImGui::Text("Hits:  %d / %d", test_armies[ army_index ].hits_current, test_armies[ army_index ].hits_max);
-			ImGui::Text("Wounded: %d Dead: %d", test_armies[army_index].wounded_soldiers, test_armies[army_index].dead_soldiers)	;
+			ImGui::Text("%s", all_armies[ army_index ].name );
+			ImGui::Text("faction: %s", faction_names[ all_armies[ army_index ].faction ]);
+			ImGui::Text("Strength: %d", all_armies[ army_index ].strength);
+			ImGui::Text("Armor: %d", all_armies[ army_index ].armor);
+			ImGui::Text("Movement: %d", all_armies[ army_index ].movement);
+			ImGui::Text("Hits:  %d / %d", all_armies[ army_index ].hits_current, all_armies[ army_index ].hits_max);
+			ImGui::Text("Wounded: %d Dead: %d", all_armies[army_index].wounded_soldiers, all_armies[army_index].dead_soldiers)	;
 		}
 	}
 	ImGui::End();
@@ -309,9 +309,9 @@ void ShowArmyEditWindow()
 
 void ShowMemoryInspector()
 {
-	static void* mm_ptr = (void*)(&test_armies[0]);
+	static void* mm_ptr = (void*)(&all_armies[0]);
 	static int inspector_line_count = 16;
-		ImGui::Begin("Memory. &test_armies[0] (Can set this only in source code for now.)");
+		ImGui::Begin("Memory. &all_armies[0] (Can set this only in source code for now.)");
 		ImGui::Separator();
 
 		ImGui::PushFont(im_font_monofonto);
@@ -395,6 +395,22 @@ void ShowDebugUI()
 		ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
 		ImGui::SameLine();
 		if ( ImGui::Button("LOAD MAP") ) { LoadNewMap(loadmap_str); }
+
+		ImGui::Separator();
+
+		ImGui::Text("Total units: 0");
+
+		static int unit_location = 3444;
+		static int unit_type = GOBLIN_BATHROBE_BLUE;
+		static int unit_faction = 0;
+		static char unit_name[32] = "New Army";
+
+		ImGui::InputInt("location", &unit_location);
+		ImGui::InputInt("type", &unit_type);
+		ImGui::InputInt("faction", &unit_faction);
+		ImGui::InputText("name", unit_name, 32);
+
+		if ( ImGui::Button("Add Unit") ) { /*AddUnit();*/ }
 
 		ImGui::End();
 	}

@@ -19,7 +19,6 @@ bool audio_enabled = false;
 PerkeleConfigs perkele_configs;
 PerkeleConfigs perkele_configs_temp;
 const char* config_file_name = "perkele.cfg";
-char settings_msg[32] = "moi";
 
 typedef struct PerkeleDisplayMode
 {
@@ -83,13 +82,14 @@ ImFont *im_font_monofonto;
 int32_t game_turn = 0;
 
 // ARMY
+#define ARMY_COUNT_MAX 1024
 GLuint army_sp;
 GLuint army_vbo;
 GLuint army_vao;
 GLuint army_texture;
 GLuint unit_data_buffer;
-int32_t unit_limit = 1024;
-int unit_data_count = 183;
+
+int unit_data_count = 0;
 ivec4* unit_data;
 bool unit_data_buffer_needs_update = true;
 
@@ -97,7 +97,7 @@ GLuint moving_army_sp;
 GLuint moving_army_vbo;
 GLuint moving_army_vao;
 
-Army test_armies[183];
+
 
 Army *selected_army = NULL;
 bool army_moving = false; // ignore commands while true
@@ -111,6 +111,11 @@ int32_t moving_army = 0;
 int32_t moving_to_hex = -1;
 int32_t prev_hex = -1;
 int32_t path_position = -1;
+
+Army all_armies[ARMY_COUNT_MAX]; // order here should stay static
+// Army active_armies[ARMY_COUNT_MAX];
+int16_t active_armies[ARMY_COUNT_MAX]; // indices to all_armies array. only the first [active_armies_count] are used
+int16_t active_armies_count = 0;
 
 
 
@@ -195,7 +200,7 @@ GLuint points_sp;
 GLuint points_vbo;
 GLuint points_vao;
 GLuint points_color_buffer;
-vec3 points_colors[183];
+vec3 points_colors[ARMY_COUNT_MAX];
 
 GLuint hits_sp;
 GLuint hits_vbo;

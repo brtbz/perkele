@@ -1,5 +1,6 @@
 BUGStofix:
 reachable nodes flicker when mouse-overing unreachable nodes
+savegame loader doesn't do any kind of validation, so if the save 'format' changes, everything will just explode. (workaround: delete old save)
 pathfinder (and a future AI using it) should be able to handle temporary 'islands' in the node graph created by enemy units
 imgui can behave weirdly in windowed mode. there's some additional yoffset for mouse input or something. (this is likely about xfce's window manager and SDL2 and some old versions of the two)
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
@@ -10,6 +11,7 @@ managed to move two units to one hex somehow, but couldn't reproduce that
 
 TODO: (in rough order of importance)
 units can retreat from battle. defender being pushed back from its hex.
+new feature for pathfinder usage code: move along the path as far as your movement points allow (AI will want to use this)
 clean up animation code a bit (timers end node start indices army moving moving army arming move)
 death animation and sound! (just disappear)
 some kind of basic scenario with dozen or so units

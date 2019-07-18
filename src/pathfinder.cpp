@@ -18,7 +18,7 @@ bool CheckForEnemyZonesOfControl(int32_t hex, int own_faction)
 			{
 				int32_t occupier = map_nodes[ map_edges[edge].end_node_index ].occupier;
 
-				if ( test_armies[occupier].faction != own_faction )
+				if ( all_armies[occupier].faction != own_faction )
 				{
 					return true;
 				}
@@ -375,7 +375,7 @@ void AnalyzeMapNode(Pathfinder *pf, int32_t map_index, int32_t accumulated_g_sco
 			}
 			else if (!MapIndexIsInClosedSet(pf, neighbour) && !MapIndexIsInOpenSetMapIndices(pf, neighbour))
 			{
-				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 && test_armies[ map_nodes[neighbour].occupier ].faction != faction )
+				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 && all_armies[ map_nodes[neighbour].occupier ].faction != faction )
 				{
 					AddClosedSetLeaf(pf, neighbour);
 				}
@@ -417,7 +417,7 @@ void AnalyzeMapNodeForReachableNodes(Pathfinder *pf, int32_t map_index, int32_t 
 			}
 			else if (!MapIndexIsInClosedSet(pf, neighbour) && !MapIndexIsInOpenSetMapIndices(pf, neighbour))
 			{
-				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 && test_armies[ map_nodes[neighbour].occupier ].faction != faction )
+				if ( map_nodes[neighbour].terrain == IMPASSABLE || map_nodes[neighbour].occupier != -1 && all_armies[ map_nodes[neighbour].occupier ].faction != faction )
 				{
 					AddClosedSetLeaf(pf, neighbour);
 				}

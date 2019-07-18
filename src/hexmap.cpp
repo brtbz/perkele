@@ -864,9 +864,9 @@ void LoadNewMap(const char* file_path)
 	FloodFillIslandIds();
 	UpdateHexMapBuffers();
 
-	for (int i = 0; i < 183; i++)
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
-		MoveArmyToNewHex(i, test_armies[i].position_hex ); // assigns the correct occupier for the map nodes
+		MoveArmyToNewHex(i, all_armies[i].position_hex ); // assigns the correct occupier for the map nodes
 	}
 	unit_data_buffer_needs_update = true;
 }

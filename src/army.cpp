@@ -132,7 +132,7 @@ void DrawAllPoints(float size, bool black)
 	black ? black_int = 1 : black_int = 0;
 	glUniform1i(black_loc, black_int );
 
-	glDrawArraysInstanced(GL_POINTS, 0, 1, 183);
+	glDrawArraysInstanced(GL_POINTS, 0, 1, ARMY_COUNT_MAX);
 
 	glUseProgram(0);
 	glBindVertexArray(0);
@@ -140,7 +140,8 @@ void DrawAllPoints(float size, bool black)
 
 void InitUnitDataBuffer()
 {
-	unit_data = (ivec4*)malloc( unit_limit * sizeof(ivec4) );
+	// unit_data = (ivec4*)malloc( unit_limit * sizeof(ivec4) );
+	unit_data = (ivec4*)malloc( ARMY_COUNT_MAX * sizeof(ivec4) );
 }
 
 void FreeUnitDataBuffer()
@@ -150,16 +151,16 @@ void FreeUnitDataBuffer()
 
 void UpdateUnitDataBuffer()
 {
-	for (int i = 0; i < 183; i++)
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
 		ivec4 unit_datum = 
 		{ 
-			test_armies[i].position_hex,
-			test_armies[i].base_sprite,
+			all_armies[i].position_hex,
+			all_armies[i].base_sprite,
 			0,//test_divisions[i].unit_type,
 			0,//test_divisions[i].unit_size
 		};
-		if (test_armies[i].draw == false)
+		if (all_armies[i].draw == false)
 		{
 			unit_datum.y = 0;
 		}
@@ -214,7 +215,8 @@ void LoadArmyGraphicStuff()
 
 	glGenBuffers(1, &unit_data_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, unit_data_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(int) * unit_limit, NULL, GL_DYNAMIC_DRAW);
+	// glBufferData(GL_ARRAY_BUFFER, sizeof(int) * unit_limit, NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(ivec4) * ARMY_COUNT_MAX, NULL, GL_DYNAMIC_DRAW); // TODO: investigate what happens here
 
 	GLint unit_data_loc = glGetAttribLocation( army_sp, "unit_data" );
 	glEnableVertexAttribArray( unit_data_loc );
@@ -322,7 +324,8 @@ void LoadPoints() // indicator for units that shows whether they are active or u
 
     glGenBuffers(1, &points_color_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, points_color_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * unit_limit * 3, NULL, GL_DYNAMIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * unit_limit * 3, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ARMY_COUNT_MAX * 3, NULL, GL_DYNAMIC_DRAW);
 
     GLint points_color_loc = glGetAttribLocation( points_sp, "points_color");
     glEnableVertexAttribArray(points_color_loc);
@@ -374,21 +377,21 @@ void RandomName(Army *a)
 	};
 
 	int random_name = rand() % 64;
-	strncpy(a->name, names[random_name], 31);
-	a->name[31] = '\0';
+	strncpy(a->name, names[random_name], 47);
+	a->name[47] = '\0';
 }
 
 void SetArmyName(Army *a, const char *name)
 {
-	strncpy(a->name, name, 32);
-	a->name[31] = '\0';
+	strncpy(a->name, name, 48);
+	a->name[47] = '\0';
 }
 
 void MoveArmyToNewHex(int32_t army, int32_t hex)
 {
-	map_nodes[ test_armies[army].position_hex ].occupier = -1;
-	test_armies[army].position_hex = hex;
-	map_nodes[ test_armies[army].position_hex ].occupier = army;
+	map_nodes[ all_armies[army].position_hex ].occupier = -1;
+	all_armies[army].position_hex = hex;
+	map_nodes[ all_armies[army].position_hex ].occupier = army;
 }
 
 void BeginArmyMoveAnimation(int32_t army, int32_t start, int32_t end)
@@ -400,7 +403,7 @@ void BeginArmyMoveAnimation(int32_t army, int32_t start, int32_t end)
 	//
 	// 1) but I want glorious WEGO-system! everyone should move at same time! (NOT YET!)
 	moving_army = army;
-	test_armies[army].draw = false;
+	all_armies[army].draw = false;
 	army_moving = true;
 	movement_starts = master_timer;
 	path_position = path_edges_size;
@@ -419,8 +422,8 @@ void AdvanceArmyMoveAnimation(int32_t army)
 		{
 			//end
 			army_moving = false;
-			test_armies[army].move_done = true;
-			test_armies[army].draw = true;
+			all_armies[army].move_done = true;
+			all_armies[army].draw = true;
 
 			MoveArmyToNewHex(army, current_path.y);
 			draw_path = false;
@@ -439,7 +442,7 @@ void BeginArmyAttackAnimation(int32_t army, int32_t start, int32_t end)
 {
 	// attack animation is a move animation that goes nowhere, just quickly bumps against the target
 	moving_army = army;
-	test_armies[army].draw = false;
+	all_armies[army].draw = false;
 	army_attacking = true;
 	movement_starts = master_timer;
 }
@@ -452,8 +455,8 @@ void AdvanceArmyAttackAnimation(int32_t army)
 		// attack anim done
 
 		army_attacking = false;
-		test_armies[army].action_done = true;
-		test_armies[army].draw = true;
+		all_armies[army].action_done = true;
+		all_armies[army].draw = true;
 
 		draw_path = false;
 		unit_data_buffer_needs_update = true;
@@ -468,11 +471,11 @@ bool HexIsFree(int32_t hex)
 void SaveUnitLocationsToFile(const char* file_path)
 {
 	int data_size = 0;
-	data_size = 183 * sizeof(Army);
+	data_size = ARMY_COUNT_MAX * sizeof(Army);
 
 	uint8_t *data = (uint8_t*)malloc(data_size);
 
-	memcpy(data, &test_armies[0], data_size);
+	memcpy(data, &all_armies[0], data_size);
 
 	FILE *fp = fopen(file_path, "wb");
 
@@ -504,7 +507,7 @@ int LoadUnitLocationsFromFile(const char* file_path)
 
 	fread(data, file_size, 1, fp);
 
-	memcpy(&test_armies[0], data, file_size);
+	memcpy(&all_armies[0], data, file_size);
 
 	fclose(fp);
 	free(data);
@@ -512,52 +515,43 @@ int LoadUnitLocationsFromFile(const char* file_path)
 	return 0;
 }
 
+void NewActiveArmy(Army *a, const char* name, Faction faction, ArmyBaseSprite abs, int32_t position)
+{
+	SetArmyName(&all_armies[ a->index ], name);
+	all_armies[ a->index ].base_sprite = abs;
+	// MoveArmyToNewHex( a->index, position );
+	all_armies[ a->index ].position_hex = position;
+	all_armies[ a->index ].faction = faction;
+	a->active = true;
+	a->draw = true;
+}
+
 void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 {
-	MoveArmyToNewHex(177, 4532);
-	MoveArmyToNewHex(176, 4533);
-	MoveArmyToNewHex(174, 4534);
-	test_armies[177].base_sprite = GOBLIN_BATHROBE_RED;
+	NewActiveArmy( &all_armies[0], "1st Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 4532 );
+	NewActiveArmy( &all_armies[1], "2nd Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4533 );
+	NewActiveArmy( &all_armies[2], "3rd Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_PINK, 4534 );
+	NewActiveArmy( &all_armies[3], "4th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 4535 );
+	NewActiveArmy( &all_armies[4], "5th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 4536 );
 
-	test_armies[174].faction = FACTION_GOBLINS;
-	test_armies[176].faction = FACTION_GOBLINS;
-	test_armies[177].faction = FACTION_GOBLINS;
+	NewActiveArmy( &all_armies[5], "1st Surfer Battalion 'Sweden'", FACTION_SURFERS, SURFER_BOY, 3891 );
+	NewActiveArmy( &all_armies[6], "2nd Surfer Battalion 'Norway'", FACTION_SURFERS, SURFER_BOY, 3892 );
+	NewActiveArmy( &all_armies[7], "3rd Surfer Battalion 'Stockholm'", FACTION_SURFERS, SURFER_BOY, 3893 );
+	NewActiveArmy( &all_armies[8], "4th Surfer Battalion 'Narvik'", FACTION_SURFERS, SURFER_BOY, 3894 );
+	NewActiveArmy( &all_armies[9], "5th Surfer Battalion 'Trondheim'", FACTION_SURFERS, SURFER_BOY, 3895 );
 
-
-	MoveArmyToNewHex(100, 3891);
-	MoveArmyToNewHex(101, 3892);
-	MoveArmyToNewHex(102, 3893);
-	MoveArmyToNewHex(103, 3894);
-	test_armies[100].base_sprite = SURFER_BOY;
-	test_armies[101].base_sprite = SURFER_BOY;
-	test_armies[102].base_sprite = SURFER_BOY;
-	test_armies[103].base_sprite = SURFER_BOY;
-
-	test_armies[100].movement = 6;
-	test_armies[101].movement = 6;
-	test_armies[102].movement = 6;
-	test_armies[103].movement = 6;
-
-	test_armies[100].faction = FACTION_SURFERS;
-	test_armies[101].faction = FACTION_SURFERS;
-	test_armies[102].faction = FACTION_SURFERS;
-	test_armies[103].faction = FACTION_SURFERS;
-
-	SetArmyName(&test_armies[100], "1st Surfer Battalion 'Sweden'");
-	SetArmyName(&test_armies[101], "2nd Surfer Battalion 'Norway'");
-	SetArmyName(&test_armies[102], "3rd Surfer Battalion 'Stockholm'");
-	SetArmyName(&test_armies[103], "4th Surfer Battalion 'Narvik'");
-
-	SetArmyName(&test_armies[174], "1st Royal Goblin Battalion");
-	SetArmyName(&test_armies[176], "2nd Royal Goblin Battalion");
-	SetArmyName(&test_armies[177], "3rd Royal Goblin Battalion");
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
+	{
+		if ( all_armies[i].active == true )
+		{
+			unit_data_count++;
+		}
+	}
 
 	vec2 temp_hehe = {-1.0f, -1.0f};
 	vec2 temp_vec2 = { 860.0f, 650.0f };
 	camera.IncreaseSizeBy(0.42f, temp_hehe);
 	camera.MoveToNewMin(temp_vec2);
-
-
 
 	for ( int i = 0; i < map_size; i++)
 	{
@@ -565,38 +559,43 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	}
 
 	LoadUnitLocationsFromFile("autosave.hws");
-	for (int i = 0; i < 183; i++)
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
-		MoveArmyToNewHex(i, test_armies[i].position_hex ); // assigns the correct occupier for the map nodes
+		MoveArmyToNewHex(i, all_armies[i].position_hex ); // assigns the correct occupier for the map nodes
 	}
 	unit_data_buffer_needs_update = true;
+}
+
+void NewDefaultBlankArmy(Army *a, int index)
+{
+	a->index = index;
+	a->base_sprite = PUDDING_GOLEM;
+	a->position_hex = index;
+	a->movement = 5;
+	a->hits_max = 15;
+	a->hits_current = 15;
+	a->strength = 12;
+	a->faction = 0;
+	a->wounded_soldiers = 0;
+	a->dead_soldiers = 0;
+	a->armor = 15;
+	a->zone_of_control = 1;
+	a->move_done = false;
+	a->action_done = false;
+	a->dead = false;
+	a->draw = true;
+	a->active = false;
+
+	RandomName(a);
 }
 
 void InitArmyStuff()
 {
 	LoadArmyGraphicStuff();
 	InitUnitDataBuffer();
-	for (int i = 0; i < 183; i++)
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
-		test_armies[i].index = i;
-		test_armies[i].base_sprite = (ArmyBaseSprite)(i % 183);
-		test_armies[i].position_hex = i;
-		test_armies[i].movement = 5;
-		test_armies[i].hits_max = 15;
-		test_armies[i].hits_current = 15;
-		test_armies[i].strength = 12;
-		test_armies[i].faction = 0;
-		test_armies[i].wounded_soldiers = 0;
-		test_armies[i].dead_soldiers = 0;
-		test_armies[i].armor = 15;
-		test_armies[i].zone_of_control = 1;
-		test_armies[i].move_done = false;
-		test_armies[i].action_done = false;
-		test_armies[i].dead = false;
-		test_armies[i].draw = true;
-		RandomName(&test_armies[i]);
-
-		// MoveArmyToNewHex(i, i); // assigns the correct occupier for the map nodes
+		NewDefaultBlankArmy(&all_armies[i], i);
 	}
 
 	LoadHits();

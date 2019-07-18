@@ -74,9 +74,9 @@ void FactionTakesItsTurn(int faction)
 {	
 	int faction_army_count = 0;
 
-	for (int i = 0; i < 183; i++)
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
-		if ( test_armies[i].faction == faction && test_armies[i].dead == false)
+		if ( all_armies[i].faction == faction && all_armies[i].dead == false)
 		{
 			faction_army_count++;
 		}
@@ -90,12 +90,12 @@ void FactionTakesItsTurn(int faction)
 
 	strncpy(active_faction_str, faction_names[active_faction], 32);
 
-	for (int i = 0; i < 183; i++)
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
-		if (test_armies[i].faction == active_faction && test_armies[i].dead == false)
+		if (all_armies[i].faction == active_faction && all_armies[i].dead == false)
 		{
-			test_armies[i].move_done = false;
-			test_armies[i].action_done = false;
+			all_armies[i].move_done = false;
+			all_armies[i].action_done = false;
 		}
 	}
 }

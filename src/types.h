@@ -172,7 +172,8 @@ typedef struct Army
 	bool action_done;
 	bool dead;
 	bool draw;
-	char name[32];
+	bool active;
+	char name[48];
 } Army;
 
 typedef enum 

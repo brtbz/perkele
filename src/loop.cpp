@@ -147,6 +147,11 @@ void Step(double delta)
 	{
 		if ( right_clicked && selected_army != NULL)
 		{
+			if (selected_army->move_done == true || selected_army->action_done == true)
+			{
+				selected_army->move_done = true;
+				selected_army->action_done = true;
+			}
 			selected_army = NULL;
 			draw_path = false;
 			ClearPaths(pathfinder);
@@ -172,7 +177,7 @@ void Step(double delta)
 			{
 				defenders_hex = highlighted_hex;
 				BeginArmyAttackAnimation( selected_army->index, selected_army->position_hex, defenders_hex );
-				ResolveCombat( selected_army, &test_armies[map_nodes[highlighted_hex].occupier] );
+				ResolveCombat( selected_army, &all_armies[map_nodes[highlighted_hex].occupier] );
 				PlaySfx(SFX_GOBLIN_ROAR);
 				unit_data_buffer_needs_update = true;
 				path_edges_size = 0;
@@ -187,9 +192,9 @@ void Step(double delta)
 		{
 			if ( map_nodes[highlighted_hex].occupier > -1 )
 			{
-				if ( test_armies[ map_nodes[highlighted_hex].occupier ].move_done == false && test_armies[ map_nodes[highlighted_hex].occupier ].faction == active_faction )
+				if ( all_armies[ map_nodes[highlighted_hex].occupier ].move_done == false && all_armies[ map_nodes[highlighted_hex].occupier ].faction == active_faction )
 				{
-					selected_army = &test_armies[ map_nodes[highlighted_hex].occupier ];
+					selected_army = &all_armies[ map_nodes[highlighted_hex].occupier ];
 					PlaySfx(SFX_UI_CLICK_A);	
 				}
 				else
@@ -369,7 +374,7 @@ void Step(double delta)
 	if (army_moving)
 	{
 		float transition = (float)(movement_timer - movement_starts) / (float)ms_per_hex;
-		DrawMovingArmy(moving_army, prev_hex, moving_to_hex, transition, test_armies[moving_army].base_sprite );
+		DrawMovingArmy(moving_army, prev_hex, moving_to_hex, transition, all_armies[moving_army].base_sprite );
 	}
 	if (army_attacking)
 	{
@@ -379,7 +384,7 @@ void Step(double delta)
 		transition *= 0.5f;
 		transition = ClampValueToRangeF(transition, 0.0f, 1.0f);
 
-		DrawMovingArmy(moving_army, test_armies[moving_army].position_hex, defenders_hex, transition, test_armies[moving_army].base_sprite );	
+		DrawMovingArmy(moving_army, all_armies[moving_army].position_hex, defenders_hex, transition, all_armies[moving_army].base_sprite );	
 	}
 
 	DrawStrings();
@@ -389,13 +394,13 @@ void Step(double delta)
 		vec3 color_dark_green = {0.0f, 0.5f, 0.0f};
 		vec3 color_red = { 1.0f, 0.0f, 0.0f};
 		vec3 color_blue = { 0.0f, 0.0f, 1.0f};
-		for ( int i = 0; i < 183; i++)
+		for ( int i = 0; i < ARMY_COUNT_MAX; i++)
 		{
-			if (test_armies[i].move_done == true && test_armies[i].faction == active_faction )
+			if (all_armies[i].move_done == true && all_armies[i].faction == active_faction )
 			{
 				points_colors[i] = color_dark_green;
 			}
-			else if ( test_armies[i].move_done == false && test_armies[i].faction == active_faction )
+			else if ( all_armies[i].move_done == false && all_armies[i].faction == active_faction )
 			{
 				points_colors[i] = color_green;
 			}
@@ -405,39 +410,43 @@ void Step(double delta)
 			}
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, points_color_buffer);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, 183 * sizeof(vec3), (const GLvoid*)&(points_colors[0]));
+		glBufferSubData(GL_ARRAY_BUFFER, 0, ARMY_COUNT_MAX * sizeof(vec3), (const GLvoid*)&(points_colors[0]));
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		DrawAllPoints(8.0f, true);
 		DrawAllPoints(5.0f, false);
 	}
 
-	for (int i = 0; i < 183; i++)
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
-		int hits = test_armies[i].hits_current;
+		int hits = all_armies[i].hits_current;
 		hits = ClampValueToRange(hits, 0, 15);
 
 		vec3 color_faction = { 0.9f, 0.6f, 0.9f};;
 
-		if (test_armies[i].faction == FACTION_GOBLINS)
+		if ( all_armies[i].active == true )
 		{
-			color_faction = { 0.9f, 0.6f, 0.4f};
-		}
-		else if ( test_armies[i].faction == FACTION_SURFERS)
-		{
-			color_faction = { 0.5f, 1.0f, 0.8f };
-		}
 
-		if (test_armies[i].move_done == true || test_armies[i].faction != active_faction)
-		{
-			color_faction.r -= 0.2f;
-			color_faction.g -= 0.2f;
-			color_faction.b -= 0.2f;
+			if (all_armies[i].faction == FACTION_GOBLINS)
+			{
+				color_faction = { 0.9f, 0.6f, 0.4f};
+			}
+			else if ( all_armies[i].faction == FACTION_SURFERS)
+			{
+				color_faction = { 0.5f, 1.0f, 0.8f };
+			}
+
+			if (all_armies[i].move_done == true || all_armies[i].faction != active_faction)
+			{
+				color_faction.r -= 0.2f;
+				color_faction.g -= 0.2f;
+				color_faction.b -= 0.2f;
+			}
+
+			int hex = all_armies[i].position_hex;
+
+			DrawHits(hex, color_faction, hits);
 		}
-
-		int hex = test_armies[i].position_hex;
-
-		DrawHits(hex, color_faction, hits);
 	}
 
 	ImGui::Render();
