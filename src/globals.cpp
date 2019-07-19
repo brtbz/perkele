@@ -114,7 +114,7 @@ int32_t path_position = -1;
 
 Army all_armies[ARMY_COUNT_MAX]; // order here should stay static
 // Army active_armies[ARMY_COUNT_MAX];
-int16_t active_armies[ARMY_COUNT_MAX]; // indices to all_armies array. only the first [active_armies_count] are used
+// int16_t active_armies[ARMY_COUNT_MAX]; // indices to all_armies array. only the first [active_armies_count] are used
 int16_t active_armies_count = 0;
 
 

@@ -132,7 +132,8 @@ void DrawAllPoints(float size, bool black)
 	black ? black_int = 1 : black_int = 0;
 	glUniform1i(black_loc, black_int );
 
-	glDrawArraysInstanced(GL_POINTS, 0, 1, ARMY_COUNT_MAX);
+	//glDrawArraysInstanced(GL_POINTS, 0, 1, ARMY_COUNT_MAX);
+	glDrawArraysInstanced(GL_POINTS, 0, 1, active_armies_count);
 
 	glUseProgram(0);
 	glBindVertexArray(0);
@@ -151,6 +152,31 @@ void FreeUnitDataBuffer()
 
 void UpdateUnitDataBuffer()
 {
+	active_armies_count = 0;
+
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
+	{
+		if (all_armies[i].active == true)
+		{
+			
+			ivec4 unit_datum = 
+			{ 
+				all_armies[i].position_hex,
+				all_armies[i].base_sprite,
+				0,//test_divisions[i].unit_type,
+				0,//test_divisions[i].unit_size
+			};
+			if (all_armies[i].draw == false)
+			{
+				unit_datum.y = 0;
+			}
+
+			unit_data[active_armies_count] = unit_datum;
+
+			active_armies_count++;
+		}
+	}
+/*
 	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
 		ivec4 unit_datum = 
@@ -167,9 +193,10 @@ void UpdateUnitDataBuffer()
 
 		unit_data[i] = unit_datum;
 	}
-
+*/
 	glBindBuffer(GL_ARRAY_BUFFER, unit_data_buffer);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, unit_data_count * sizeof(ivec4), (const GLvoid*)&(unit_data[0]) );
+	// glBufferSubData(GL_ARRAY_BUFFER, 0, unit_data_count * sizeof(ivec4), (const GLvoid*)&(unit_data[0]) );
+	glBufferSubData(GL_ARRAY_BUFFER, 0, active_armies_count * sizeof(ivec4), (const GLvoid*)&(unit_data[0]) );
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	unit_data_buffer_needs_update = false;
@@ -394,6 +421,28 @@ void MoveArmyToNewHex(int32_t army, int32_t hex)
 	map_nodes[ all_armies[army].position_hex ].occupier = army;
 }
 
+void DeactivateDead()
+{
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
+	{
+		if (all_armies[i].dead == true)
+		{
+			all_armies[i].active = false;
+		}
+	}
+}
+
+void CleanInactiveArmiesFromBoard()
+{
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
+	{
+		if (all_armies[i].active == false)
+		{
+			MoveArmyToNewHex(i, -13);
+		}
+	}
+}
+
 void BeginArmyMoveAnimation(int32_t army, int32_t start, int32_t end)
 {
 	// I guess most of the movement code is handled here in c++. 
@@ -540,6 +589,8 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	NewActiveArmy( &all_armies[8], "4th Surfer Battalion 'Narvik'", FACTION_SURFERS, SURFER_BOY, 3894 );
 	NewActiveArmy( &all_armies[9], "5th Surfer Battalion 'Trondheim'", FACTION_SURFERS, SURFER_BOY, 3895 );
 
+
+
 	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
 		if ( all_armies[i].active == true )
@@ -563,6 +614,8 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	{
 		MoveArmyToNewHex(i, all_armies[i].position_hex ); // assigns the correct occupier for the map nodes
 	}
+
+	CleanInactiveArmiesFromBoard();
 	unit_data_buffer_needs_update = true;
 }
 

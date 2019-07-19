@@ -76,7 +76,7 @@ void FactionTakesItsTurn(int faction)
 
 	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
-		if ( all_armies[i].faction == faction && all_armies[i].dead == false)
+		if ( all_armies[i].faction == faction && all_armies[i].dead == false && all_armies[i].active == true )
 		{
 			faction_army_count++;
 		}

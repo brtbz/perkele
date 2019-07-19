@@ -123,6 +123,9 @@ void Step(double delta)
 
 	HexesWithinCameraBounds();
 
+	DeactivateDead();
+	CleanInactiveArmiesFromBoard();
+
 	if (unit_data_buffer_needs_update)
 	{
 		UpdateUnitDataBuffer();
@@ -369,7 +372,8 @@ void Step(double delta)
 	}
 
 	glEnable(GL_DEPTH_TEST);
-	DrawArmies(unit_data_count);
+	// DrawArmies(unit_data_count);
+	DrawArmies(active_armies_count);
 	glDisable(GL_DEPTH_TEST);
 	if (army_moving)
 	{
@@ -394,23 +398,31 @@ void Step(double delta)
 		vec3 color_dark_green = {0.0f, 0.5f, 0.0f};
 		vec3 color_red = { 1.0f, 0.0f, 0.0f};
 		vec3 color_blue = { 0.0f, 0.0f, 1.0f};
+
+		int point_count = 0;
 		for ( int i = 0; i < ARMY_COUNT_MAX; i++)
 		{
-			if (all_armies[i].move_done == true && all_armies[i].faction == active_faction )
+			if (all_armies[i].active == true)
 			{
-				points_colors[i] = color_dark_green;
-			}
-			else if ( all_armies[i].move_done == false && all_armies[i].faction == active_faction )
-			{
-				points_colors[i] = color_green;
-			}
-			else
-			{
-				points_colors[i] = color_red;
+				if (all_armies[i].move_done == true && all_armies[i].faction == active_faction )
+				{
+					points_colors[point_count] = color_dark_green;
+				}
+				else if ( all_armies[i].move_done == false && all_armies[i].faction == active_faction )
+				{
+					points_colors[point_count] = color_green;
+				}
+				else
+				{
+					points_colors[point_count] = color_red;
+				}
+
+				point_count++;
 			}
 		}
+
 		glBindBuffer(GL_ARRAY_BUFFER, points_color_buffer);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, ARMY_COUNT_MAX * sizeof(vec3), (const GLvoid*)&(points_colors[0]));
+		glBufferSubData(GL_ARRAY_BUFFER, 0, point_count * sizeof(vec3), (const GLvoid*)&(points_colors[0]));
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		DrawAllPoints(8.0f, true);
