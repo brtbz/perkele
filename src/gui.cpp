@@ -60,7 +60,7 @@ void ShowRestButton()
 		{
 			if (selected_army != NULL && selected_army->move_done == false && selected_army->action_done == false)
 			{
-				PlaySfx(SFX_GOBLIN_ROAR);
+				PlaySfx(SFX_UNIT_REST);
 				int hits_recovered = selected_army->wounded_soldiers;
 				if (CheckForEnemyZonesOfControl(selected_army->position_hex, selected_army->faction))
 				{

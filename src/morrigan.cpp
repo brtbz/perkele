@@ -122,10 +122,143 @@ void EndTurn()
 void DestroyArmy(Army *a)
 {
 
+	PlaySfx(SFX_UNIT_DEATH);
+
 	a->dead = true;
 
 	unit_data_buffer_needs_update = true;
 
+}
+
+int PushArmy(Army *pusher, Army *pushee)
+{
+	int32_t pushers_hex = pusher->position_hex;
+	int32_t pushees_hex = pushee->position_hex;
+	int32_t destination_hex = -1;
+	int32_t maybe_hex = -1;
+	int32_t maybe_hex2 = -1;
+	int32_t maybe_edge = -1;
+	int32_t maybe_edge2 = -1;
+	int32_t direction1 = -1;
+	int32_t direction2 = -1;
+
+	int direction = -1;
+	// 0 n, 1 ne, 2 se, 3 s, 4 sw, 5 nw
+
+	for (int i = 0; i < 6; i++)
+	{
+		if ( map_edges[ map_nodes[pushers_hex].edge[i] ].end_node_index == pushees_hex)
+		{
+			direction = i;
+			// hexes are neighbours, so push is possible
+			// (should the push be possible from further away?)
+		}
+	}
+
+	if (direction == -1)
+	{
+		return -1; // push failed
+	}
+
+	// first attempt straight push
+	maybe_edge = map_edges[ map_nodes[ pushees_hex ].edge[ direction ] ].index;
+	if ( maybe_edge != -1 )
+	{
+		maybe_hex = map_edges[ map_nodes[ pushees_hex ].edge[ direction ] ].end_node_index;
+		if ( HexIsValidAndPassable(maybe_hex) )
+		{
+			if (HexIsFree( maybe_hex ))
+			{
+				// get pushed here
+				destination_hex = maybe_hex;
+
+				MoveArmyToNewHex(pushee->index, destination_hex);
+				unit_data_buffer_needs_update = true;
+
+				return 0;
+			}
+		}
+	}
+
+	for ( int i = 0; i < 2; i++)
+	{
+		// second attempt is 60 degrees left or right from the straight push direction
+		// third attempt is 120 degrees left or right from the straight push direction
+		direction1 = direction + ( i + 1);
+		direction2 = direction - ( i + 1);
+		if (direction1 < 0) { direction1 += 6; }
+		if (direction2 < 0) { direction2 += 6; }
+		if (direction1 > 5) { direction1 -= 6; }
+		if (direction2 > 5) { direction2 -= 6; }
+
+		maybe_edge = map_edges[ map_nodes[ pushees_hex ].edge[ direction1 ] ].index;
+		maybe_edge2 = map_edges[ map_nodes[ pushees_hex ].edge[ direction2 ] ].index;
+
+		if ( maybe_edge != -1 )
+		{
+			maybe_hex = map_edges[ map_nodes[ pushees_hex ].edge[ direction1 ] ].end_node_index;
+			if ( HexIsValidAndPassable(maybe_hex))
+			{
+				if ( !HexIsFree( maybe_hex ))
+				{
+					maybe_hex = -2;
+				}
+			}
+		}
+
+		if ( maybe_edge2 != -1 )
+		{
+			maybe_hex2 = map_edges[ map_nodes[ pushees_hex ].edge[ direction2 ] ].end_node_index;
+			if ( HexIsValidAndPassable(maybe_hex2))
+			{
+				if ( !HexIsFree( maybe_hex2 ))
+				{
+					maybe_hex2 = -2;
+				}
+			}
+		}
+
+		if ( HexIsValidAndPassable(maybe_hex) && !HexIsValidAndPassable(maybe_hex2) )
+		{
+			destination_hex = maybe_hex;
+		}
+		else if ( HexIsValidAndPassable(maybe_hex2) && !HexIsValidAndPassable(maybe_hex) )
+		{
+			destination_hex = maybe_hex2;
+		}
+		else if ( HexIsValidAndPassable(maybe_hex) && HexIsValidAndPassable(maybe_hex2) )
+		{
+			int random_roll = MWC % 100;
+			if (random_roll < 50)
+			{
+				destination_hex = maybe_hex;
+			}
+			else
+			{
+				destination_hex = maybe_hex2;
+			}
+		}
+
+		if ( HexIsValidAndPassable(destination_hex) )
+		{
+			MoveArmyToNewHex(pushee->index, destination_hex);
+			unit_data_buffer_needs_update = true;
+
+			return 0;	
+		}
+
+	}
+
+	// if army can't run away, it surrenders
+	DestroyArmy(pushee);
+
+	return 0;
+
+	// prefered push edge is map_edges[ map_nodes[ pushees_hex ].edge[ direction ] ]
+	// secondary map_edges[ map_nodes [pushees_hex].edge[direction +/- 1] ] // direction should stay in range 0-5 and loop over instead of being clamped
+	// if both available, choose one at random
+	// tertiary map_edges[ map_nodes [pushees_hex].edge[direction +/- 2] ]
+	// if none are available, kill the army
 }
 
 void ResolveCombat(Army *attacker, Army *defender)
@@ -217,6 +350,7 @@ void ResolveCombat(Army *attacker, Army *defender)
 	snprintf(&combat_result_str1[0], 256, "Attacker: %s Dead: %d Wounded: %d", attacker->name, attacker_dead, attacker_wounded);
 	snprintf(&combat_result_str2[0], 256, "Defender: %s Dead: %d Wounded: %d", defender->name, defender_dead, defender_wounded);
 
+	PushArmy(attacker, defender);
 
 	if (attacker->hits_current <= 0)
 	{

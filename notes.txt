@@ -10,10 +10,8 @@ managed to move two units to one hex somehow, but couldn't reproduce that
 
 
 TODO: (in rough order of importance)
-units can retreat from battle. defender being pushed back from its hex.
 new feature for pathfinder usage code: move along the path as far as your movement points allow (AI will want to use this)
 clean up animation code a bit (timers end node start indices army moving moving army arming move)
-death animation and sound! (just disappear)
 some kind of basic scenario with dozen or so units
 more complex combat mechanics
 new ui theme to replace dear imgui's default one
@@ -25,6 +23,17 @@ camera could use a rewrite, so it can (among other things) handle changing aspec
 zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
 pack path arrows into single draw call
 loader for shader code should handle wrong filenames better (now it seems to just segfault)
+
+
+
+incomplete list of IMPLEMENTED FEATURES (these were on todo list earlier):
+units can retreat from battle. defender being pushed back from its hex.
+death animation and sound! (just disappear)
+units can move and attack once per turn
+zones of control for units.
+units can pass through other units of the same faction
+animation for attack (just a small bump against the attacked unit)
+two or more factions for armies
 
 
 

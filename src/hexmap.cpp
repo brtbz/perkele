@@ -828,6 +828,18 @@ void UpdateEdgeTravelCosts()
 	}
 }
 
+bool HexIsValid(int32_t hex)
+{
+	if ( hex > -1 && hex < map_size ) { return true; }
+	else { return false; }
+}
+
+bool HexIsValidAndPassable(int32_t hex)
+{
+	if ( hex > -1 && hex < map_size && map_nodes[hex].terrain == PASSABLE) { return true; }
+	else { return false; }
+}
+
 bool FloodFill(int32_t map_index, int32_t island_id)
 {
 	if ( map_nodes[map_index].terrain == IMPASSABLE ) { return false; }

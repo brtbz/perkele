@@ -22,18 +22,23 @@ static void lock_handler(cm_Event *e)
 #define SFX_UI_CLICK_A 1
 #define SFX_GOBLIN_ROAR 2
 #define SFX_UI_CLICK_ERROR 3
+#define SFX_UNIT_DEATH 4
+#define SFX_UNIT_REST 5
 
 void PlaySfx(int id)
 {
 	if (audio_enabled)
 	{
-		for (int i = 0; i < 4; i++)
+		cm_play(sfx[id].src);
+		/*
+		for (int i = 0; i < 5; i++)
 		{
 			if (sfx[i].id == id)
 			{
 				cm_play(sfx[i].src);
 			}
-		}   
+		}
+		*/  
 	}
 }
 
@@ -52,6 +57,12 @@ int LoadMusicAndSounds()
 
 	sfx[3].id = 3;
 	sfx[3].src = cm_new_source_from_file("data/sfx/interface6_short.ogg");
+
+	sfx[4].id = 4;
+	sfx[4].src = cm_new_source_from_file("data/sfx/slime8.ogg");
+
+	sfx[5].id = 5;
+	sfx[5].src = cm_new_source_from_file("data/sfx/spell.ogg");
 
 	music_src = cm_new_source_from_file("data/music/hey.ogg");
 	if (!music_src) {
