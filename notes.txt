@@ -1,11 +1,13 @@
 BUGStofix:
-reachable nodes flicker when mouse-overing unreachable nodes
-savegame loader doesn't do any kind of validation, so if the save 'format' changes, everything will just explode. (workaround: delete old save)
 pathfinder (and a future AI using it) should be able to handle temporary 'islands' in the node graph created by enemy units
 imgui can behave weirdly in windowed mode. there's some additional yoffset for mouse input or something. (this is likely about xfce's window manager and SDL2 and some old versions of the two)
 FIXED TEMPORARILY program seems to freeze if sound effect is playing, while trying to quit the program (cmixer's mutex stuff suspect)
 custom text rendering disabled while I figure out why Windows doesn't like it
 managed to move two units to one hex somehow, but couldn't reproduce that
+
+FixedBugs:
+reachable nodes no longer flicker whne mouseovering impassable nodes
+wrong autosave format no longer crashes the program
 
 
 

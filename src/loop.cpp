@@ -146,7 +146,7 @@ void Step(double delta)
 		selected_army = NULL;
 	}
 
-	if (!army_moving && !army_attacking) // disable UI while moving unit around the map. is that overkill?
+	if (!army_moving && !army_attacking) // disable UI while moving unit around the map.
 	{
 		if ( right_clicked && selected_army != NULL)
 		{
@@ -220,7 +220,7 @@ void Step(double delta)
 				{
 					if ( FindPath(pathfinder, selected_army->position_hex, highlighted_hex, selected_army->faction) < 0 )
 					{
-						draw_path = false;
+						// draw_path = false;
 					}
 					else
 					{

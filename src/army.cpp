@@ -537,6 +537,7 @@ void SaveUnitLocationsToFile(const char* file_path)
 
 int LoadUnitLocationsFromFile(const char* file_path)
 {
+	int expected_data_size = ARMY_COUNT_MAX * sizeof(Army);
 	FILE *fp = fopen(file_path, "rb");
 
 	if ( fp == NULL )
@@ -551,6 +552,13 @@ int LoadUnitLocationsFromFile(const char* file_path)
 	fseek(fp, 0, SEEK_END);
 	int file_size = ftell(fp);
 	fsetpos(fp, &begin);
+
+	if (file_size != expected_data_size)
+	{
+		// old version of "savefile", can't use it
+		fclose(fp);
+		return -2;
+	}
 
 	uint8_t *data = (uint8_t*)malloc(file_size);
 
