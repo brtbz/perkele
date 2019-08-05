@@ -181,7 +181,7 @@ void Step(double delta)
 				defenders_hex = highlighted_hex;
 				BeginArmyAttackAnimation( selected_army->index, selected_army->position_hex, defenders_hex );
 				ResolveCombat( selected_army, &all_armies[map_nodes[highlighted_hex].occupier] );
-				PlaySfx(SFX_GOBLIN_ROAR);
+				PlaySfx(selected_army->attack_sound);
 				unit_data_buffer_needs_update = true;
 				path_edges_size = 0;
 				draw_path = false;

@@ -24,6 +24,7 @@ static void lock_handler(cm_Event *e)
 #define SFX_UI_CLICK_ERROR 3
 #define SFX_UNIT_DEATH 4
 #define SFX_UNIT_REST 5
+#define SFX_SURFER_BATTLE_CRY 6
 
 void PlaySfx(int id)
 {
@@ -63,6 +64,9 @@ int LoadMusicAndSounds()
 
 	sfx[5].id = 5;
 	sfx[5].src = cm_new_source_from_file("data/sfx/spell.ogg");
+
+	sfx[6].id = 6;
+	sfx[6].src = cm_new_source_from_file("data/sfx/ogre1.ogg");
 
 	music_src = cm_new_source_from_file("data/music/hey.ogg");
 	if (!music_src) {

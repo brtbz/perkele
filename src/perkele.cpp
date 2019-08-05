@@ -35,6 +35,7 @@ extern "C" {
 #include "army.cpp"
 #include "morrigan.cpp"
 #include "pathfinder.cpp"
+#include "balor.cpp"
 #include "gui.cpp"
 #include "init.cpp"
 #include "loader.cpp"

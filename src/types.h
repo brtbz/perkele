@@ -173,6 +173,7 @@ typedef struct Army
 	bool dead;
 	bool draw;
 	bool active;
+	int attack_sound;
 	char name[48];
 } Army;
 

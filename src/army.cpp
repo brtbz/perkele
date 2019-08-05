@@ -589,6 +589,12 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	NewActiveArmy( &all_armies[8], "4th Surfer Battalion 'Narvik'", FACTION_SURFERS, SURFER_BOY, 3894 );
 	NewActiveArmy( &all_armies[9], "5th Surfer Battalion 'Trondheim'", FACTION_SURFERS, SURFER_BOY, 3895 );
 
+	all_armies[5].attack_sound = SFX_SURFER_BATTLE_CRY;
+	all_armies[6].attack_sound = SFX_SURFER_BATTLE_CRY;
+	all_armies[7].attack_sound = SFX_SURFER_BATTLE_CRY;
+	all_armies[8].attack_sound = SFX_SURFER_BATTLE_CRY;
+	all_armies[9].attack_sound = SFX_SURFER_BATTLE_CRY;
+
 
 
 	for (int i = 0; i < ARMY_COUNT_MAX; i++)
@@ -638,6 +644,7 @@ void NewDefaultBlankArmy(Army *a, int index)
 	a->dead = false;
 	a->draw = true;
 	a->active = false;
+	a->attack_sound = SFX_GOBLIN_ROAR;
 
 	RandomName(a);
 }
@@ -652,6 +659,55 @@ void InitArmyStuff()
 	}
 
 	LoadHits();
+}
+
+void ResetArmiesToDefaultTemporaryPleaseDelete()
+{
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
+	{
+		NewDefaultBlankArmy(&all_armies[i], i);
+	}
+
+	NewActiveArmy( &all_armies[0], "1st Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 4532 );
+	NewActiveArmy( &all_armies[1], "2nd Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4533 );
+	NewActiveArmy( &all_armies[2], "3rd Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_PINK, 4534 );
+	NewActiveArmy( &all_armies[3], "4th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 4535 );
+	NewActiveArmy( &all_armies[4], "5th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 4536 );
+
+	NewActiveArmy( &all_armies[5], "1st Surfer Battalion 'Sweden'", FACTION_SURFERS, SURFER_BOY, 3891 );
+	NewActiveArmy( &all_armies[6], "2nd Surfer Battalion 'Norway'", FACTION_SURFERS, SURFER_BOY, 3892 );
+	NewActiveArmy( &all_armies[7], "3rd Surfer Battalion 'Stockholm'", FACTION_SURFERS, SURFER_BOY, 3893 );
+	NewActiveArmy( &all_armies[8], "4th Surfer Battalion 'Narvik'", FACTION_SURFERS, SURFER_BOY, 3894 );
+	NewActiveArmy( &all_armies[9], "5th Surfer Battalion 'Trondheim'", FACTION_SURFERS, SURFER_BOY, 3895 );
+
+	all_armies[5].attack_sound = SFX_SURFER_BATTLE_CRY;
+	all_armies[6].attack_sound = SFX_SURFER_BATTLE_CRY;
+	all_armies[7].attack_sound = SFX_SURFER_BATTLE_CRY;
+	all_armies[8].attack_sound = SFX_SURFER_BATTLE_CRY;
+	all_armies[9].attack_sound = SFX_SURFER_BATTLE_CRY;
+
+	unit_data_count = 0;
+
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
+	{
+		if ( all_armies[i].active == true )
+		{
+			unit_data_count++;
+		}
+	}
+
+	for ( int i = 0; i < map_size; i++)
+	{
+		map_nodes[i].occupier = -1;
+	}
+
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
+	{
+		MoveArmyToNewHex(i, all_armies[i].position_hex ); // assigns the correct occupier for the map nodes
+	}
+
+	CleanInactiveArmiesFromBoard();
+	unit_data_buffer_needs_update = true;
 }
 
 void TakeDownArmyStuff()
