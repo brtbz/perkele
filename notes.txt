@@ -23,6 +23,7 @@ devious and terrifying enemy AI to command armies of goblins all over the map an
 edges can have several different travel costs (normal, flying, sailing, voice, woodsman)
 camera could use a rewrite, so it can (among other things) handle changing aspect ratio, so I can allow resizable window
 zooming in should center camera to mouse cursor. maybe not all the way at once, but each zoom step should move it closer
+  actually mouse cursor should stay over the same hex while zooming in, so the camera pans towards the said hex, but doesn't center on it
 pack path arrows into single draw call
 loader for shader code should handle wrong filenames better (now it seems to just segfault)
 
