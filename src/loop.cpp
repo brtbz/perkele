@@ -259,7 +259,7 @@ void Step(double delta)
 		{ SDL_SetCursor(cursor_swords); }
 	}
 
-	static bool draw_ipi = true;
+	static bool draw_background_image = true;
 	static bool cycle_palette_phase = true;
 	static int current_palette_phase = 0;
 
@@ -323,6 +323,7 @@ void Step(double delta)
 	}
 
 	ShowRestButton();
+	// imgui end
 
 	cm_set_master_gain((double)master_gain);
 	cm_set_gain(music_src, (double)music_gain);
@@ -338,13 +339,13 @@ void Step(double delta)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	if (draw_ipi)
+	if (draw_background_image)
 	{
 		if (cycle_palette_phase)
 		{
 			current_palette_phase = (master_timer / 100 ) % 256;
 		}
-		DrawIPI(current_palette_phase, cycle_palette_phase, zoom_level);
+		DrawBackgroundImage(current_palette_phase, cycle_palette_phase, zoom_level);
 	}
 
 	glDepthFunc(GL_LEQUAL);
