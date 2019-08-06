@@ -572,6 +572,21 @@ int LoadUnitLocationsFromFile(const char* file_path)
 	return 0;
 }
 
+//                                                   SPRITE, MOVE, HP, ARMOR, STRENGTH, SOUND
+ArmyTemplate army_template_surfer = {            SURFER_BOY,    6, 15,     9,       15, SFX_SURFER_BATTLE_CRY};
+ArmyTemplate army_template_goblin = { GOBLIN_BATHROBE_GREEN,    5, 15,    12,        9, SFX_GOBLIN_ROAR };
+
+void ApplyArmyTemplate(ArmyTemplate *at, Army *a)
+{
+	a->base_sprite = at->base_sprite;
+	a->movement = at->movement;
+	a->hits_max = at->hits_max;
+	a->hits_current = at->hits_max;
+	a->armor = at->armor;
+	a->strength = at->strength;
+	a->attack_sound = at->attack_sound;
+}
+
 void NewActiveArmy(Army *a, const char* name, Faction faction, ArmyBaseSprite abs, int32_t position)
 {
 	SetArmyName(&all_armies[ a->index ], name);
@@ -597,13 +612,10 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	NewActiveArmy( &all_armies[8], "4th Surfer Battalion 'Narvik'", FACTION_SURFERS, SURFER_BOY, 3894 );
 	NewActiveArmy( &all_armies[9], "5th Surfer Battalion 'Trondheim'", FACTION_SURFERS, SURFER_BOY, 3895 );
 
-	all_armies[5].attack_sound = SFX_SURFER_BATTLE_CRY;
-	all_armies[6].attack_sound = SFX_SURFER_BATTLE_CRY;
-	all_armies[7].attack_sound = SFX_SURFER_BATTLE_CRY;
-	all_armies[8].attack_sound = SFX_SURFER_BATTLE_CRY;
-	all_armies[9].attack_sound = SFX_SURFER_BATTLE_CRY;
-
-
+	for (int i = 5; i < 10; i++)
+	{
+		ApplyArmyTemplate( &army_template_surfer, &all_armies[i] );
+	}
 
 	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
@@ -688,11 +700,10 @@ void ResetArmiesToDefaultTemporaryPleaseDelete()
 	NewActiveArmy( &all_armies[8], "4th Surfer Battalion 'Narvik'", FACTION_SURFERS, SURFER_BOY, 3894 );
 	NewActiveArmy( &all_armies[9], "5th Surfer Battalion 'Trondheim'", FACTION_SURFERS, SURFER_BOY, 3895 );
 
-	all_armies[5].attack_sound = SFX_SURFER_BATTLE_CRY;
-	all_armies[6].attack_sound = SFX_SURFER_BATTLE_CRY;
-	all_armies[7].attack_sound = SFX_SURFER_BATTLE_CRY;
-	all_armies[8].attack_sound = SFX_SURFER_BATTLE_CRY;
-	all_armies[9].attack_sound = SFX_SURFER_BATTLE_CRY;
+	for (int i = 5; i < 10; i++)
+	{
+		ApplyArmyTemplate( &army_template_surfer, &all_armies[i] );
+	}
 
 	unit_data_count = 0;
 

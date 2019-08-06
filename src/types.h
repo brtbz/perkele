@@ -177,6 +177,17 @@ typedef struct Army
 	char name[48];
 } Army;
 
+typedef struct ArmyTemplate
+{
+	ArmyBaseSprite base_sprite;
+	int16_t movement;
+	int16_t hits_max;
+	int16_t armor;
+	int16_t strength;
+
+	int attack_sound;
+} ArmyTemplate;
+
 typedef enum 
 {
 	PASSABLE = 1,

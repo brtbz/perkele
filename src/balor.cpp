@@ -25,3 +25,35 @@ void BalorHandlesTheTurn(int faction)
 	}
 */
 }
+
+/*
+
+if units in balors faction with free move remain, request decision from balor
+if no units with free move remain, balor ends the turn
+
+void RequestOrdersFromBalor()
+{
+	
+}
+
+bool carrying_out_balors_orders = false;
+
+void CarryOutBalorsOrders()
+void AdvanceBalorsOrders()
+{
+	
+}
+
+if (balors_turn)
+{
+	if (carrying_out_balors_orders)
+	{
+		AdavanceBalorsOrders()
+	}
+	else
+	{
+		RequestOrdersFromBalor()
+	}
+}
+
+*/
