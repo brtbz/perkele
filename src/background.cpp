@@ -1,5 +1,5 @@
 // Indexed Palette Image
-void DrawIPI(int palette_phase, bool phase_shift, float zoom_level)
+void DrawBackgroundImage(int palette_phase, bool phase_shift, float zoom_level)
 {
 	glBindVertexArray(ipi_vao);
 	glUseProgram(ipi_sp);
