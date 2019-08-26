@@ -466,6 +466,7 @@ void AdvanceArmyMoveAnimation(int32_t army)
 	if ( movement_starts + ms_per_hex < movement_timer )
 	{
 		path_position--;
+		allowed_steps--;
 
 		if (path_position < 0)
 		{
@@ -476,7 +477,19 @@ void AdvanceArmyMoveAnimation(int32_t army)
 
 			MoveArmyToNewHex(army, current_path.y);
 			draw_path = false;
-			unit_data_buffer_needs_update = true;		
+			unit_data_buffer_needs_update = true;
+			allowed_steps = 512;
+		}
+		else if (allowed_steps <= 0)
+		{
+			//end
+			army_moving = false;
+			all_armies[army].move_done = true;
+			all_armies[army].draw = true;
+			MoveArmyToNewHex(army, moving_to_hex);
+			draw_path = false;
+			unit_data_buffer_needs_update = true;
+			allowed_steps = 512;
 		}
 		else
 		{

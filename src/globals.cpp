@@ -111,6 +111,7 @@ int32_t moving_army = 0;
 int32_t moving_to_hex = -1;
 int32_t prev_hex = -1;
 int32_t path_position = -1;
+int allowed_steps = 512;
 
 Army all_armies[ARMY_COUNT_MAX]; // order here should stay static
 // Army active_armies[ARMY_COUNT_MAX];

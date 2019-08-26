@@ -171,6 +171,24 @@ void Step(double delta)
 					path_edges_size = 0;
 					draw_path = false;
 				}
+				else if (HexIsValidAndPassable(highlighted_hex))
+				{
+					allowed_steps = AllowedStepsWithMovementPoints(selected_army->movement);
+					if (allowed_steps > 0)
+					{
+						BeginArmyMoveAnimation(selected_army->index, selected_army->position_hex, highlighted_hex);
+						PlaySfx(SFX_UNIT_MOVE);
+						unit_data_buffer_needs_update = true;
+						path_edges_size = 0;
+						draw_path = false;					
+					}
+					else
+					{
+						PlaySfx(SFX_UI_CLICK_ERROR);
+						allowed_steps = 512;
+					}
+
+				}
 				else
 				{
 					PlaySfx(SFX_UI_CLICK_ERROR);

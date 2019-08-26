@@ -12,7 +12,6 @@ wrong autosave format no longer crashes the program
 
 
 TODO: (in rough order of importance)
-new feature for pathfinder usage code: move along the path as far as your movement points allow (AI will want to use this)
 clean up animation code a bit (timers end node start indices army moving moving army arming move)
 some kind of basic scenario with dozen or so units
 more complex combat mechanics
@@ -30,6 +29,7 @@ loader for shader code should handle wrong filenames better (now it seems to jus
 
 
 incomplete list of IMPLEMENTED FEATURES (these were on todo list earlier):
+new feature for pathfinder usage code: move along the path as far as your movement points allow (AI will want to use this) (It seems to kinda work)
 units can retreat from battle. defender being pushed back from its hex.
 death animation and sound! (just disappear)
 units can move and attack once per turn

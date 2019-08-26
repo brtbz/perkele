@@ -612,10 +612,43 @@ int32_t FindPath(Pathfinder *pf, int32_t start, int32_t goal, int faction)
 	return temp_score;
 }
 
+int AllowedStepsWithMovementPoints(int mp)
+{
+	int steps = 0;
+
+	int32_t start_node = current_path.x;
+	int32_t attempted_end_node = current_path.y;
+
+	int path_position = path_edges_size;
+
+	while (mp > 0 && path_position >= 0)
+	{
+		mp -= map_edges[ path_edges[path_position] ].cost;
+		path_position--;
+		steps++;
+	}
+	
+	if (mp < 0)
+	{
+		steps--;
+		path_position++;
+	}
+
+	while (!HexIsFree( map_nodes[ map_edges[ path_edges[path_position] ].start_node_index ].index ) && steps >= 0 && path_position < path_edges_size)
+	{
+		steps--;
+		path_position++;
+	}
+
+	if (steps < 0) { steps = 0; }
+
+	return steps;
+}
+
 void ClearPaths(Pathfinder *pf)
 {
 	ZeroPathfinderCounters(pf);
-	path_edges_size = -0;
+	path_edges_size = 0;
 	draw_path = false;
 	reachable_nodes_number = 0;
 	analyzed_nodes_number = 0;
