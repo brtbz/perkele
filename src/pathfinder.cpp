@@ -459,13 +459,6 @@ void ZeroPathfinderCounters(Pathfinder *pf)
 	pf->number_of_nodes_that_were_in_open_set_debug = 0;
 }
 
-/*
-uint64_t starting1 = SDL_GetPerformanceCounter();
-uint64_t stopping1 = SDL_GetPerformanceCounter();
-double calculating1 = (double)(stopping1 - starting1) / (double)perf_freq;
-printf("This took %.04g\n", calculating1*1000.0);
-*/
-
 // way to show all the hexes that are reachable with currently available movement points
 // 1. start from start node
 // 2. add nodes to open set and analyze

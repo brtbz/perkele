@@ -68,10 +68,22 @@ const char* faction_names[] =
 	"SURFERS",
 };
 
-void MoveToNextFaction();
+void PrepareFactionForItsTurn(int faction)
+{
+	strncpy(active_faction_str, faction_names[faction], 32);
 
-void FactionTakesItsTurn(int faction)
-{	
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
+	{
+		if (all_armies[i].faction == faction && all_armies[i].dead == false)
+		{
+			all_armies[i].move_done = false;
+			all_armies[i].action_done = false;
+		}
+	}
+}
+
+bool FactionHasActiveUnits(int faction)
+{
 	int faction_army_count = 0;
 
 	for (int i = 0; i < ARMY_COUNT_MAX; i++)
@@ -82,52 +94,42 @@ void FactionTakesItsTurn(int faction)
 		}
 	}
 
-	if ( faction_army_count < 1)
+	if (faction_army_count > 0)
 	{
-		MoveToNextFaction();
-		// endless loop if all the armies are dead :)
+		return true;
 	}
-
-	strncpy(active_faction_str, faction_names[active_faction], 32);
-
-	for (int i = 0; i < ARMY_COUNT_MAX; i++)
-	{
-		if (all_armies[i].faction == active_faction && all_armies[i].dead == false)
-		{
-			all_armies[i].move_done = false;
-			all_armies[i].action_done = false;
-		}
-	}
+	return false;
 }
 
-void MoveToNextFaction()
+void SwitchToNextFaction()
 {
 	active_faction++;
-
-	if (active_faction > FACTION_COUNT)
+	while ( !FactionHasActiveUnits(active_faction) )
 	{
-		active_faction = 0;
-		game_turn++;
+		active_faction++;
+		if (active_faction >= faction_count)
+		{
+			active_faction = 0;
+		}
+		// possible endless loop !!!
 	}
-	FactionTakesItsTurn(active_faction);
+	PrepareFactionForItsTurn(active_faction);
 }
 
 void EndTurn()
 {
 	selected_army = NULL;
 
-	MoveToNextFaction();
+	SwitchToNextFaction();
 }
 
 void DestroyArmy(Army *a)
 {
-
 	PlaySfx(SFX_UNIT_DEATH);
 
 	a->dead = true;
 
 	unit_data_buffer_needs_update = true;
-
 }
 
 int PushArmy(Army *pusher, Army *pushee)

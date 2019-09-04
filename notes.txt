@@ -95,3 +95,12 @@ Hex edges: (amit)
 Iterate over all hexes H.
 For each hex, iterate over all 6 neighbors D.
 If D is on your game map, and H’s region and D’s region are different, draw the edge between H and D.
+
+
+
+/*
+uint64_t starting1 = SDL_GetPerformanceCounter();
+uint64_t stopping1 = SDL_GetPerformanceCounter();
+double calculating1 = (double)(stopping1 - starting1) / (double)perf_freq;
+printf("This took %.04g\n", calculating1*1000.0);
+*/
