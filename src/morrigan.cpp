@@ -80,6 +80,16 @@ void PrepareFactionForItsTurn(int faction)
 			all_armies[i].action_done = false;
 		}
 	}
+
+	if (faction == FACTION_GOBLINS)
+	{
+		balors_turn = true;
+		BalorTakesControl();
+	}
+	else
+	{
+		balors_turn = false;
+	}
 }
 
 bool FactionHasActiveUnits(int faction)

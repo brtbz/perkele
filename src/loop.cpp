@@ -146,7 +146,12 @@ void Step(double delta)
 		selected_army = NULL;
 	}
 
-	if (!army_moving && !army_attacking) // disable UI while moving unit around the map.
+	if (!army_moving && !army_attacking && balors_turn)
+	{
+		RequestOrdersFromBalor();
+	}
+
+	if (!army_moving && !army_attacking && !balors_turn) // disable UI while moving unit around the map. (or when balor moves)
 	{
 		if ( right_clicked && selected_army != NULL)
 		{
