@@ -389,8 +389,8 @@ void ShowDebugUI()
 		ImGui::Text("open_set_count: %d", pathfinder->open_set_count);
 		ImGui::Text("closed_set_count: %d", pathfinder->closed_set_count);
 		ImGui::Separator();
-		ImGui::Text("Current Path %d %d", current_path.x, current_path.y);
-		ImGui::Text("Path_edges_size %u", path_edges_size);
+		ImGui::Text("Current Path %d %d", pathfinder->current_path.x, pathfinder->current_path.y);
+		ImGui::Text("Path_edges_size %u", pathfinder->path_edges_size);
 
 		ImGui::InputText("loadmap", loadmap_str, IM_ARRAYSIZE(loadmap_str));
 		ImGui::SameLine();

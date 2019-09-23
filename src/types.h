@@ -279,4 +279,9 @@ typedef struct Pathfinder
 
 	int32_t *nodes_that_were_in_open_set_debug;
 	int32_t number_of_nodes_that_were_in_open_set_debug;
+
+	int32_t *path_edges;
+
+	ivec2 current_path = {0, 0}; //these are start and end (not x and y)
+	int32_t path_edges_size = 0;
 } Pathfinder;

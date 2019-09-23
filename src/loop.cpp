@@ -173,7 +173,7 @@ void Step(double delta)
 					BeginArmyMoveAnimation(selected_army->index, selected_army->position_hex, highlighted_hex);
 					PlaySfx(SFX_UNIT_MOVE);
 					unit_data_buffer_needs_update = true;
-					path_edges_size = 0;
+					pathfinder->path_edges_size = 0;
 					draw_path = false;
 				}
 				else if (HexIsValidAndPassable(highlighted_hex))
@@ -184,7 +184,7 @@ void Step(double delta)
 						BeginArmyMoveAnimation(selected_army->index, selected_army->position_hex, highlighted_hex);
 						PlaySfx(SFX_UNIT_MOVE);
 						unit_data_buffer_needs_update = true;
-						path_edges_size = 0;
+						pathfinder->path_edges_size = 0;
 						draw_path = false;					
 					}
 					else
@@ -206,7 +206,7 @@ void Step(double delta)
 				ResolveCombat( selected_army, &all_armies[map_nodes[highlighted_hex].occupier] );
 				PlaySfx(selected_army->attack_sound);
 				unit_data_buffer_needs_update = true;
-				path_edges_size = 0;
+				pathfinder->path_edges_size = 0;
 				draw_path = false;
 			}
 			else
@@ -239,7 +239,7 @@ void Step(double delta)
 
 			if ( selected_army->position_hex != highlighted_hex)
 			{
-				if ( current_path.x != selected_army->position_hex || current_path.y != highlighted_hex )
+				if ( pathfinder->current_path.x != selected_army->position_hex || pathfinder->current_path.y != highlighted_hex )
 				{
 					if ( FindPath(pathfinder, selected_army->position_hex, highlighted_hex, selected_army->faction) < 0 )
 					{
@@ -249,8 +249,8 @@ void Step(double delta)
 					{
 						draw_path = true;
 					}
-					current_path.x = selected_army->position_hex;
-					current_path.y = highlighted_hex;
+					pathfinder->current_path.x = selected_army->position_hex;
+					pathfinder->current_path.y = highlighted_hex;
 				}
 			}
 		}
@@ -388,9 +388,9 @@ void Step(double delta)
 			UpdateHexMapBuffersForDebugOverlay();
 			DrawHexDebugOverlay(overlay_color, analyzed_nodes_number);
 
-			for (int i = 0; i <= path_edges_size; i++)
+			for (int i = 0; i <= pathfinder->path_edges_size; i++)
 			{
-				DrawEdgeAsArrow( map_edges[ path_edges[i] ].start_node_index, map_edges[ path_edges[i] ].end_node_index, map_edges[ path_edges[i] ].direction * 60.0f );
+				DrawEdgeAsArrow( map_edges[ pathfinder->path_edges[i] ].start_node_index, map_edges[ pathfinder->path_edges[i] ].end_node_index, map_edges[ pathfinder->path_edges[i] ].direction * 60.0f );
 			}			
 		}
 	}

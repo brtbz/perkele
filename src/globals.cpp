@@ -159,14 +159,12 @@ GLuint edge_texture;
 // PATHFINDER
 #define OPEN_SET_MAX_SIZE 16384
 #define CLOSED_SET_MAX_SIZE OPEN_SET_MAX_SIZE
+#define PATH_EDGES_MAX_SIZE 512
 
 Pathfinder *pathfinder;
 
 int32_t *came_along_edges; // this a big ARRAY! array index is same as map index, value is edge's index
-int32_t path_edges[512];
-uint32_t path_edges_size = 0;
 bool draw_path = false;
-ivec2 current_path = { 0, 0 }; //these are start and end (not x and y)
 
 
 

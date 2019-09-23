@@ -523,14 +523,14 @@ uint32_t ReconstructPath(Pathfinder *pf, int32_t start, int32_t goal)
 	int n = 0;
 
 
-	path_edges[n] = came_along_edges[goal];
+	pf->path_edges[n] = came_along_edges[goal];
 	int32_t prev_node = map_edges[ came_along_edges[goal] ].start_node_index;
 
 	while ( prev_node != start && path_size < 512 )
 	{
 		n++;
 		path_size++;
-		path_edges[n] = came_along_edges[prev_node];
+		pf->path_edges[n] = came_along_edges[prev_node];
 		prev_node = map_edges[ came_along_edges[prev_node] ].start_node_index;
 	}
 
@@ -584,7 +584,7 @@ int32_t FindPath(Pathfinder *pf, int32_t start, int32_t goal, int faction)
 		if ( map_index == goal )
 		{
 			goal_found = true;
-			path_edges_size = ReconstructPath(pf, start, goal);
+			pf->path_edges_size = ReconstructPath(pf, start, goal);
 			temp_score = accumulated_g_score;
 			break;
 		}
@@ -609,14 +609,14 @@ int AllowedStepsWithMovementPoints(int mp)
 {
 	int steps = 0;
 
-	int32_t start_node = current_path.x;
-	int32_t attempted_end_node = current_path.y;
+	int32_t start_node = pathfinder->current_path.x;
+	int32_t attempted_end_node = pathfinder->current_path.y;
 
-	int path_position = path_edges_size;
+	int path_position = pathfinder->path_edges_size;
 
 	while (mp > 0 && path_position >= 0)
 	{
-		mp -= map_edges[ path_edges[path_position] ].cost;
+		mp -= map_edges[ pathfinder->path_edges[path_position] ].cost;
 		path_position--;
 		steps++;
 	}
@@ -627,7 +627,7 @@ int AllowedStepsWithMovementPoints(int mp)
 		path_position++;
 	}
 
-	while (!HexIsFree( map_nodes[ map_edges[ path_edges[path_position] ].start_node_index ].index ) && steps >= 0 && path_position < path_edges_size)
+	while (!HexIsFree( map_nodes[ map_edges[ pathfinder->path_edges[path_position] ].start_node_index ].index ) && steps >= 0 && path_position < pathfinder->path_edges_size)
 	{
 		steps--;
 		path_position++;
@@ -641,7 +641,7 @@ int AllowedStepsWithMovementPoints(int mp)
 void ClearPaths(Pathfinder *pf)
 {
 	ZeroPathfinderCounters(pf);
-	path_edges_size = 0;
+	pf->path_edges_size = 0;
 	draw_path = false;
 	reachable_nodes_number = 0;
 	analyzed_nodes_number = 0;
@@ -659,6 +659,7 @@ void InitPathfinder(Pathfinder *pf)
 	pf->closed_set = (SlimLeaf*)malloc( sizeof(SlimLeaf) * OPEN_SET_MAX_SIZE );
 	// pf->came_along_edges = (int32_t*)malloc( sizeof(int32_t) * OPEN_SET_MAX_SIZE );
 	pf->nodes_that_were_in_open_set_debug = (int32_t*)malloc(sizeof(int32_t) * OPEN_SET_MAX_SIZE);
+	pf->path_edges = (int32_t*)malloc(sizeof(int32_t) * PATH_EDGES_MAX_SIZE);
 }
 
 void ShutdownPathfinder(Pathfinder *pf)
@@ -667,4 +668,5 @@ void ShutdownPathfinder(Pathfinder *pf)
 	free(pf->open_set_map_indices);
 	free(pf->closed_set);
 	free(pf->nodes_that_were_in_open_set_debug);
+	free(pf->path_edges);
 }

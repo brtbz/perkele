@@ -52,15 +52,15 @@ void RequestOrdersFromBalor()
 
 		int destination = reachable_nodes[ MWC % reachables_count ];
 
-		current_path.x = all_armies[balors_army].position_hex;
-		current_path.y = destination;
+		pathfinder->current_path.x = all_armies[balors_army].position_hex;
+		pathfinder->current_path.y = destination;
 
 		FindPath(pathfinder, all_armies[balors_army].position_hex, map_nodes[destination].index, all_armies[balors_army].faction);
 
 		BeginArmyMoveAnimation(balors_army, all_armies[balors_army].position_hex, map_nodes[destination].index);
 		PlaySfx(SFX_UNIT_MOVE);
 		unit_data_buffer_needs_update = true;
-		path_edges_size = 0;
+		pathfinder->path_edges_size = 0;
 		draw_path = false;
 	}
 }

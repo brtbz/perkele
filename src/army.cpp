@@ -455,9 +455,9 @@ void BeginArmyMoveAnimation(int32_t army, int32_t start, int32_t end)
 	all_armies[army].draw = false;
 	army_moving = true;
 	movement_starts = master_timer;
-	path_position = path_edges_size;
+	path_position = pathfinder->path_edges_size;
 	prev_hex = start;
-	moving_to_hex = map_edges[ path_edges[path_position] ].end_node_index;
+	moving_to_hex = map_edges[ pathfinder->path_edges[path_position] ].end_node_index;
 }
 
 void AdvanceArmyMoveAnimation(int32_t army)
@@ -475,7 +475,7 @@ void AdvanceArmyMoveAnimation(int32_t army)
 			all_armies[army].move_done = true;
 			all_armies[army].draw = true;
 
-			MoveArmyToNewHex(army, current_path.y);
+			MoveArmyToNewHex(army, pathfinder->current_path.y);
 			draw_path = false;
 			unit_data_buffer_needs_update = true;
 			allowed_steps = 512;
@@ -495,7 +495,7 @@ void AdvanceArmyMoveAnimation(int32_t army)
 		{
 			movement_starts = master_timer;
 			prev_hex = moving_to_hex;
-			moving_to_hex = map_edges[ path_edges[path_position] ].end_node_index;
+			moving_to_hex = map_edges[ pathfinder->path_edges[path_position] ].end_node_index; // this line looks pretty horrible
 		}
 	}
 }
