@@ -213,3 +213,4 @@ char combat_result_str2[256];
 char active_faction_str[32];
 int active_faction = 0;
 bool balors_turn = false;
+int balors_current_army = -1;

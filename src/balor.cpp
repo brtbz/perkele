@@ -31,7 +31,7 @@ int32_t GetArmyForBalorToPlayWith()
 {
 	for (int i = 0; i < ARMY_COUNT_MAX; i++)
 	{
-		if ( all_armies[i].faction == active_faction && all_armies[i].dead == false && all_armies[i].active == true && all_armies[i].move_done == false)
+		if ( all_armies[i].faction == active_faction && all_armies[i].dead == false && all_armies[i].active == true && all_armies[i].move_done == false )
 		{
 			return i;
 		}
@@ -39,18 +39,68 @@ int32_t GetArmyForBalorToPlayWith()
 	return -1;
 }
 
+int32_t ReachableNodeWithEnemyInItsNeighbouringNode(int count)
+{
+	for (int i = 0; i < count; i++)
+	{
+		if ( CheckForEnemyZonesOfControl( reachable_nodes[i], active_faction ) )
+		{
+			return reachable_nodes[i]; // just goes to first possible node with enemy next to it
+		}
+	}
+
+	return -1; // didn't find anything
+}
+
+int32_t ShouldIAttackMaybe(int32_t own_hex, int own_faction)
+{
+	// -1, no
+	// anything else, this hex number
+	for (int i = 0; i < 6; i++)
+	{
+		if ( map_nodes[own_hex].edge[i] != -1 )
+		{
+			int32_t edge = map_nodes[own_hex].edge[i];
+
+			if ( map_nodes[ map_edges[edge].end_node_index ].occupier != -1 )
+			{
+				int32_t occupier = map_nodes[ map_edges[edge].end_node_index ].occupier;
+
+				if ( all_armies[occupier].faction != own_faction )
+				{
+					return map_nodes[ map_edges[edge].end_node_index ].index;
+				}
+			}
+		}
+	}
+
+	return -1;
+}
+
 void RequestOrdersFromBalor()
 {
 	ClearPaths(pathfinder);
-	bool orders_delivered = false;
 
 	int32_t balors_army = GetArmyForBalorToPlayWith();
+
+	if ( balors_current_army != balors_army && balors_current_army != -1 )
+	{
+		all_armies[balors_current_army].move_done = true;
+		all_armies[balors_current_army].action_done = true;
+	}
+
+	balors_current_army = balors_army;
 
 	if ( balors_army >= 0)
 	{
 		int reachables_count = FindReachableNodes(pathfinder, all_armies[balors_army].position_hex, all_armies[balors_army].movement, all_armies[balors_army].faction);
 
-		int destination = reachable_nodes[ MWC % reachables_count ];
+		int destination = ReachableNodeWithEnemyInItsNeighbouringNode(reachables_count);
+
+		if (destination < 0)
+		{
+			destination = reachable_nodes[ MWC % reachables_count ];
+		}
 
 		pathfinder->current_path.x = all_armies[balors_army].position_hex;
 		pathfinder->current_path.y = destination;
