@@ -23,6 +23,7 @@ extern "C" {
 #include "types.h"
 #include "loader.h"
 #include "camera.h"
+#include "morrigan.h"
 
 #include "matik.cpp"
 #include "globals.cpp"
