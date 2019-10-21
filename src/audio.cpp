@@ -30,6 +30,10 @@ void PlaySfx(int id)
 {
 	if (audio_enabled)
 	{
+		if (cm_get_state( sfx[id].src) == CM_STATE_PLAYING)
+		{
+			cm_stop(sfx[id].src);
+		}
 		cm_play(sfx[id].src);
 		/*
 		for (int i = 0; i < 5; i++)

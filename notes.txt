@@ -25,6 +25,7 @@ zooming in should center camera to mouse cursor. maybe not all the way at once, 
   actually mouse cursor should stay over the same hex while zooming in, so the camera pans towards the said hex, but doesn't center on it
 pack path arrows into single draw call
 loader for shader code should handle wrong filenames better (now it seems to just segfault)
+it's overkill at the moment, but unit data and maybe map data could be in a database (sqlite)
 
 
 
@@ -70,6 +71,12 @@ glad by who?
 
 Other notes
 -----------
+
+sound effects didn't play previously, if there already was a similar playing. 
+(cmixer doesn't seem to have easy way to have one sound effect play twice at same time.)
+
+should there be a pause after every combat during AI's turn? so that the player can observe the results. 
+or maybe a combat log that shows results from all the fights from the previous turn?
 
 hardware requirements!
 minimum display size is 1024x600!
