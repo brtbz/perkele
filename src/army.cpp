@@ -525,11 +525,6 @@ void AdvanceArmyAttackAnimation(int32_t army)
 	}
 }
 
-bool HexIsFree(int32_t hex)
-{
-	return map_nodes[ hex ].occupier == -1 ? true : false;
-}
-
 void SaveUnitLocationsToFile(const char* file_path)
 {
 	int data_size = 0;
@@ -625,6 +620,14 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	NewActiveArmy( &all_armies[8], "4th Surfer Battalion 'Narvik'", FACTION_SURFERS, SURFER_BOY, 3894 );
 	NewActiveArmy( &all_armies[9], "5th Surfer Battalion 'Trondheim'", FACTION_SURFERS, SURFER_BOY, 3895 );
 
+	NewActiveArmy( &all_armies[10], "6th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3780 );
+	NewActiveArmy( &all_armies[11], "7th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3781 );
+	NewActiveArmy( &all_armies[12], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3782 );
+
+	NewActiveArmy( &all_armies[13], "7th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2978 );
+	NewActiveArmy( &all_armies[14], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2979 );
+	NewActiveArmy( &all_armies[15], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2980 );
+
 	for (int i = 5; i < 10; i++)
 	{
 		ApplyArmyTemplate( &army_template_surfer, &all_armies[i] );
@@ -712,6 +715,15 @@ void ResetArmiesToDefaultTemporaryPleaseDelete()
 	NewActiveArmy( &all_armies[7], "3rd Surfer Battalion 'Stockholm'", FACTION_SURFERS, SURFER_BOY, 3893 );
 	NewActiveArmy( &all_armies[8], "4th Surfer Battalion 'Narvik'", FACTION_SURFERS, SURFER_BOY, 3894 );
 	NewActiveArmy( &all_armies[9], "5th Surfer Battalion 'Trondheim'", FACTION_SURFERS, SURFER_BOY, 3895 );
+
+	NewActiveArmy( &all_armies[10], "6th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3780 );
+	NewActiveArmy( &all_armies[11], "7th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3781 );
+	NewActiveArmy( &all_armies[12], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3782 );
+
+	NewActiveArmy( &all_armies[13], "7th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2978 );
+	NewActiveArmy( &all_armies[14], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2979 );
+	NewActiveArmy( &all_armies[15], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2980 );
+
 
 	for (int i = 5; i < 10; i++)
 	{

@@ -735,6 +735,11 @@ bool HexIsValidAndPassable(int32_t hex)
 	else { return false; }
 }
 
+bool HexIsFree(int32_t hex)
+{
+	return map_nodes[ hex ].occupier == -1 ? true : false;
+}
+
 bool FloodFill(int32_t map_index, int32_t island_id)
 {
 	if ( map_nodes[map_index].terrain == IMPASSABLE ) { return false; }

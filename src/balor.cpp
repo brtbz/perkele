@@ -60,6 +60,50 @@ int32_t ReachableNodeWithEnemyInItsNeighbouringNode(int count)
 	return -1; // didn't find anything
 }
 
+int32_t FreeHexNextToClosestEnemy()
+{
+	int32_t own_hex = all_armies[balors_current_army].position_hex;
+	int32_t closest_enemy = -1;
+	int32_t distance = 1024;
+
+	for (int i = 0; i < ARMY_COUNT_MAX; i++)
+	{
+		if ( all_armies[i].faction != active_faction && all_armies[i].dead == false && all_armies[i].active == true)
+		{
+			ivec2 own_hex_v2 = { map_nodes[own_hex].x, map_nodes[own_hex].y };
+			ivec2 enemy_hex_v2 = { map_nodes[ all_armies[i].position_hex ].x, map_nodes[ all_armies[i].position_hex ].y };
+			int32_t dist = CalculateHexDistance(own_hex_v2, enemy_hex_v2);
+			if (dist < distance)
+			{
+				closest_enemy = i;
+				distance = dist;
+			}
+		}
+	}
+
+	if (closest_enemy == -1)
+	{
+		return -1;
+	}
+	else
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			if (map_nodes[ all_armies[closest_enemy].position_hex ].edge[i] != -1)
+			{
+				int32_t edge = map_nodes[ all_armies[closest_enemy].position_hex ].edge[i];
+
+				if ( HexIsFree(map_edges[edge].end_node_index) && HexIsValidAndPassable(map_edges[edge].end_node_index) )
+				{
+					return map_edges[edge].end_node_index;
+				}
+			}
+		}
+	}
+
+	return -1;
+}
+
 int32_t ShouldIAttackMaybe(int32_t own_hex, int own_faction)
 {
 	// -1, no
@@ -85,6 +129,33 @@ int32_t ShouldIAttackMaybe(int32_t own_hex, int own_faction)
 	return -1;
 }
 
+bool ShouldIRestMaybe()
+{
+	if ( all_armies[balors_current_army].move_done == true || all_armies[balors_current_army].action_done == true  )
+	{
+		return false;
+	}
+
+	if (CheckForEnemyZonesOfControl(all_armies[balors_current_army].position_hex, active_faction))
+	{
+		return false;
+	}
+
+	if ( all_armies[balors_current_army].wounded_soldiers == 0 )
+	{
+		return false;
+	}
+
+	// add some randomization here
+
+	return true;
+}
+
+int32_t MoveTowardsEnemyMaybe()
+{
+
+}
+
 void RequestOrdersFromBalor()
 {
 	ClearPaths(pathfinder);
@@ -97,7 +168,6 @@ void RequestOrdersFromBalor()
 	}
 	else
 	{
-
 		if ( balors_current_army != balors_army && balors_current_army != -1 )
 		{
 			all_armies[balors_current_army].move_done = true;
@@ -108,49 +178,76 @@ void RequestOrdersFromBalor()
 
 		if ( balors_army >= 0)
 		{
-			int32_t attack_maybe = ShouldIAttackMaybe( all_armies[balors_army].position_hex, active_faction );
+			bool rest_maybe = ShouldIRestMaybe();
 
-			if (attack_maybe != -1)
+			if (rest_maybe)
 			{
-				// attack
-				defenders_hex = attack_maybe; // defenders_hex is used by the animation
-
-				BeginArmyAttackAnimation( all_armies[balors_army].index, all_armies[balors_army].position_hex, defenders_hex );
-				ResolveCombat( &all_armies[balors_army], &all_armies[map_nodes[attack_maybe].occupier] );
-				PlaySfx( all_armies[balors_army].attack_sound );
-				unit_data_buffer_needs_update = true;
-				pathfinder->path_edges_size = 0;
-				draw_path = false;
-				all_armies[balors_army].action_done = true;
-			}
-			else if (all_armies[balors_army].move_done == false)
-			{
-				int reachables_count = FindReachableNodes(pathfinder, all_armies[balors_army].position_hex, all_armies[balors_army].movement, all_armies[balors_army].faction);
-				if ( reachables_count > 0)
-				{
-					int destination = ReachableNodeWithEnemyInItsNeighbouringNode(reachables_count);
-
-					if (destination < 0)
-					{
-						destination = reachable_nodes[ MWC % reachables_count ];
-					}
-
-					pathfinder->current_path.x = all_armies[balors_army].position_hex;
-					pathfinder->current_path.y = destination;
-
-					FindPath(pathfinder, all_armies[balors_army].position_hex, map_nodes[destination].index, all_armies[balors_army].faction);
-
-					BeginArmyMoveAnimation(balors_army, all_armies[balors_army].position_hex, map_nodes[destination].index);
-					PlaySfx(SFX_UNIT_MOVE);
-					unit_data_buffer_needs_update = true;
-					pathfinder->path_edges_size = 0;
-					draw_path = false;
-				}
-				all_armies[balors_army].move_done = true;
+				RestArmy( &all_armies[balors_army] );
 			}
 			else
 			{
-				all_armies[balors_army].action_done = true;
+				int32_t attack_maybe = ShouldIAttackMaybe( all_armies[balors_army].position_hex, active_faction );
+
+				if (attack_maybe != -1)
+				{
+					// attack
+					defenders_hex = attack_maybe; // defenders_hex is used by the animation
+
+					BeginArmyAttackAnimation( all_armies[balors_army].index, all_armies[balors_army].position_hex, defenders_hex );
+					ResolveCombat( &all_armies[balors_army], &all_armies[map_nodes[attack_maybe].occupier] );
+					PlaySfx( all_armies[balors_army].attack_sound );
+					unit_data_buffer_needs_update = true;
+					pathfinder->path_edges_size = 0;
+					draw_path = false;
+					all_armies[balors_army].action_done = true;
+				}
+				else if (all_armies[balors_army].move_done == false)
+				{
+					int reachables_count = FindReachableNodes(pathfinder, all_armies[balors_army].position_hex, all_armies[balors_army].movement, all_armies[balors_army].faction);
+					if ( reachables_count > 0)
+					{
+						int destination = ReachableNodeWithEnemyInItsNeighbouringNode(reachables_count);
+
+						bool dest_in_reachables = true;
+
+						if (destination < 0)
+						{
+							int32_t free_hex_next_closest_enemy = FreeHexNextToClosestEnemy();
+
+							if (free_hex_next_closest_enemy == -1)
+							{
+								destination = reachable_nodes[ MWC % reachables_count ];
+							}
+							else
+							{
+								destination = free_hex_next_closest_enemy;
+								dest_in_reachables = false;
+								// 
+							}
+						}
+
+						pathfinder->current_path.x = all_armies[balors_army].position_hex;
+						pathfinder->current_path.y = destination;
+
+						FindPath(pathfinder, all_armies[balors_army].position_hex, map_nodes[destination].index, all_armies[balors_army].faction);
+
+						if (dest_in_reachables == false)
+						{
+							allowed_steps = AllowedStepsWithMovementPoints( all_armies[balors_army].movement );
+						}
+
+						BeginArmyMoveAnimation(balors_army, all_armies[balors_army].position_hex, map_nodes[destination].index);
+						PlaySfx(SFX_UNIT_MOVE);
+						unit_data_buffer_needs_update = true;
+						pathfinder->path_edges_size = 0;
+						draw_path = false;
+					}
+					all_armies[balors_army].move_done = true;
+				}
+				else
+				{
+					all_armies[balors_army].action_done = true;
+				}
 			}
 		}
 	}

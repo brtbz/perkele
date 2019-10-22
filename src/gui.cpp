@@ -60,6 +60,8 @@ void ShowRestButton()
 		{
 			if (selected_army != NULL && selected_army->move_done == false && selected_army->action_done == false)
 			{
+				RestArmy(selected_army);
+				/*
 				PlaySfx(SFX_UNIT_REST);
 				int hits_recovered = selected_army->wounded_soldiers;
 				if (CheckForEnemyZonesOfControl(selected_army->position_hex, selected_army->faction))
@@ -72,9 +74,10 @@ void ShowRestButton()
 				selected_army->action_done = true;
 
 				unit_data_buffer_needs_update = true; // or does it???
-
-				selected_army = NULL;
 				draw_path = false;
+				*/
+				selected_army = NULL;
+				
 			}
 			else
 			{
@@ -411,6 +414,8 @@ void ShowDebugUI()
 		ImGui::InputText("name", unit_name, 32);
 
 		if ( ImGui::Button("Add Unit") ) { /*AddUnit();*/ }
+
+		ImGui::Text("allowed steps: %d", allowed_steps);
 
 		ImGui::End();
 	}

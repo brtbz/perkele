@@ -142,6 +142,22 @@ void DestroyArmy(Army *a)
 	unit_data_buffer_needs_update = true;
 }
 
+void RestArmy(Army *a)
+{
+	PlaySfx(SFX_UNIT_REST);
+	int hits_recovered = a->wounded_soldiers;
+	if (CheckForEnemyZonesOfControl(a->position_hex, a->faction))
+	{
+		hits_recovered = 1;
+	}
+	a->hits_current += hits_recovered;
+	a->wounded_soldiers -= hits_recovered;
+	a->move_done = true;
+	a->action_done = true;
+	unit_data_buffer_needs_update = true; // or does it???
+	draw_path = false;
+}
+
 int PushArmy(Army *pusher, Army *pushee)
 {
 	int32_t pushers_hex = pusher->position_hex;

@@ -185,7 +185,7 @@ void Step(double delta)
 						PlaySfx(SFX_UNIT_MOVE);
 						unit_data_buffer_needs_update = true;
 						pathfinder->path_edges_size = 0;
-						draw_path = false;					
+						draw_path = false;			
 					}
 					else
 					{
