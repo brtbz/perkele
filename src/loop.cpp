@@ -201,13 +201,42 @@ void Step(double delta)
 			}
 			else if ( selected_army->action_done == false && HexesAreNeighbours( selected_army->position_hex, highlighted_hex) && map_nodes[highlighted_hex].occupier > -1 )
 			{
-				defenders_hex = highlighted_hex;
-				BeginArmyAttackAnimation( selected_army->index, selected_army->position_hex, defenders_hex );
-				ResolveCombat( selected_army, &all_armies[map_nodes[highlighted_hex].occupier] );
-				PlaySfx(selected_army->attack_sound);
-				unit_data_buffer_needs_update = true;
-				pathfinder->path_edges_size = 0;
+				if ( selected_army->faction != all_armies[map_nodes[highlighted_hex].occupier].faction )
+				{
+					defenders_hex = highlighted_hex;
+					BeginArmyAttackAnimation( selected_army->index, selected_army->position_hex, defenders_hex );
+					ResolveCombat( selected_army, &all_armies[map_nodes[highlighted_hex].occupier] );
+					PlaySfx(selected_army->attack_sound);
+					unit_data_buffer_needs_update = true;
+					pathfinder->path_edges_size = 0;
+					draw_path = false;
+				}
+				else
+				{
+					// it's own guy, switch to it
+					if ( selected_army->action_done == true || selected_army->move_done == true )
+					{
+						selected_army->action_done = true;
+						selected_army->move_done = true;	
+					}
+					selected_army = &all_armies[map_nodes[highlighted_hex].occupier];
+					draw_path = false;
+					ClearPaths(pathfinder);
+					unit_data_buffer_needs_update = true;
+				}
+			}
+			else if ( selected_army->faction == all_armies[map_nodes[highlighted_hex].occupier].faction )
+			{
+				// it's own guy, switch to it
+				if ( selected_army->action_done == true || selected_army->move_done == true )
+				{
+					selected_army->action_done = true;
+					selected_army->move_done = true;	
+				}
+				selected_army = &all_armies[map_nodes[highlighted_hex].occupier];
 				draw_path = false;
+				ClearPaths(pathfinder);
+				unit_data_buffer_needs_update = true;		
 			}
 			else
 			{
@@ -263,10 +292,12 @@ void Step(double delta)
 				{
 					if (selected_army->action_done == false)
 					{
-						//SDL_SetCursor(cursor_swords_bmp);
-						custom_cursor_should_be = 1;
+						if ( selected_army->faction != all_armies[map_nodes[highlighted_hex].occupier].faction )
+						{
+							//SDL_SetCursor(cursor_swords_bmp);
+							custom_cursor_should_be = 1;
+						}	
 					}
-
 				}
 			}
 		}

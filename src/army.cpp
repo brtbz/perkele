@@ -624,9 +624,9 @@ void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 	NewActiveArmy( &all_armies[11], "7th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3781 );
 	NewActiveArmy( &all_armies[12], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3782 );
 
-	NewActiveArmy( &all_armies[13], "7th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2978 );
-	NewActiveArmy( &all_armies[14], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2979 );
-	NewActiveArmy( &all_armies[15], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2980 );
+	NewActiveArmy( &all_armies[13], "9th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2460 );
+	NewActiveArmy( &all_armies[14], "10th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2461 );
+	NewActiveArmy( &all_armies[15], "11th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2588 );
 
 	for (int i = 5; i < 10; i++)
 	{
@@ -720,9 +720,9 @@ void ResetArmiesToDefaultTemporaryPleaseDelete()
 	NewActiveArmy( &all_armies[11], "7th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3781 );
 	NewActiveArmy( &all_armies[12], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 3782 );
 
-	NewActiveArmy( &all_armies[13], "7th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2978 );
-	NewActiveArmy( &all_armies[14], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2979 );
-	NewActiveArmy( &all_armies[15], "8th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2980 );
+	NewActiveArmy( &all_armies[13], "9th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2460 );
+	NewActiveArmy( &all_armies[14], "10th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2461 );
+	NewActiveArmy( &all_armies[15], "11th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 2588 );
 
 
 	for (int i = 5; i < 10; i++)
