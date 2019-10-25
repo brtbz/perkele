@@ -29,7 +29,7 @@ void BalorTakesControl()
 
 int32_t GetArmyForBalorToPlayWith()
 {
-	if ( balors_current_army != -1)
+	if ( balors_current_army != -1 && all_armies[balors_current_army].dead == false)
 	{
 		if (all_armies[balors_current_army].move_done == false || all_armies[balors_current_army].action_done == false)
 		{

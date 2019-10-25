@@ -1,3 +1,26 @@
+void UnselectArmy(Army *a)
+{
+	if (a->move_done == true || a->action_done == true)
+	{
+		a->move_done = true;
+		a->action_done = true;
+	}
+
+	selected_army = NULL;
+	draw_path = false;
+	ClearPaths(pathfinder);
+}
+
+void SelectArmy(Army *a)
+{
+	if (selected_army != NULL)
+	{
+		UnselectArmy(selected_army);
+	}
+
+	selected_army = a;
+}
+
 void Step(double delta)
 {
 	int camera_move_x = 0;
@@ -155,14 +178,7 @@ void Step(double delta)
 	{
 		if ( right_clicked && selected_army != NULL)
 		{
-			if (selected_army->move_done == true || selected_army->action_done == true)
-			{
-				selected_army->move_done = true;
-				selected_army->action_done = true;
-			}
-			selected_army = NULL;
-			draw_path = false;
-			ClearPaths(pathfinder);
+			UnselectArmy(selected_army);
 		}
 		else if ( left_clicked && selected_army != NULL )
 		{
@@ -214,29 +230,15 @@ void Step(double delta)
 				else
 				{
 					// it's own guy, switch to it
-					if ( selected_army->action_done == true || selected_army->move_done == true )
-					{
-						selected_army->action_done = true;
-						selected_army->move_done = true;	
-					}
-					selected_army = &all_armies[map_nodes[highlighted_hex].occupier];
-					draw_path = false;
-					ClearPaths(pathfinder);
-					unit_data_buffer_needs_update = true;
+					PlaySfx(SFX_UI_CLICK_A);
+					SelectArmy(&all_armies[map_nodes[highlighted_hex].occupier]);
 				}
 			}
 			else if ( selected_army->faction == all_armies[map_nodes[highlighted_hex].occupier].faction )
 			{
 				// it's own guy, switch to it
-				if ( selected_army->action_done == true || selected_army->move_done == true )
-				{
-					selected_army->action_done = true;
-					selected_army->move_done = true;	
-				}
-				selected_army = &all_armies[map_nodes[highlighted_hex].occupier];
-				draw_path = false;
-				ClearPaths(pathfinder);
-				unit_data_buffer_needs_update = true;		
+				PlaySfx(SFX_UI_CLICK_A);
+				SelectArmy(&all_armies[map_nodes[highlighted_hex].occupier]);
 			}
 			else
 			{
@@ -249,8 +251,8 @@ void Step(double delta)
 			{
 				if ( all_armies[ map_nodes[highlighted_hex].occupier ].move_done == false && all_armies[ map_nodes[highlighted_hex].occupier ].faction == active_faction )
 				{
-					selected_army = &all_armies[ map_nodes[highlighted_hex].occupier ];
-					PlaySfx(SFX_UI_CLICK_A);	
+					PlaySfx(SFX_UI_CLICK_A);
+					SelectArmy(&all_armies[map_nodes[highlighted_hex].occupier]);
 				}
 				else
 				{
