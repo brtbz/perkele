@@ -188,7 +188,7 @@ void RequestOrdersFromBalor()
 			{
 				int32_t attack_maybe = ShouldIAttackMaybe( all_armies[balors_army].position_hex, active_faction );
 
-				if (attack_maybe != -1)
+				if (attack_maybe != -1 && all_armies[balors_army].action_done == false)
 				{
 					// attack
 					defenders_hex = attack_maybe; // defenders_hex is used by the animation
