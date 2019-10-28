@@ -108,6 +108,22 @@ typedef struct PerkeleConfigs
 	bool pathfind_debug_overlay;
 } PerkeleConfigs;
 
+typedef struct WhatToShow
+{
+	bool gui_frames;
+	bool highlighted_unit_info;
+	bool selected_unit_info;
+	bool combat_results_window;
+	bool debug_ui_window;
+	bool main_menu;
+	bool memory_inspector_window;
+	bool settings_window;
+	bool menu_button;
+	bool end_turn_button;
+	bool rest_button;
+	bool cool_info_overlay;
+} WhatToShow;
+
 typedef struct Sfx
 {
 	int id;

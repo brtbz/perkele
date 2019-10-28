@@ -24,7 +24,7 @@ void ShowMenuButtonOverlay()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	if (ImGui::Begin("Example: Simple overlay", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 	{
-		if (ImGui::Button("MENU", ImVec2(60.0f, 40.0f))) { show_main_menu = !show_main_menu; }
+		if (ImGui::Button("MENU", ImVec2(60.0f, 40.0f))) { show.main_menu = !show.main_menu; }
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(1);
@@ -247,7 +247,7 @@ void ShowSettingsWindow()
 	ImGui::Text("DEV");
 
 	static bool bypass_main_menu = perkele_configs.bypass_main_menu;
-	ImGui::Checkbox("enable debug ui", &show_debug_ui);
+	ImGui::Checkbox("enable debug ui", &show.debug_ui_window);
 	ImGui::Checkbox("bypass main menu on startup", &bypass_main_menu);
 	ImGui::Checkbox("Ignore move rules", &ignore_move_rules);
 	ImGui::Checkbox("Pathfind debug overlay", &draw_hex_debug_overlay);
@@ -261,7 +261,7 @@ void ShowSettingsWindow()
 		perkele_configs.sfx_gain = sfx_gain;
 		perkele_configs.mouse_edge_scroll = mouse_edge_scroll;
 		perkele_configs.bypass_main_menu = bypass_main_menu;
-		perkele_configs.enable_debug_window = show_debug_ui;
+		perkele_configs.enable_debug_window = show.debug_ui_window;
 		perkele_configs.ignore_move_rules = ignore_move_rules;
 		perkele_configs.pathfind_debug_overlay = draw_hex_debug_overlay;
 		perkele_configs.screen_mode = e;
@@ -270,11 +270,11 @@ void ShowSettingsWindow()
 		perkele_configs.enable_vsync = tempvsync;
 		ValidateConfigs(&perkele_configs);
 		WriteConfigsToFile(&perkele_configs, config_file_name);
-		show_settings_window = false;
+		show.settings_window = false;
 	}
 	if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Changed display options require restart to take effect."); }
 	ImGui::SameLine();
-	if (ImGui::Button("Cancel###SETTINGS_WINDOW_CANCEL") ) { show_settings_window = false; }
+	if (ImGui::Button("Cancel###SETTINGS_WINDOW_CANCEL") ) { show.settings_window = false; }
 
 	ImGui::End();
 }
@@ -284,10 +284,10 @@ void ShowMainMenu()
 		ImGui::SetNextWindowPos(ImVec2( viewport_size.x / 2.0f, viewport_size.y /2.0f ), 0, ImVec2(0.5f, 0.5f));
 		ImGui::SetNextWindowSize(ImVec2( 216.0f, 280.0f ));
 		ImGui::Begin("Main Menu", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize );
-		if (ImGui::Button("Continue###MAIN_MENU_CONTINUE", ImVec2(200,50))) { show_main_menu = !show_main_menu; }
+		if (ImGui::Button("Continue###MAIN_MENU_CONTINUE", ImVec2(200,50))) { show.main_menu = !show.main_menu; }
 		if (ImGui::Button("New Map###MAIN_MENU_NEW_MAP", ImVec2(200,50))) { ResetArmiesToDefaultTemporaryPleaseDelete(); }
-		if (ImGui::Button("Settings###MAIN_MENU_SETTINGS", ImVec2(200,50))) { show_settings_window = !show_settings_window; }
-		if (ImGui::Button("Debug Window###MAIN_MENU_DEBUG_WINDOW", ImVec2(200,50))) { show_debug_ui = !show_debug_ui; }
+		if (ImGui::Button("Settings###MAIN_MENU_SETTINGS", ImVec2(200,50))) { show.settings_window = !show.settings_window; }
+		if (ImGui::Button("Debug Window###MAIN_MENU_DEBUG_WINDOW", ImVec2(200,50))) { show.debug_ui_window = !show.debug_ui_window; }
 		if (ImGui::Button("Exit to OS###MAIN_MENU_EXIT", ImVec2(200,50))) { game_running = false; }
 		ImGui::End();
 }
@@ -355,9 +355,9 @@ void ShowDebugUI()
 
 		ImGui::Checkbox("ImGuiDemo", &show_demo_window);      // Edit bools storing our window open/close state
 		ImGui::SameLine();
-		ImGui::Checkbox("Settings###SETTINGS_CHECKBOX", &show_settings_window);
+		ImGui::Checkbox("Settings###SETTINGS_CHECKBOX", &show.settings_window);
 		ImGui::SameLine();
-		ImGui::Checkbox("Memory", &show_memory_window);
+		ImGui::Checkbox("Memory", &show.memory_inspector_window);
 
 		ImGui::Separator();
 

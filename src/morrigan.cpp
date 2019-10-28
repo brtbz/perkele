@@ -133,6 +133,29 @@ void EndTurn()
 	SwitchToNextFaction();
 }
 
+void UnselectArmy(Army *a)
+{
+	if (a->move_done == true || a->action_done == true)
+	{
+		a->move_done = true;
+		a->action_done = true;
+	}
+
+	selected_army = NULL;
+	draw_path = false;
+	ClearPaths(pathfinder);
+}
+
+void SelectArmy(Army *a)
+{
+	if (selected_army != NULL)
+	{
+		UnselectArmy(selected_army);
+	}
+
+	selected_army = a;
+}
+
 void DestroyArmy(Army *a)
 {
 	PlaySfx(SFX_UNIT_DEATH);

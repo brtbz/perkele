@@ -3,17 +3,28 @@ uint64_t program_start_time_ticks;
 uint64_t perf_freq = 1;
 uint32_t master_timer = 0; //ms
 
+WhatToShow show =
+{
+	true,  // gui_frames;
+	true,  // highlighted_unit_info;
+	true,  // selected_unit_info;
+	true,  // combat_results_window;
+	true,  // debug_ui_window;
+	false, // main_menu;
+	false, // memory_inspector_window;
+	false, // settings_window;
+	true,  // menu_button;
+	true,  // end_turn_button;
+	true,  // rest_button;
+	true,  // cool_info_overlay;
+};
 
 bool game_running = true;
-bool show_debug_ui = true;
-bool show_settings_window = false;
 bool bypass_main_menu = false;
-bool show_main_menu = false;
-bool show_memory_window = false;
 bool mouse_edge_scroll = true;
 
-
 bool audio_enabled = false;
+
 
 
 PerkeleConfigs perkele_configs;

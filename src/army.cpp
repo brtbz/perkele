@@ -608,11 +608,11 @@ void NewActiveArmy(Army *a, const char* name, Faction faction, ArmyBaseSprite ab
 
 void ArrangePiecesAroundOnTheBoardJohnImOnlyTesting()
 {
-	NewActiveArmy( &all_armies[0], "1st Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 4532 );
+	NewActiveArmy( &all_armies[0], "1st Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4532 );
 	NewActiveArmy( &all_armies[1], "2nd Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4533 );
 	NewActiveArmy( &all_armies[2], "3rd Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_PINK, 4534 );
-	NewActiveArmy( &all_armies[3], "4th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 4535 );
-	// NewActiveArmy( &all_armies[4], "5th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 4536 );
+	NewActiveArmy( &all_armies[3], "4th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4535 );
+	NewActiveArmy( &all_armies[4], "5th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4536 );
 
 	NewActiveArmy( &all_armies[5], "1st Surfer Battalion 'Sweden'", FACTION_SURFERS, SURFER_BOY, 3891 );
 	NewActiveArmy( &all_armies[6], "2nd Surfer Battalion 'Norway'", FACTION_SURFERS, SURFER_BOY, 3892 );
@@ -704,11 +704,11 @@ void ResetArmiesToDefaultTemporaryPleaseDelete()
 		NewDefaultBlankArmy(&all_armies[i], i);
 	}
 
-	NewActiveArmy( &all_armies[0], "1st Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 4532 );
+	NewActiveArmy( &all_armies[0], "1st Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4532 );
 	NewActiveArmy( &all_armies[1], "2nd Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4533 );
 	NewActiveArmy( &all_armies[2], "3rd Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_PINK, 4534 );
-	NewActiveArmy( &all_armies[3], "4th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_BLUE, 4535 );
-	// NewActiveArmy( &all_armies[4], "5th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_RED, 4536 );
+	NewActiveArmy( &all_armies[3], "4th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4535 );
+	NewActiveArmy( &all_armies[4], "5th Royal Goblin Battalion", FACTION_GOBLINS, GOBLIN_BATHROBE_GREEN, 4536 );
 
 	NewActiveArmy( &all_armies[5], "1st Surfer Battalion 'Sweden'", FACTION_SURFERS, SURFER_BOY, 3891 );
 	NewActiveArmy( &all_armies[6], "2nd Surfer Battalion 'Norway'", FACTION_SURFERS, SURFER_BOY, 3892 );

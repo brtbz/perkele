@@ -215,9 +215,9 @@ void Init()
 
 	// these switches and values are all over. maybe they could all gather to some place nice
 	bypass_main_menu = perkele_configs.bypass_main_menu;
-	bypass_main_menu ? show_main_menu = false : show_main_menu = true;
+	bypass_main_menu ? show.main_menu = false : show.main_menu = true;
 
-	show_debug_ui = perkele_configs.enable_debug_window;
+	show.debug_ui_window = perkele_configs.enable_debug_window;
 	mouse_edge_scroll = perkele_configs.mouse_edge_scroll;
 
 	draw_hex_debug_overlay = perkele_configs.pathfind_debug_overlay;

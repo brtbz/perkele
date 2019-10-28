@@ -1,25 +1,3 @@
-void UnselectArmy(Army *a)
-{
-	if (a->move_done == true || a->action_done == true)
-	{
-		a->move_done = true;
-		a->action_done = true;
-	}
-
-	selected_army = NULL;
-	draw_path = false;
-	ClearPaths(pathfinder);
-}
-
-void SelectArmy(Army *a)
-{
-	if (selected_army != NULL)
-	{
-		UnselectArmy(selected_army);
-	}
-
-	selected_army = a;
-}
 
 void Step(double delta)
 {
@@ -63,12 +41,12 @@ void Step(double delta)
 		{
 			if (evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 			{
-				if (show_main_menu) { game_running = false; }
-				else { show_main_menu = true; }
+				if (show.main_menu) { game_running = false; }
+				else { show.main_menu = true; }
 			}
 			else if (evt.key.keysym.scancode == SDL_SCANCODE_F1)
 			{
-				show_debug_ui = !show_debug_ui;
+				show.debug_ui_window = !show.debug_ui_window;
 			}
 		}
 		if (ui_hovered == 0)
@@ -208,7 +186,6 @@ void Step(double delta)
 						PlaySfx(SFX_UI_CLICK_ERROR);
 						allowed_steps = 512;
 					}
-
 				}
 				else
 				{
@@ -332,53 +309,19 @@ void Step(double delta)
 	ImGui_ImplSDL2_NewFrame(window);
 	ImGui::NewFrame();
 
-	ShowGUIFrames();
+	if ( show.gui_frames )              { ShowGUIFrames(); }
+	if ( show.highlighted_unit_info )   { ShowHighlightedUnitInfo(); }
+	if ( show.selected_unit_info )      { ShowSelectedUnitInfo(); }
+	if ( show.combat_results_window )   { ShowCombatResultsWindow(); }
+	if ( show.debug_ui_window )         { ShowDebugUI(); }
+	if ( show.main_menu )               { ShowMainMenu(); }
+	if ( show.memory_inspector_window ) { ShowMemoryInspector(); }
+	if ( show.settings_window )         { ShowSettingsWindow(); }
+	if ( show.menu_button )             { ShowMenuButtonOverlay(); }
+	if ( show.end_turn_button )         { ShowEndTurnButtonOverlay(); }
+	if ( show.rest_button )             { ShowRestButton(); }
+	if ( show.cool_info_overlay )       { ShowCoolInfoOverlayTopBar(); }
 
-	ShowHighlightedUnitInfo();
-
-	ShowSelectedUnitInfo();
-
-	ShowCombatResultsWindow();
-
-	if (show_debug_ui)
-	{
-		ShowDebugUI();
-	}
-
-	if (show_main_menu)
-	{
-		ShowMainMenu();
-	}
-
-	if (show_memory_window)
-	{
-		ShowMemoryInspector();
-	}
-
-	if (show_settings_window)
-	{
-		ShowSettingsWindow();
-	}
-
-	static bool show_menu_button = true;
-	if (show_menu_button )
-	{
-		ShowMenuButtonOverlay();		
-	}
-
-	static bool show_end_turn_button = true;
-	if (show_end_turn_button)
-	{
-		ShowEndTurnButtonOverlay();
-	}
-
-	static bool show_cool_info_overlay_topbar = true;
-	if (show_cool_info_overlay_topbar)
-	{
-		ShowCoolInfoOverlayTopBar();
-	}
-
-	ShowRestButton();
 	// imgui end
 
 	cm_set_master_gain((double)master_gain);
